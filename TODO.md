@@ -6,7 +6,7 @@ Strukturáltan felveszi a felhasználó problémáját, egy korlátozott taxonó
 1. lépés:
 - megosztás bilickiv@gmail.com
 - README a problémával, célcsoporttal és termékhatárral;
-- egyoldalas MVP-leírás és priorizált backlog;
+- egyoldalas MVP-leírás és priorizált backlog (investigation ticket?);
 - piackutatási összehasonlító táblázat;
 - jogterületi taxonómia és címkézési szabályok;
 - use case- és pageflow-vázlat;
