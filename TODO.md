@@ -4,16 +4,16 @@
 Strukturáltan felveszi a felhasználó problémáját, egy korlátozott taxonómia szerint előzetes ügytípust javasol, majd magyarázható módon három megfelelő ügyvédprofilt ajánl. Alacsony bizonyosságnál kérdezzen vissza, vagy mondja ki, hogy nem tud felelősen besorolást adni.
 
 1. lépés:
-megosztás bilickiv@gmail.com
-README a problémával, célcsoporttal és termékhatárral;
-egyoldalas MVP-leírás és priorizált backlog;
-piackutatási összehasonlító táblázat;
-jogterületi taxonómia és címkézési szabályok;
-use case- és pageflow-vázlat;
-első adatmodell és architektúraábra;
-mérési és validációs terv;
-adatvédelmi, jogi, MI- és biztonsági kockázati lista;
-MI-használati napló.
+-megosztás bilickiv@gmail.com 
+-README a problémával, célcsoporttal és termékhatárral; 
+-egyoldalas MVP-leírás és priorizált backlog; 
+-piackutatási összehasonlító táblázat; 
+-jogterületi taxonómia és címkézési szabályok; 
+-use case- és pageflow-vázlat; 
+-első adatmodell és architektúraábra; 
+-mérési és validációs terv; 
+-adatvédelmi, jogi, MI- és biztonsági kockázati lista; 
+-MI-használati napló. 
 
 ## Tervezett MVP-sorozat:
 ### MVP-0 – mérési és domainalap
