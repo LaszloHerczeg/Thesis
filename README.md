@@ -14,3 +14,7 @@ MI-támogatott, könnyen kezelhető szolgáltatás formájában.
 Ügyfelek, akiknek jogi segítségre van szüksége és szeretnék megtalálni a legmegfelelőbb jogi szakembert.
 
 ## Termékhatár
+- Strukturáltan felveszi a felhasználó problémáját
+- Egy korlátozott taxonómia szterint előzetes ügytípust javasol
+- Magyaráható modon három megfelelő ügyvédprofilt ajánl
+- Alacsony bizonyosságnál kérdezzen vissza vagy mondja ki, hogy nem tud felelősen besorolást adni
