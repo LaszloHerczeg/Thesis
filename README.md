@@ -16,5 +16,5 @@ MI-támogatott, könnyen kezelhető szolgáltatás formájában.
 ## Termékhatár
 - Strukturáltan felveszi a felhasználó problémáját
 - Egy korlátozott taxonómia szterint előzetes ügytípust javasol
-- Magyaráható módon három megfelelő ügyvédprofilt ajánl
+- Magyarázható módon három megfelelő ügyvédprofilt ajánl
 - Alacsony bizonyosságnál kérdezzen vissza vagy mondja ki, hogy nem tud felelősen besorolást adni
