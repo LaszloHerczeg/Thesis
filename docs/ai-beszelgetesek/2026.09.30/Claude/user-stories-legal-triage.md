@@ -134,7 +134,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
   - photos taken sideways on a phone are rotated the right way up.
 - Several photos can be uploaded as one document (e.g. a three-page letter photographed page by page). The client can put them in order, and each photo counts as one page for page references (US-09).
 - For PDFs that contain a text layer (i.e. created digitally, not scanned), text is extracted directly, page by page, keeping the page number for each piece of text. Photos and scanned PDF pages are read with OCR (US-07).
-- If extraction fails, the client is told and offered to try again with a higher quality scanned document or picture. If extraction fails again. client is told and offered to change their description of the case and can continue without the document.
+- If extraction fails, the client is told and can continue without the document.
 
 ### US-07 · Have scanned documents read automatically — *Must*
 **As a** client, **I want** scanned or photographed documents to be read too, **so that** I can use paper documents I only have as scans.
@@ -146,13 +146,13 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 - Pages with very low OCR confidence are marked as low-reliability and feed into US-10.
 
 ### US-08 · Have my personal data masked — *Must*
-**As a** client, **I want** my personal data in uploaded documents, in my description, in the follow-up questions and answers to be automatically detected and masked, **so that** my sensitive information is not exposed to AI services or to people who don't need to see it.
+**As a** client, **I want** my personal data in uploaded documents and in my description to be automatically detected and masked, **so that** my sensitive information is not exposed to AI services or to people who don't need to see it.
 
 **Acceptance criteria**
 - The system detects at least: person names, addresses, phone numbers, email addresses, dates of birth, national ID / tax / social-security numbers, and bank account numbers (IBAN — International Bank Account Number).
 - Detected items are replaced with consistent placeholders (e.g. the same person is always `[PERSON_1]`) so the text still makes sense.
 - Masking happens **before** any text is sent to an external LLM (enforced in the LLM gateway, US-30).
-- The client sees a preview of what was masked and can mark missed items for masking or un-mask items wrongly masked (e.g. the name of a company that is the other party). It is displayed on the page that all unmasked data will be sent to an AI maintained by a thrid-party organization.
+- The client sees a preview of what was masked and can mark missed items for masking or un-mask items wrongly masked (e.g. the name of a company that is the other party).
 - The mapping between placeholders and original values (the PII mapping) is stored separately from the masked text and encrypted. Only the parts of the system that need it can read it, e.g. masking new text consistently within a case, and deletion.
 - The problem description (US-01), follow-up answers (US-02) and extracted document data are stored in two versions: the original (unmasked) version and the masked version.
 - The two versions are used in different places:
@@ -205,6 +205,10 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 - If any check fails, the request is repeated once, with a reminder of the required format.
 - If the second answer is also invalid, the case is treated as "could not be categorised" (US-04). The client never sees an invalid answer.
 - Every invalid answer is logged with the reason (unknown category, wrong format, missing field or value out of range) and counted in the error statistics (US-32).
+- The same kind of checking applies to the other AI outputs:
+  - follow-up questions (US-02) must use one of the allowed question types;
+  - extracted fields (US-09) must have the right data type (a date must be a valid date, an amount must be a number);
+  - the source snippet quoted for an extracted field must actually appear in the document text.
 
 ### US-13 · State my preferences for a lawyer — *Must*
 **As a** client, **I want** to state my preferences (location, language, online or in-person consultation, budget / fee model, how soon I need an appointment), **so that** the recommendations fit my practical situation.
@@ -246,7 +250,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 - The client can go back to the three recommendations and choose a different lawyer.
 - The client's own details are **not** sent to the lawyer; the client decides whether and how to make contact.
 - The short disclaimer (US-05) stays visible, including a note that the platform does not guarantee the lawyer will take the case.
-- If the lawyer was deactivated after the recommendations were shown, the client sees a message saying so and is asked to choose another recommendation. A button is available to re-do the the recommendation.
+- If the lawyer was deactivated after the recommendations were shown, the client sees a message saying so and is asked to choose another recommendation.
 - The system records which lawyer was chosen, which position they had in the list (1st, 2nd or 3rd), and when. Every change of choice is recorded too. This feeds the task completion metric (US-33) and shows how often clients pick the top-ranked lawyer.
 
 ---
@@ -553,7 +557,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
   - Each blocked attempt is logged with the email address, the time and the IP address.
 - Password rules follow modern practice based on NIST guidance (SP 800-63B):
   - Minimum length of 8 characters. The limit is a configurable setting, so it can be raised later without changing the code.
-  - Maximum length of at least 64 characters. All characters are allowed, including spaces and accented letters (á, ő, ü, ß).
+  - Maximum length of at least 64 characters. All characters are allowed, including spaces, accented letters (á, ő, ü, ß) and emoji.
   - **No** forced composition rules such as "must contain an uppercase letter, a number and a symbol". These make passwords harder to remember without making them much stronger.
   - The password is rejected if it appears in a list of known leaked passwords or common passwords, or if it contains the username, the email address or the site's name. The client is told *why* it was rejected.
 - A live strength indicator shows how strong the password is while it is typed.
@@ -637,7 +641,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 
 **Acceptance criteria**
 - The profile page is reached through "Edit profile" in the profile menu (US-41). Users can only ever see and edit their own profile.
-- The user can change their username and their email address. The same rules as at registration apply (US-36): usernames and email addresses must be unique and valid, and a new email address must not be on the banned-email list.
+- The user can change their username, their email address and their preferred interface language (US-59). The same rules as at registration apply (US-36): usernames and email addresses must be unique and valid, and a new email address must not be on the banned-email list.
 - Changing the email address requires entering the current password, to protect the account if someone else gets access to an open session.
 - The password is changed in a separate section. The user enters their current password, then the new password twice. The new password must meet the same rules as at registration (US-36), including the live strength indicator.
 - After a password change, the user stays logged in on the current device but is logged out everywhere else.
@@ -797,6 +801,9 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 **Acceptance criteria**
 - Client text and document text are always sent to the LLM as clearly marked data, separate from the system's own instructions. The instructions tell the model to treat this data only as content to analyse, never as instructions.
 - The LLM cannot take actions. It has no tools, no database access and no access to other cases. It only returns text in the fixed format checked by US-12, so a successful injection can at worst produce a wrong category. The validation and the confidence rules (US-03, US-04) limit even that.
+- Injected text cannot change which lawyers are shown or why:
+  - recommendations are calculated by the matching engine from the database (US-14), not by the LLM;
+  - explanations are not written by the LLM (US-15).
 - AI-generated text shown to the client, such as follow-up questions, is displayed as plain text. Any HTML, links or scripts in it are not rendered.
 - Known injection patterns are detected, such as "ignore previous instructions" or attempts to change the AI's role.
   - Affected cases are flagged in the logs (US-26) and in the admin case list (US-25).
@@ -854,6 +861,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 - Administrator accounts are not deleted automatically. Their role must first be removed with the server script (US-24).
 - If the account was banned, only a hash of the email address is kept on the block list (US-27).
 - Each deletion is logged with an anonymous account reference and the time, never the deleted content.
+- The profile page (US-42) shows the inactivity period and explains that logging in resets it.
 
 ### US-56 · Delete my account and all my data — *Must*
 **As a** logged-in client, **I want** to start the deletion of my account and all my data myself, **so that** I can use my right to be forgotten without having to contact anyone.

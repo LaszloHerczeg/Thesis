@@ -1,0 +1,342 @@
+- User Intake & Interaction
+
+Text-based problem submission: Users can describe their legal problem in their own words.
+Dynamic Q&A: The system asks structured follow-up questions to gather missing information based on the initial input.
+Low-confidence fallback: If the system is uncertain about a classification, it prompts the user for clarification or explicitly states it cannot confidently categorize the issue.
+Disclaimer display: Clear product boundaries stating the system provides preliminary screening, not definitive legal advice or interpretation.
+Document Processing
+
+PDF text extraction: Native text extraction from digital PDFs.
+Conditional OCR: Optical Character Recognition specifically triggered for scanned or image-based documents.
+PII detection & masking: Automatic identification and anonymization of sensitive personal data within uploaded documents.
+Traceable data extraction: Structured field extraction that shows the user exactly which page or text snippet the information was pulled from.
+Human-in-the-loop verification: Prompts requiring user confirmation when document extraction yields low-reliability data.
+AI Classification & Recommendation Engine
+
+Case-type classification: Categorizes the user's issue into a predefined taxonomy of 6–8 specific legal areas, accompanied by a confidence score.
+Multi-criteria content-based recommendation: Suggests exactly three relevant lawyer profiles based on matching criteria (specialty, location, language, consultation format, availability, and fee model).
+Explainable AI (XAI): Displays the specific reasons and matching logic behind why those top three lawyer profiles were recommended.
+Administration & Management
+
+Admin interface: A dashboard to manage lawyer profiles and the legal category taxonomy.
+Lawyer profile schema: Structured profiles containing specific data points (expertise, location, languages spoken, online/in-person availability, pricing model).
+Architecture & Auditing
+
+Modular architecture: Distinct modules for client intake, document processing, classification/recommendation, LLM gateway, and auditing.
+Audit and measurement module: Built-in tracking for system performance, including classification accuracy, response times, API costs, error patterns, and task completion rates.
+AI usage logging: A tracked log of AI usage during the development process to compare AI-supported workflows against standard development. * I want to implement these features. Write user stories based on these features
+
+-I'll turn these features into a set of user stories with acceptance criteria, grouped by module, as a document you can keep and edit.
+
+Your user stories are in user-stories-legal-triage.md. There are 26 of them, grouped into five epics that match your feature areas: intake, document processing, classification and recommendation, administration, and architecture and auditing. An epic is a group of related stories that together deliver one bigger feature.
+
+Every story uses the "As a… I want… so that…" format. Each one also has testable acceptance criteria, which are the conditions that must be true before the story counts as done. Each has a MoSCoW priority too: Must, Should or Could have. A glossary at the top spells out all the abbreviations: PII (Personally Identifiable Information), OCR (Optical Character Recognition), XAI (Explainable AI), LLM (Large Language Model) and HITL (Human-in-the-Loop).
+
+I made a few design decisions your feature list left open, and they're worth checking:
+
+Fewer than three matching lawyers: the system still shows three, filling the gaps with partial matches that are clearly labelled.
+Explanations: the reasons for each recommendation are built from the actual matching scores, not written freely by the AI, so they can't contradict the real ranking.
+Masking before AI calls: the LLM gateway, the single module all AI calls go through, refuses any text that hasn't had its personal data masked first.
+
+At the end there's a short list of gaps you may want to add as stories. Consent and data deletion under GDPR (the EU's General Data Protection Regulation) is the most important one if this runs in the EU.
+
+A natural next step is to break the Must-have stories into development tasks and put them in order for your first sprint.
+
+-after the client picks one of the three lawyers, the product will show the contact info of the lawyer. Add this as well
+
+-I'll add a new story for showing the chosen lawyer's contact details, and update the related stories to match.
+
+I added a new story, US-15 · See the chosen lawyer's contact details, in the Classification & Recommendation epic. There are now 27 stories.
+
+Under it, each of the three recommended lawyers gets a "Choose this lawyer" button. Once the client picks one, the page shows that lawyer's name, address, phone number, email and an optional booking link. The phone number and email can be tapped to call or write. The client can also go back and pick a different lawyer. Nothing about the client is sent to the lawyer automatically, so the client decides whether to make contact. The system records which lawyer was chosen and whether they were ranked first, second or third. That also tells you how often clients agree with the top recommendation.
+
+The new story required a few changes elsewhere in the document:
+
+Lawyer profile schema (now US-19): a phone number and email address are now required fields. A website or booking link is optional.
+Task completion (now US-25): "lawyer chosen and contact details shown" is now the final step of a completed case.
+Numbering: the old stories US-15 to US-26 are now US-16 to US-27. All cross-references and the summary table are updated to match.
+Open questions: I removed the "Contacting the lawyer" item from the suggested additions, since this story answers it.
+
+-add user stories regarding the following:
+
+users being able to register with modern password validation
+after registration, the user gets logged in automatically
+when not logged in, there is a sign up and a log in option on the menubar
+being logged in, there's the username and a log out option instead of the sign up and the log in
+if the logged in person is an admin, the admin option is on the menubar
+if the logged in person is not an admin, the admin option is NOT on the menubar
+for users not logged in the admin page is not reachable
+for users logged in but not admin the admin page is not reachable
+the metrics page is only available for admins
+logged-in users can initiate the deletion of their data and profile *Consent and data retention (GDPR): the client should give explicit consent to processing, and uploaded documents and the PII mapping should be automatically deleted after a set period. *client-facing interface is multilingual: Enghlish, Hungarian and German. The language can be chosen via a button
+
+-I'll add these as three new epics (accounts and access control, privacy and data protection, multilingual interface) and adjust the existing stories they touch.
+
+I added 15 new stories in three new epics, so there are now 42 stories in total.
+
+Epic 6 — User Accounts & Access Control (US-28 to US-37) turns each of your bullets into its own story:
+
+Registration (US-28): the password rules follow NIST SP 800-63B, the widely used US password guideline from the National Institute of Standards and Technology. That means at least 15 characters. There are no forced "uppercase, number and symbol" rules, since these make passwords harder to remember without making them much stronger. Instead, passwords are checked against lists of known leaked passwords.
+Admin role at sign-up: new accounts always start as regular client accounts. Only an existing administrator can make someone an administrator.
+Log in and log out (US-30): I added this story because the menubar stories depend on it.
+Hidden menu option vs. real protection: US-34 notes that hiding the Admin option is only for convenience, not security. The actual protection is on the server. A visitor who isn't logged in gets sent to the log-in page. A logged-in client gets an "Access denied" page (an HTTP 403 response, the standard web code for "you're logged in but not allowed here"). This is true even if they type the admin page's web address directly into the browser.
+
+Epic 7 — Privacy & Data Protection (US-38 to US-40) covers three things:
+
+Consent: the client must tick the consent box themselves (it is never pre-ticked). It is a separate box from the disclaimer. The system records which version of the privacy text the client agreed to.
+Automatic deletion: documents and the PII mapping (the table linking placeholders like [PERSON_1] back to real personal data) are deleted after a set period.
+Self-service deletion: logged-in users can delete their account and all their data. They confirm by entering their password again.
+
+Epic 8 — Multilingual Interface (US-41 to US-42) adds a language button on every page with English, Hungarian and German. The language is detected automatically on a first visit and remembered afterwards. Clients can also write their problem description in any of the three languages.
+
+To keep everything consistent, I also changed three existing stories:
+
+Disclaimer (US-05): it now has to be maintained in all three languages.
+Category descriptions (US-20): these must be entered in all three languages as well.
+Admin area (US-16): it now points to the new access-control stories.
+
+The old "Suggested additions" section is gone, since all of its items are now stories. In its place is one open question you should decide: must clients have an account to submit a problem, or can visitors use it anonymously? The stories currently allow anonymous use, but anonymous users can't delete their own data.
+
+-Delete this : The system enforces between 6 and 8 active categories and everything referencint to only have 6-8 categories.
+In US-03: below the plain language I want the legal expression too in smaller size
+Delete US-26 and US-27
+Change the password criteria: the password has to be 8 character long at least. Leave it to be configurable
+Instead of a log out button, make it a profile button. When hovered, a dropdown menu appears. There's an option for editing profile and logging out. When "edit profile" is pressed, they can change profile data, password included.
+
+-All five changes are made. There are now 41 stories, numbered US-01 to US-41 with no gaps, and every cross-reference has been updated to the new numbers.
+
+Category count: I removed the "6–8" limit from the glossary, from the classification story (US-11) and from the taxonomy story (US-20). The number of categories is now simply whatever the administrator sets up.
+US-03: each suggested category now shows a plain-language description as the main text, with the legal term in smaller text underneath. For example, "A problem with your landlord" on top and "Tenancy law" below it, both in the client's chosen language.
+US-26 and US-27 deleted: I also removed their references from the metrics page story and from the role descriptions.
+Password (now US-26): the minimum is 8 characters, and it's a configurable setting. The other modern rules stay the same: no forced symbol or number rules, leaked passwords are blocked, and there's a strength indicator. One thing to know: the latest NIST (National Institute of Standards and Technology) guideline recommends 15 characters when a password is the only way to log in. Because the minimum is configurable, you can raise it later without changing any code.
+Profile menu (US-30): the "Log out" button is replaced by a profile button showing the username. Hovering over it opens a dropdown with "Edit profile" and "Log out". Phones have no hover, so the story also requires the dropdown to open on tap or click and to work with the keyboard. Otherwise mobile users couldn't reach it.
+Edit profile (new US-31): users can change their username, email address, preferred language and password. Changing the password or email requires entering the current password first. After a password change, the user is logged out on all other devices. This page also replaces the old "My account" page, so consent withdrawal, document deletion dates and account deletion all live here now.
+
+-If a user tries to use the legal screening service, they get a message saying that they have to register or log in for the service and get redirected to the registration page.
+On the registration page, there's a button where they can be redirected to log in if they have already registered before
+
+-I'll add a new story for the log-in requirement, add the log-in button to the registration story, and update the stories this affects.
+
+There are now 42 stories. I put the new one at the start of the accounts epic, which shifts every later story up by one, and all references are updated to the new numbers.
+
+New US-26 · Require registration or log-in to use the screening service:
+
+A visitor who isn't logged in and tries to start the screening is sent to the registration page. This also happens if they open a screening page by typing its web address directly.
+A message at the top of the registration page explains why: "To use the legal screening service, please register or log in."
+After registering, or after logging in through the new button, they go straight to the screening, not back to the home page.
+The check also happens on the server, so the screening can't be reached by getting around the web pages.
+If a user's session times out in the middle of the screening, they can log back in and continue where they left off.
+
+Registration story (now US-27): the registration page now has an "Already registered? Log in" button that goes to the log-in page.
+
+Other updates that follow from this:
+
+Automatic log-in (US-28): after registering from the screening redirect, the user lands at the start of the screening.
+Consent (US-38): consent is now given at registration. Since everyone using the screening is registered, nobody can submit a problem without consent. The only exception is a client who withdraws consent later: they're blocked until they give it again.
+Visitor role: the description now says what visitors can still see: the start page, disclaimer, privacy policy and language button.
+Open questions: I removed this section, since your answer settles it.
+
+-add:
+After a user uploads a case, that case and the recommendation should be only visible for the same user and the admin.
+
+-I added US-38 · Keep each case private to its owner and administrators at the end of the accounts and access-control epic. There are now 43 stories. The privacy and multilingual stories each moved up by one number, and all references are updated.
+
+What the story covers:
+
+What counts as the case: the problem description, answers, documents, classification, the three recommendations and the chosen lawyer are all protected together.
+Another client's case: if a client tries to open someone else's case, for example by changing the number in the web address, they get a "Not found" page. I chose "Not found" (a 404 response) rather than "Access denied" on purpose, because it doesn't even reveal that the case exists.
+Case numbers: case numbers are long random codes instead of 1, 2, 3, so they can't be guessed.
+Admin access is logged: every time an administrator opens a case, the system records who opened which case and when.
+Server-side checks: the rules are enforced on the server for every page, document and data export.
+
+Two decisions I made that you should check:
+
+Administrators see personal data masked, and can't open the original uploaded files. This matches the earlier privacy story (US-08). If admins need to see the real names or the original PDFs, I can change it.
+There's no "My cases" list for clients yet. The story says a client can open their own cases, but no story yet says where they find them. Do you want a "My cases" page, for example in the profile menu?
+
+-Yes, add my cases list
+
+-I added US-39 · See a list of my cases, so there are now 44 stories. The privacy and multilingual stories moved up by one number, and all references are updated.
+
+The profile dropdown (US-31) now has three options: My cases, Edit profile and Log out.
+
+What the My cases page does:
+
+The list: shows the client's own cases, newest first. Each row has the date, a short title taken from the start of the problem description, the category (plain language, with the legal term in smaller text), the status, and the chosen lawyer if there is one.
+Filtering: the list can be filtered by status or category.
+Case detail page: shows everything from the screening, including the three recommendations with their explanations and the chosen lawyer's contact details. The client can still switch to one of the other two recommended lawyers from here.
+Unfinished cases: these have a "Continue" button that goes back to the step where the client stopped.
+Starting a case: a "New case" button starts a new screening. If the client has no cases yet, the page says so and offers a button to start the first one.
+Recommendations stay as they were: a case shows the recommendations as they were when it was completed. If one of those lawyers has left the platform since, a note says so.
+Deleted documents: after documents are removed under the retention rules, the case keeps its results and notes when the documents were deleted.
+
+I also added one thing you didn't ask for: clients can delete a single case from the list, instead of only deleting their whole account. It fits the privacy stories, but you can remove it if you'd rather keep the scope smaller.
+
+-add:
+
+forgotten password: user gets a link via email, the user can modify the password via the link. The link expires after a relatively short time. User has to enter an email to get the link. The application does not tell when the email is incorrect so it does not give protected information. The forgotten password link  is available on the log in page
+
+the first admin will be created with a command-line script on the server side so the website can be setup without using the web (security reasons). Username, email and password is needed in the command. Password has to be written twice and it is not shown while typing. Same usernam, password and email rules apply as at registration, password is stored as hash. Script refuses to create a user if the email or the username is already used. Script can only be run on the server, no web endpoint. Creating administrator is logged with username and time.
+CLI scipt to promote a user to an admin. Only on server, no web endpoint.
+For logged-in admins, there's a menupoint for listing existing cases. There's an option for filtering based on the user who created the case, case category, status etc.
+
+-I'll add these four as new stories and update the existing stories they affect: registration, log-in, the menubars and the case-privacy story.
+
+I added four stories, so there are now 48. Because three of them went into the Administration epic, every story from the old US-21 onward has a new number. All cross-references and the summary table are updated.
+
+Epic 4 — Administration & Management:
+
+US-21 · Create the first administrator with a server-side script. One change from your description: the username and email go in the command, but the password does not. The script asks for it twice afterwards, with nothing shown while typing. That's because anything typed as part of a command is saved in the server's command history, where someone else could later read the password. Everything else is as you described: same rules as registration, stored as a hash, refused if the username or email is taken, no web endpoint, and logged with username and time.
+US-22 · Promote a user to administrator with a server-side script. Before changing anything, the script shows the account and asks you to confirm. It says so if the user doesn't exist or is already an admin. It has no web endpoint and every promotion is logged.
+US-23 · Browse and filter all cases as an administrator. Administrators get a "Cases" menu item. The list can be filtered by the user who created the case, category, status, date range, confidence level, chosen lawyer and whether documents were uploaded. It can also be sorted by any column. Cases are read-only for admins, with personal data masked as in the case-privacy story.
+
+Epic 6 — User Accounts & Access Control:
+
+US-33 · Reset a forgotten password by email. The log-in page has a "Forgot your password?" link. The page always shows the same message and responds equally fast, whether or not the email address exists. The link expires after about 30 minutes, works only once, and makes older links invalid. After a reset, the user is logged out everywhere and gets a confirmation email.
+
+Changes to existing stories:
+
+Registration (US-30): the admin role can now only be given by the two server scripts.
+Menubar: the "Cases" item is added to the admin menubar and hidden from everyone else.
+Case privacy (US-42): it now points to the new admin case list.
+Glossary and roles: the glossary now defines CLI (command-line interface), and there's a new "Server operator" role for the person running the scripts.
+
+One gap to decide: there's now a way to make someone an admin, but no way to remove the admin role. Do you want a matching server script for that?
+
+-add:
+
+US-06: uploading photos AND PDF. After upload, the photos are resized and converted into JPG or PNG to make the size smaller
+US-25: if all the tries are unsuccesful, the site shows an error message, the entered data persist and there's button to retry
+usage of rate limit to prevent bots. Log the individual user's AI calls so abusing can be banned
+store only the masked version of the problem description (US-01) and the follow-up answers (S-02). When the client views their own case, the original values are restored using the PII mapping.
+US-45: the deletion happens if the user is inactive for set period. The user gets an email notification for this.
+On the my cases site, a delete option next to every case which deletes only that specific case and all of the stored information regarding that.
+A download all my data on the users profile because of GDPR
+There's a menu for checking all the logged information for a logged-in administrator
+security features for uploaded files, Validating extensions etc
+preventing prompt injection
+validating LLM answer to check if it is a real category
+Web Content Accessibility Guidlines and repsonsivenes for mobile use
+API specification: OpenAPI
+
+-This is a larger batch, so I'll check the stories it touches before editing.
+
+Everything on your list is in, and there are now 58 stories in 10 epics. The new stories were placed inside the epics they belong to, so almost every story number has changed. For example, the old US-06 is still US-06, but the old US-25 is now US-27 and the old US-45 is now US-51. All cross-references and the summary table are updated.
+
+Changes to existing stories
+
+Photos and PDF upload (US-06): accepts PDF, JPG, PNG, HEIC (the iPhone photo format) and WebP.
+Photos are shrunk and converted to JPG, or to PNG when that is smaller or keeps text sharper.
+Conversion also removes hidden photo data such as the GPS location, and turns sideways photos the right way up.
+Several photos can make up one document.
+Failed AI calls (US-27): if all retries fail, an error message appears with a "Try again" button, and everything the client entered is kept.
+Masked storage (US-01, US-02, US-08): only the masked description and answers are saved. The client's own case view puts the real values back just for display; this restored version is never saved. Once the personal-data mapping is deleted, the client also sees the masked text, with a note explaining why.
+Inactivity deletion (US-51): documents and the personal-data mapping are deleted after, for example, 6 months without logging in. An email warns 14 days in advance, and logging in cancels the deletion.
+
+New stories
+
+US-12 · Check the AI's answer: the category must exist and be active, and the confidence must be between 0 and 1. The AI is asked once more if the answer is wrong. If it's wrong again, the case is marked "could not be categorised".
+US-25 · Log viewer for admins: a "Logs" menu item with filters, search and CSV export. It is read-only.
+US-31 · OpenAPI specification: automated tests check that the specification always matches the code.
+Epic 7 — Security (new):
+US-47 · Rate limits and bans: requests are rate-limited, and every AI call is logged per user. Heavy users are flagged automatically, but an administrator decides whether to suspend them.
+US-48 · Upload security: checks that the file content matches its extension, scans for viruses, rejects risky PDFs and stores files under random names.
+US-49 · Prompt injection protection: the AI only ever returns a category and can't take any actions. The lawyer recommendations aren't produced by the AI at all, so injected text can't change them.
+US-53 · Delete a single case: a delete button next to every case in "My cases".
+US-54 · Download my data: a ZIP file containing a machine-readable copy of the data, a human-readable copy, and any stored documents.
+Epic 10 — Accessibility & Mobile (new):
+US-57 · Accessibility: meets WCAG 2.2 level AA, the international accessibility standard.
+US-58 · Mobile use: works on screens from 320 pixels wide, and clients can take a photo with the phone camera straight from the upload page.
+
+Two things to decide:
+
+Inactive accounts: inactivity currently deletes only documents and personal data; the account and the masked cases stay. Should inactive accounts be deleted completely as well?
+Removing the admin role: there is still no way to take the administrator role away from someone. Do you want a matching server script for that?
+
+-masked storage: store the masked and the unmasked version too. When the client views the case, the unmasked version is shown.
+US-47: extemily heavy users are temporarily suspended automaticly to give the admin time to overview it. Heavy users are flagged and listed as a warning for the admin.
+create a menu for the admin to list suspensions and warnings. Opening a suspension or warning lists all the cases submitted by the user, te number of warnings and suspensions of the user and the dates of these and the user's username and email and clicking a case opens the case with masked information. On the listing page there's an option to suspend the user or not. Pressing the suspend button trigger a confirmation question. The listing can be filtered based on username, status etc.
+give a menu for the admin to list all the users. Clicking one user shows the username, the email and the number of AI calls and a suspend button and a ban button. Pressing the suspend or the ban button triggers a confirmation question. The list can be filtered by name, email, registration time, AI calls. The list can be ordered as well.
+uploaded files should be stored only for a shorter period of time
+inactivity deletes the user and the masked cases too
+create a server script to take the administration role away
+
+-All seven changes are in. There are now 62 stories, and the numbers have shifted again, so the IDs below are the new ones.
+
+Changed stories
+
+Masked and original storage (US-01, US-02, US-08): the description, answers and extracted document data are now saved in two versions, masked and original.
+The masked version is the only one sent to the AI, shown to admins, written to logs or used in metrics.
+The original version is stored encrypted and shown only to the client who owns the case.
+Automatic warnings and suspensions (US-52): there are now two usage thresholds.
+Going over the lower one creates a warning for the admins. The user can carry on.
+Going over the higher one automatically and temporarily suspends the user. The suspension lasts until an admin reviews it, and the user sees a message and gets an email.
+Admin accounts only ever get warnings, never automatic suspensions.
+
+New stories
+
+US-24 · Remove the admin role with a server script: it asks for confirmation and refuses to remove the last remaining admin. The user loses admin access on their very next request, even if an admin page is already open.
+US-27 · Users list ("Users" menu):
+The list can be filtered by name, email, registration date, AI calls and status, and sorted by any column.
+A user's page shows their details, AI call count and cost, and Suspend and Ban buttons.
+Both buttons ask for confirmation and a reason. A suspension also needs a duration, such as 1, 7 or 30 days.
+US-28 · Warnings and suspensions ("Warnings" menu):
+The list can be filtered by username, type, status and date, and the menu item shows how many entries still need reviewing.
+Opening an entry shows the user's username, email, the number of earlier warnings and suspensions with their dates, and all of their cases. Each case opens with personal data masked.
+The admin then chooses No action or Suspend, and Suspend asks for confirmation.
+US-54 · Uploaded files are kept for a short period only: for example 30 days after upload. The data extracted from the files stays with the case.
+US-55 · Inactive accounts are deleted completely: after, for example, 6 months without logging in, the account and all its cases are deleted, in both masked and original versions. A warning email goes out 14 days before, and logging in cancels the deletion.
+
+Decisions I made that you should check:
+
+Suspend vs. ban: a suspension is temporary, with an end date. A ban is permanent, and the banned email address can't be used to register again.
+Keeping bans after deletion: if a banned account is later deleted, only a scrambled form of its email address (a hash) is kept. This means the ban still works without keeping the person's data.
+Admins can't be suspended or banned from the website. Their admin role has to be removed with the server script first. This also means an admin can't be suspended by another admin through the web.
+Admin accounts are never deleted for inactivity, so the system can't lose its last administrator by accident.
+
+-let's implement a suspension option for a given time decided by the admin and a ban option which can be lifted by the admin but without lifting, the user stays banned indefinitely
+bans and suspension be logged with time, username, reasion and lenght
+during registration, the provided email should be compared to the list of the banned emails
+
+-I updated the existing stories rather than adding new ones, so there are still 62 stories and no numbers changed this time.
+
+Suspensions and bans (US-27, the Users list):
+
+Suspension: the admin decides how long it lasts. They can pick a quick option (1, 7 or 30 days) or enter any future end date and time. The suspension ends automatically on that date, and the user can log in again.
+Ban: it has no end date. The user stays banned until an admin lifts it.
+Lifting either one: it needs confirmation and a reason. The user gets an email, and lifting a ban also removes their email address from the banned-email list.
+
+Logging:
+
+Every suspension, ban and lift is logged with the time, the affected user's username, the admin's username, the reason and the length. For a suspension, the length is the number of days and the end date; for a ban, it's recorded as "indefinite".
+The same details appear in the user's history on their detail page.
+Decisions made in the Warnings review (US-28) and automatic suspensions (US-52) are logged the same way. For automatic suspensions, the length is recorded as "until reviewed by an administrator".
+
+Banned-email check (US-36, registration):
+
+A new email address is compared against the banned-email list, which holds the addresses of currently banned accounts.
+It also holds scrambled versions (hashes) of the addresses of banned accounts that were later deleted.
+Before comparing, spaces are trimmed and capital letters made lower-case, so "Name@Mail.com " and "name@mail.com" count as the same address.
+If the address is on the list, no account is created. The visitor sees: "This email address cannot be used to register. Please contact us if you think this is a mistake." Each blocked attempt is logged.
+
+I also added the same check to the Edit profile story (US-42). Without it, a banned person could register with a new address and then switch to the banned one.
+
+-when a banned or suspended user logs in, they get a page saying whether they are suspended or banned. For suspended users, the end date of the suspension is displayed
+
+-I added this to the log-in story (US-38) instead of creating a new story, so the story numbers stay the same.
+
+When a suspended or banned user logs in with the correct password, they aren't logged in. Instead they see an account status page:
+
+Suspended by an admin: "Your account is suspended until [end date and time]." The date is shown in the user's chosen language and date format.
+Suspended automatically: "Your account is temporarily suspended while an administrator reviews it." There's no end date yet, because an admin hasn't decided.
+Banned: "Your account has been banned." No date is shown.
+Every version explains how to get in touch if the user thinks it's a mistake.
+
+I added two safety rules as well:
+
+Correct password first: the status page appears only after the correct password is entered. With a wrong password, the normal error message appears, so nobody can check another person's account status by guessing.
+No session: a suspended or banned user never gets logged in, and every blocked log-in attempt is logged.
+
+The Users list story (US-27) now points to this status page.
+
+One correction: in my last two replies I called the automatic suspension story US-52. It is actually US-50; US-52 is prompt injection. The references inside the document are correct.

@@ -10,7 +10,7 @@
         <mxCell id="MVntmq-p3tpXzbuaGGG_-25" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Ügyfél" vertex="1">
           <mxGeometry height="60" width="30" x="140" y="-1160" as="geometry" />
         </mxCell>
-        <mxCell id="MVntmq-p3tpXzbuaGGG_-26" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Lekérheti, módosíthatja vagy törölheti az adatait" vertex="1">
+        <mxCell id="MVntmq-p3tpXzbuaGGG_-26" parent="1" style="ellipse;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;" value="Lekérheti, módosíthatja vagy törölheti az adatait" vertex="1">
           <mxGeometry height="70" width="140" x="160" y="-1040" as="geometry" />
         </mxCell>
         <mxCell id="MVntmq-p3tpXzbuaGGG_-27" parent="1" style="ellipse;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;" value="Visszajelzést küld az ügyvédről" vertex="1">
@@ -25,7 +25,7 @@
         <mxCell id="MVntmq-p3tpXzbuaGGG_-43" edge="1" parent="1" source="MVntmq-p3tpXzbuaGGG_-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=8 8;" target="MVntmq-p3tpXzbuaGGG_-28" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="MVntmq-p3tpXzbuaGGG_-29" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Megnézi az ajánlott ügyvédeket és felkéri az ügyre" vertex="1">
+        <mxCell id="MVntmq-p3tpXzbuaGGG_-29" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Megnézi az ajánlott ügyvédeket" vertex="1">
           <mxGeometry height="70" width="140" x="5" y="-380" as="geometry" />
         </mxCell>
         <mxCell id="MVntmq-p3tpXzbuaGGG_-42" edge="1" parent="1" source="MVntmq-p3tpXzbuaGGG_-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="MVntmq-p3tpXzbuaGGG_-29" value="">
@@ -37,13 +37,13 @@
         <mxCell id="MVntmq-p3tpXzbuaGGG_-41" edge="1" parent="1" source="MVntmq-p3tpXzbuaGGG_-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="MVntmq-p3tpXzbuaGGG_-30" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="MVntmq-p3tpXzbuaGGG_-31" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Maszkolást ellenőriz és javít" vertex="1">
+        <mxCell id="MVntmq-p3tpXzbuaGGG_-31" parent="1" style="ellipse;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;" value="Maszkolást ellenőriz és javít" vertex="1">
           <mxGeometry height="70" width="140" x="5" y="-600" as="geometry" />
         </mxCell>
         <mxCell id="MVntmq-p3tpXzbuaGGG_-40" edge="1" parent="1" source="MVntmq-p3tpXzbuaGGG_-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="MVntmq-p3tpXzbuaGGG_-31" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="MVntmq-p3tpXzbuaGGG_-32" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Dokumentumot tölt fel" vertex="1">
+        <mxCell id="MVntmq-p3tpXzbuaGGG_-32" parent="1" style="ellipse;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;" value="Dokumentumot tölt fel" vertex="1">
           <mxGeometry height="70" width="140" x="5" y="-710" as="geometry" />
         </mxCell>
         <mxCell id="MVntmq-p3tpXzbuaGGG_-39" edge="1" parent="1" source="MVntmq-p3tpXzbuaGGG_-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="MVntmq-p3tpXzbuaGGG_-32" value="">

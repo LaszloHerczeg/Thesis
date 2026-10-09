@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="QMyZoLqkgglkq9s8gqqo">
+    <mxGraphModel dx="1369" dy="785" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-1" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Szerver" vertex="1">
+          <mxGeometry height="490" width="580" x="40" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-9" parent="xgELD4cyJUqrCMK9MsNt-1" style="rounded=0;whiteSpace=wrap;html=1;" value="Authentication and authorization" vertex="1">
+          <mxGeometry height="60" width="120" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-40" edge="1" parent="xgELD4cyJUqrCMK9MsNt-1" source="xgELD4cyJUqrCMK9MsNt-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="xgELD4cyJUqrCMK9MsNt-39" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-41" connectable="0" parent="xgELD4cyJUqrCMK9MsNt-40" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="SQL" vertex="1">
+          <mxGeometry relative="1" x="0.0035" y="4" as="geometry">
+            <mxPoint x="-24" y="-23" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-43" edge="1" parent="xgELD4cyJUqrCMK9MsNt-1" source="xgELD4cyJUqrCMK9MsNt-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="xgELD4cyJUqrCMK9MsNt-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-27" parent="xgELD4cyJUqrCMK9MsNt-1" style="swimlane;" value="Backend" vertex="1">
+          <mxGeometry height="450" width="360" x="180" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-35" parent="xgELD4cyJUqrCMK9MsNt-27" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;" value="Mérés" vertex="1">
+          <mxGeometry height="80" width="120" x="200" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-34" parent="xgELD4cyJUqrCMK9MsNt-27" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;" value="Audit" vertex="1">
+          <mxGeometry height="80" width="120" x="60" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-31" parent="xgELD4cyJUqrCMK9MsNt-27" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;" value="Besorolás" vertex="1">
+          <mxGeometry height="80" width="120" x="80" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-30" parent="xgELD4cyJUqrCMK9MsNt-27" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;" value="Dokumentumfeldolgozás" vertex="1">
+          <mxGeometry height="80" width="160" x="135" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-29" parent="xgELD4cyJUqrCMK9MsNt-27" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;" value="Ügyfelvétel" vertex="1">
+          <mxGeometry height="80" width="120" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-33" parent="xgELD4cyJUqrCMK9MsNt-27" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;" value="LLM-gateway" vertex="1">
+          <mxGeometry height="80" width="120" x="230" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-32" parent="xgELD4cyJUqrCMK9MsNt-27" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;" value="Ajánlás" vertex="1">
+          <mxGeometry height="80" width="120" x="80" y="265" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-39" parent="xgELD4cyJUqrCMK9MsNt-1" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;" value="Adatbázis" vertex="1">
+          <mxGeometry height="80" width="120" x="20" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-42" parent="xgELD4cyJUqrCMK9MsNt-1" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;" value="&amp;nbsp;Fájl tárhelly" vertex="1">
+          <mxGeometry height="80" width="120" x="20" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-6" edge="1" parent="1" source="xgELD4cyJUqrCMK9MsNt-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="xgELD4cyJUqrCMK9MsNt-5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Ügyfél" vertex="1">
+          <mxGeometry height="60" width="30" x="150" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Böngésző" vertex="1">
+          <mxGeometry height="60" width="120" x="105" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-7" edge="1" parent="1" source="xgELD4cyJUqrCMK9MsNt-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.216;entryY=0.007;entryDx=0;entryDy=0;entryPerimeter=0;" target="xgELD4cyJUqrCMK9MsNt-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-8" connectable="0" parent="xgELD4cyJUqrCMK9MsNt-7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="HTTPS" vertex="1">
+          <mxGeometry relative="1" x="-0.2765" y="2" as="geometry">
+            <mxPoint x="23" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-36" parent="1" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;AI&lt;/div&gt;LLM-API" vertex="1">
+          <mxGeometry height="80" width="120" x="700" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-37" edge="1" parent="1" source="xgELD4cyJUqrCMK9MsNt-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="xgELD4cyJUqrCMK9MsNt-36" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xgELD4cyJUqrCMK9MsNt-38" connectable="0" parent="xgELD4cyJUqrCMK9MsNt-37" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="HTTPS" vertex="1">
+          <mxGeometry relative="1" x="-0.1714" as="geometry">
+            <mxPoint y="-20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
