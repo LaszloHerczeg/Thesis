@@ -98,7 +98,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 
 ## Epic 2 — Classification & Recommendation Engine
 
-### US-04 · Get my problem classified into a legal area — *Must*
+### US-4 · Get my problem classified into a legal area — *Must*
 **As a** client, **I want** my problem to be sorted into the right legal area, **so that** I know what kind of lawyer I need and how sure the system is.
 
 **Acceptance criteria**
@@ -107,38 +107,39 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 - If confidence is below the threshold, US-02 / US-03 apply instead of showing results.
 - The input, output, confidence, model used, and response time are logged.
 
-### US-05 · State my preferences for a lawyer — *Should*
+### US-5 · State my preferences for a lawyer — *Should*
 **As a** client, **I want** to state my preferences (location, language, online or in-person consultation, budget / fee model, how soon I need an appointment), **so that** the recommendations fit my practical situation.
 
 **Acceptance criteria**
-- The client can set: location (city), language(s), consultation format (online / in-person / either) and preferred price.
+- The client can set: location (city or region, plus maximum distance for in-person), language(s), consultation format (online / in-person / either), preferred fee model (e.g. fixed fee, hourly, free first consultation), and urgency.
+- Each preference can be marked as "required" or "nice to have".
 - Sensible defaults are pre-filled (e.g. the language the client is using the site in).
 
-### US-06 · Receive exactly three lawyer recommendations — *Must*
+### US-6 · Receive exactly three lawyer recommendations — *Must*
 **As a** client, **I want** to receive the three best-matching lawyer profiles, **so that** I have a short, manageable choice instead of a long list.
 
 **Acceptance criteria**
-- Matching compares the case category and the client's preferences against lawyer profiles on six criteria: specialty, location, language, consultation format and fee.
+- Matching compares the case category and the client's preferences against lawyer profiles on six criteria: specialty, location, language, consultation format, availability and fee model.
 - Specialty is a required match: a lawyer who does not cover the case's category is never recommended.
 - Each criterion has a configurable weight; lawyers are ranked by weighted score.
 - Only active profiles (see US-45) are considered.
 - Maximum of three profiles are shown. If fewer than three lawyers match all required preferences, only the matching profiles are shown
 - The same input with the same lawyer data always produces the same result (deterministic ranking; ties broken by a fixed rule).
 
-### US-07 · Understand why each lawyer was recommended — *Could*
+### US-7 · Understand why each lawyer was recommended — *Could*
 **As a** client, **I want** to see why each lawyer was recommended, **so that** I can trust the recommendation and choose between the three.
 
 **Acceptance criteria**
-- Each recommended profile shows a per-criterion breakdown, e.g. ✓ Specialty: tenancy law · ✓ Speaks Hungarian · ✓ Online consultations · ✗ Location.
+- Each recommended profile shows a per-criterion breakdown, e.g. ✓ Specialty: tenancy law · ✓ Speaks Hungarian · ✓ Online consultations · ✗ 45 km away (you asked for 20 km).
 - A one-sentence plain-language summary explains the main reason for the recommendation.
 
-### US-08 · See the chosen lawyer's contact details — *Could*
+### US-8 · See the chosen lawyer's contact details — *Could*
 **As a** client, **I want** to see the contact details of the lawyer I pick from the three recommendations, **so that** I can get in touch with them directly.
 
 **Acceptance criteria**
 - Each of the three recommended profiles has a "Choose this lawyer" button. Contact details are not shown before a lawyer is chosen.
 - After choosing, the client sees the lawyer's name, office address, phone number and email address, plus a website or booking link if the profile has one.
-- The page also repeats the lawyer's consultation formats and fee, so the client knows what to expect when they call.
+- The page also repeats the lawyer's consultation formats and fee model, so the client knows what to expect when they call.
 - The phone number and email address are clickable links (tapping them opens the phone's dialler or the email program).
 - The client can go back to the three recommendations and choose a different lawyer.
 - The client's own details are **not** sent to the lawyer; the client decides whether and how to make contact.
@@ -146,11 +147,11 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 - If the lawyer was deactivated after the recommendations were shown, the client sees a message saying so and is asked to choose another recommendation. A button is available to re-do the the recommendation.
 - The system records which lawyer was chosen, which position they had in the list (1st, 2nd or 3rd), and when. Every change of choice is recorded too. This feeds the task completion metric (US-50) and shows how often clients pick the top-ranked lawyer.
 
-### US-09 · Rule-based Classification — *Must*
+### US-9 · Rule-based Classification — *Must*
 **As a** client, **I want** the system to classify my case, **so that** I can find the best lawyer for me.
 
 **Acceptance criteria**
-- The system chooses a field following the classification rules according to the data extracted from the client's description and documents.
+- The system chooses a field according to the data extracted from the client's description and documents following the classification rules.
 - The output is sent to the same interface as the LLM-based classification.
 - If the case can not be classified, the system gives appropriate answer (e.g. "Not supported")
 - If the system needs more information, the system gives appropriate answer (e.g "More information needed")
@@ -171,6 +172,8 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 - Before the answer is used, the system checks that:
   - the answer can be read in the expected format and has all required fields;
   - the category identifier matches an **active** category in the current taxonomy (US-13). The check compares identifiers, not category names as free text;
+- If any check fails, the request is repeated once, with a reminder of the required format.
+- If the second answer is also invalid, the case is treated as "could not be categorised" (US-03). The client never sees an invalid answer.
 - Every invalid answer is logged with the reason (unknown category, wrong format, missing field or value out of range) and counted in the error statistics (US-39).
 
 
@@ -196,7 +199,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 **As an** administrator, **I want** every lawyer profile to follow the same structured format, **so that** matching is fair and reliable across all lawyers.
 
 **Acceptance criteria**
-- Required fields: name, contact details (phone number, email address; website or booking link optional), areas of expertise (one or more, chosen from the taxonomy), office location (city), languages spoken, consultation formats (online / in-person), and price.
+- Required fields: name, contact details (phone number, email address; website or booking link optional), areas of expertise (one or more, chosen from the taxonomy), office location (address and coordinates), languages spoken, consultation formats (online / in-person), availability (e.g. next free slot or "accepting new clients" plus typical waiting time), and pricing model.
 - Areas of expertise and languages are chosen from fixed lists, not typed freely, to avoid spelling variants.
 - A profile cannot be saved if any required field is missing or invalid; the form shows which field is wrong.
 
@@ -204,7 +207,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 **As an** administrator, **I want** to manage the list of legal categories, **so that** the system's categories match the lawyers and case types we actually handle.
 
 **Acceptance criteria**
-- Each category has a name, a plain-language client-facing description, and example problems, each entered in Hungarian.
+- Each category has a name, a plain-language client-facing description, and example problems, each entered in English, Hungarian and German (US-61).
 - A category that is still assigned to active lawyers cannot be removed until those lawyers are reassigned; the admin is shown which lawyers are affected.
 - Changes to the taxonomy are versioned, and each classification records which taxonomy version it used (so accuracy can be compared fairly over time).
 
@@ -234,7 +237,8 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
   - the creation date;
   - the case number;
   - the username of the client who created it;
-  - the category (the legal term);
+  - the category (plain language with the legal term below);
+  - the confidence level;
   - the status;
   - the chosen lawyer, if any;
   - the date of the last change.
@@ -262,7 +266,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 **Acceptance criteria**
 - A labelled test set (example problems with the correct category, decided by a person) can be stored and run against the classifier.
 - The system reports overall accuracy, accuracy per category, and a confusion matrix (a table showing which categories get mixed up with which).
-- It reports how often the low-confidence fallback was triggered.
+- It reports how often the low-confidence fallback was triggered and how often the confidence score matched reality (i.e. whether high-confidence answers really are right more often).
 - Each evaluation run is saved with the date, model version and taxonomy version so results can be compared.
 
 ### US-17 · Describe the API in an OpenAPI specification — *Must*
@@ -520,7 +524,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 - The deletion is logged with the case ID, the user and the time, never the deleted content.
 - The server checks that the case belongs to the user, so nobody can delete another user's case (US-29).
 
----
+
 
 
 # SZD II.
