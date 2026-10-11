@@ -22,14 +22,13 @@
 - **Mit kezdtem vele:** A kapott outputot alaposan átellenőriztem és töröltem belőle adatokat, amiket nem implementálok az első iterációban, majd Claude-dal legeneráltam egy megfelelő promptot, amit Lovable-nek beadva legeneráltam a frontendet.
 - **Átvett tartalom:** Mappában megtalálható a teljes output és a módosítás eredménye is.
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.10.11 — [Kezdeti taxonómia és besorolási szabályok generálása]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 Max
+- **Kategória:**`ötletelés`
+- **Fájl:** 2026.10.11/Claude/Taxonómia és besorolási szabályok.md
+- **Mit kezdtem vele:** Kezdetben átveszem a teljes taxonómiát és besorolási szabályokat. Menet közben tapasztalat útján finomítok rajta és lehetőség szerint egy jogi szakemberrel átnézetem.
+- **Átvett tartalom:** Teljes
 
 ### ÉÉÉÉ.HH.NN — [rövid cím]
 
