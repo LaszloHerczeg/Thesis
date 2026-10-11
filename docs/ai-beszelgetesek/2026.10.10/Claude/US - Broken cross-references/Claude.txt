@@ -1,0 +1,77 @@
+Q: Fix the broken cross-references
+
+A: Cross-checking summary table ranges against updated story spans.
+Thought for 2m 58s
+
+Fixing broken cross-references in an attached markdown file.
+
+Mapping old story numbers to their renumbered equivalents.
+
+Checking numbering gaps and deciding how to format references.
+
+Tracing each old reference to its new story number.
+
+Untangling old story numbers hidden inside scattered references.
+
+Matching admin-area story numbers to their renumbered counterparts.
+
+Resolving references for login, profile, and reset flows.
+
+Linking admin, privacy, and upload-security references to new numbers.
+
+Tracing older classification and confidence references to current stories.
+
+Reconstructing the original meaning behind a reused story reference.
+
+Weighing conflicting clues to pin down a confidence-rule reference.
+
+Judging ambiguous logging references against the new numbering scheme.
+
+Building a script to apply renumbered references systematically.
+
+Untangling ambiguous references for deletion and admin access.
+
+Resolving admin-metrics and access-denied page references.
+
+Resolving OCR, gateway, and duplicate cross-reference tangles.
+
+Working through the remaining batch of renumbered references.
+
+Verifying epic summary tables against corrected story counts.
+
+Deciding whether to correct mismatched counts beyond reference fixes.
+
+Flagging mismatched epic totals and duplicate epic names.
+
+Designing a token-based approach to avoid replacement chaining.
+
+Compiling precise replacement mappings for each story reference.
+
+Mapping admin dashboard references across cases, users, and logs.
+
+Matching case-list and metrics-page references to new numbers.
+
+Resolving OCR audit trails and scattered admin references.
+
+Verifying admin-status and account-review reference counts.
+
+Cross-checking summary table ranges against updated story spans.
+
+I’ll work out which story each outdated number originally pointed to, then fix every reference in a copy of your file.
+
+Created a file, shared a file, and 4 more steps
+I fixed every broken cross-reference in User Stories.md: about 150 references across 156 lines. Most of the old numbers came from before the stories were renumbered. For example, “US-08” used to mean the personal-data masking story and now points to US-41, and “US-36” used to mean registration and now points to US-19. A final check confirmed that every reference now points to a story that exists. I left the story numbers themselves unchanged.
+
+A few references needed a judgment call because the old target no longer maps cleanly:
+
+US-4: “US-03 / US-04 apply” is now “US-02 / US-03”. Low confidence leads to more follow-up questions (US-02), and then to the “can’t categorise” message (US-03).
+US-27: Its old “US-46 applies” pointed to a story that has since been merged into US-27 itself. I reworded it to refer to the “Access denied” rule further down the same story.
+US-30: “plain language with the legal term below (as in US-03)” now points to US-4. However, no story actually defines that display rule anymore. Only US-15 describes it, and only for the admin list.
+US-35: “logged (US-39)” now points to US-38, the gateway that logs each AI call. Change it back if you meant the cost/error dashboard in US-39.
+US-15: “deleted by their owner” now points to US-31 (delete a single case) and US-58 (delete account).
+Summary tables: I corrected the story ranges for Epic 6 (added US-41), Epic 8 (only US-39), Epic 15 (added US-64 – US-66) and Epic 17 (US-62 – US-63).
+The priority counts in the summary tables are still wrong. For example, Epic 8 shows 2 Must but has only one story, and Epic 16 lists two “Could” stories as Must. US-65 and US-66 also have no priority at all. I can recount the tables if you tell me which priority those two should have.
+
+
+User stories
+Document·MD 
