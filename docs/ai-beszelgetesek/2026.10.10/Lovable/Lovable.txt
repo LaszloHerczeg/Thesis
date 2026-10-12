@@ -1,0 +1,42 @@
+Me: I attached the 2 files available in the input directory.
+
+A: The Jogútmutató frontend is built and runs on mock data. In a test browser I signed in as the test client, completed a full screening (description → skipped questions → classification → preferences → three recommendations → contact details), and confirmed that a client gets "Access denied" on the admin pages. I didn't click through the rest of the brief (registration, profile actions, the admin screens) by hand; it builds cleanly and the existing test passes.
+
+Where I didn't follow your brief exactly:
+
+Framework: this platform only runs TanStack Start, so the app uses TanStack Router instead of a plain Vite + react-router setup. It runs entirely in the browser, and the pages live in src/pages as you asked.
+Mocks: you asked for a separate mock version of each service. Instead, the switch happens inside src/api/http.ts, which sends requests either to the real server or to an in-browser fake server. That fake server has a handler file per area and enforces your error rules. So CSRF, error mapping and the 401/429 handling run the same way in both modes, and switching to FastAPI still only needs the two .env values. Say if you want literal per-service mock modules instead.
+
+What's in it:
+
+Every page and route in your list, the menubar and profile dropdown per US-22/23/25/26, and the full 6-step screening wizard including resume, the US-38 "Try again" error, the US-03 honest message and lawyer re-choice.
+Admin pages for lawyers, categories (with version history), cases (filters, sorting and paging sent to the server) and metrics (confusion matrix and saved runs). Users, Warnings and Logs are placeholders.
+Hungarian by default with an English switch; plain CSS (one global stylesheet plus CSS Modules), no UI libraries.
+README.md lists setup, how to switch to the real backend, the test accounts and every endpoint with its body, response, error codes and role.
+
+Things to try:
+
+Log in as kovacs_anna / Tavaszi-szel-2026 (client) or admin_peter / Biztonsagos-Admin-2026 (admin). The README also has suspended and banned test accounts.
+Put [teszt:hiba] in a problem description to see the analysis-failure screen once.
+Open Anna's "Ajánlások elkészültek" (recommendations ready) case: one recommended lawyer has since been deactivated, so you'll see the note and the "Re-do recommendation" button.
+Before you change styles: after adding or renaming classes in a .module.css file, run python3 scripts/gen-css-types.py. The strict TypeScript settings need these generated type files.
+
+The contact email on the account-status page (segitseg@jogutmutato.example.hu) is a placeholder I made up. Send me the real one and I'll swap it in.
+
+Q: What are the passwords for the test users?
+
+A:The mock backend includes several seeded test accounts. You can sign in using either the username or email address:
+
+Main test accounts
+Role	Username / Email	Password	Details
+Client	kovacs_anna <br> anna.kovacs@example.hu	Tavaszi-szel-2026	Active client account with pre-seeded screening cases
+Admin	admin_peter <br> peter.admin@example.hu	Biztonsagos-Admin-2026	Full administrative access (metrics, lawyer catalog, audit logs)
+Client	nagy_bela <br> bela.nagy@example.hu	Teszt-jelszo-2026	Standard active client
+
+Status test accounts (for testing restrictions)
+All other seeded client accounts use the password Teszt-jelszo-2026:
+
+felfuggesztett_feri (feri@example.hu) – Temporarily suspended
+auto_zsuzsa (zsuzsa@example.hu) – Automatically suspended
+kitiltott_karoly (karoly@example.hu) – Permanently banned
+Would you like to add quick-fill demo buttons to the login page so you don't have to copy-paste credentials during testing, or test a specific screening flow?
