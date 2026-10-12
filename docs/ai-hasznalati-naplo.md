@@ -22,6 +22,22 @@
 - **Mit kezdtem vele:** A kapott outputot alaposan átellenőriztem és töröltem belőle adatokat, amiket nem implementálok az első iterációban, majd Claude-dal legeneráltam egy megfelelő promptot, amit Lovable-nek beadva legeneráltam a frontendet.
 - **Átvett tartalom:** Mappában megtalálható a teljes output és a módosítás eredménye is.
 
+### 2026.10.10 — [Frontend prompt generálása Lovable-nek]
+
+- **Eszköz:** Claude Opus 5.5 High
+- **Kategória:** `szövegezés`
+- **Fájl:** 2026.10.10/Claude/Frontend prompt for Lovable
+- **Mit kezdtem vele:**
+- **Átvett tartalom:**
+
+### 2026.10.10 — [Frontend generálása]
+
+- **Eszköz:** Lovable build
+- **Kategória:** `kód`
+- **Fájl:** 2026.10.10/Lovable
+- **Mit kezdtem vele:** A kódot átnézem. Szükség esetén módosítok, törlök vagy kiegészítem. Amikor kész, elkezdem a backend-et építeni hozzá.
+- **Átvett tartalom:**
+
 ### 2026.10.11 — [Kezdeti taxonómia és besorolási szabályok generálása]
 
 - **Eszköz:** Calude Opus 5.5 Max
