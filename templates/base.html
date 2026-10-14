@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="{% block og_title %}PLaceholder title{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}PLaceholder description{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    {% block og_extra %}{% endblock %}
+    <title>{% block title %}Placeholder title{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'account/css/style.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div id="nav-logo">
+                <a href="{% url 'account:index' %}" class="nav-logo">My Blog</a>
+            </div>
+            <div class="nav-bar">
+                <ul>
+                    <li> <a href="{% url 'account:index' %}">Home</a> </li>
+                    <li> <a href="{% url 'case:screening' %}">Projects</a> </li>
+                    <li> <a href="{% url 'account:about' %}">About</a> </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-account">
+                            <a href="{% url 'account:profile' %}">{{ user.get_short_name|default:user.username }}</a>
+                        </li>
+                        <li>
+                            <form method="post" action="{% url 'account:logout' %}" class="logout-form">
+                                {% csrf_token %}
+                                <button type="submit">Sign out</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-account"> <a href="{% url 'account:login' %}">Sign in</a> </li>
+                        <li> <a href="{% url 'account:registration' %}">Sign up</a> </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="alert alert-{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <main>
+        {% block content %} {% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy 2026 László Herczeg</p>
+        </div>
+    </footer>
+
+</body>
+</html>

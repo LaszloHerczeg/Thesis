@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+<title>
+    {% block title %}
+        PLaceholder title
+    {% endblock %}
+</title>
+
+{% block content %}
+    {# TODO: show all the attributes #}
+
+    <h1>
+        {{ post.title }}
+    </h1>
+    <time datetime="{{ post.published|date:'c' }}">{{ post.published|date:"j F Y" }}</time>
+    <p> {{ post.body }}</p>
+{% endblock %}

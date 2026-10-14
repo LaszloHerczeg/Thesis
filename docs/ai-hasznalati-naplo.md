@@ -46,14 +46,13 @@
 - **Mit kezdtem vele:** Kezdetben átveszem a teljes taxonómiát és besorolási szabályokat. Menet közben tapasztalat útján finomítok rajta és lehetőség szerint egy jogi szakemberrel átnézetem.
 - **Átvett tartalom:** Teljes
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.10.14 — [Új ügy felvételéhez szükséges kód generálása - HTML, view, form, url]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `kód`
+- **Fájl:** 2026.10.14/Claude
+- **Mit kezdtem vele:** A kódot alaposan átnéztem, majd javítottam rajta, mert hibás volt a prompt-om és kihagytam belőle részeket. A kapott információt, hogy {{form}} azonos a {{form.as_div}}-vel, a hivatalos dokumentációban leellenőriztem.
+- **Átvett tartalom:** A kód legnagyobb részét felhasználtam, kivéve: html-ben a scriptet nem használtam fel, forms.py-ból a felesleges függvényeket kihagytam, views.py-ból a felesleges attribute beállításokat kihagytam.
 
 ### ÉÉÉÉ.HH.NN — [rövid cím]
 
