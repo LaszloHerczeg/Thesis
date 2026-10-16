@@ -1,10 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <h1>
+        Registration
+    </h1>
+
+    <form method="post" action={% url 'account:registration' %}>
+    {% csrf_token %}
+
+    <div>
+    {% if form.errors %}
+        <p class="errornote">
+        {% blocktranslate count counter=form.errors.items|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+        </p>
+    {% endif %}
+
+    <fieldset class="module aligned wide">
+    <div class="form-row">
+        {{ form.username.errors }}
+        <div class="flex-container">{{ form.username.label_tag }} {{ form.username }}</div>
+    </div>
+    <div class="form-row">
+        {{ form.first_name.errors }}
+        <div class="flex-container">{{ form.first_name.label_tag }} {{ form.first_name }}</div>
+    </div>
+    <div class="form-row">
+        {{ form.last_name.errors }}
+        <div class="flex-container">{{ form.last_name.label_tag }} {{ form.last_name }}</div>
+    </div>
+    <div class="form-row">
+        {{ form.email.errors }}
+        <div class="flex-container">{{ form.email.label_tag }} {{ form.email }}</div>
+    </div>
+
+    <div class="form-row">
+        {{ form.password.errors }}
+        <div class="flex-container">{{ form.password.label_tag }} {{ form.password }}</div>
+        {% if form.password.help_text %}
+        <div class="help"{% if form.password.id_for_label %} id="{{ form.password.id_for_label }}_helptext"{% endif %}>{{ form.password.help_text|safe }}</div>
+        {% endif %}
+    </div>
+
+    <div class="form-row">
+        {{ form.password_confirmation.errors }}
+        <div class="flex-container">{{ form.password_confirmation.label_tag }} {{ form.password_confirmation }}</div>
+        {% if form.password_confirmation.help_text %}
+        <div class="help"{% if form.password_confirmation.id_for_label %} id="{{ form.password_confirmation.id_for_label }}_helptext"{% endif %}>{{ form.password_confirmation.help_text|safe }}</div>
+        {% endif %}
+    </div>
+
+    </fieldset>
+
+    <div class="submit-row">
+        <input type="submit" value="{% translate 'Register' %}" class="default">
+    </div>
+
+    </div>
+    </form>
+{% endblock %}

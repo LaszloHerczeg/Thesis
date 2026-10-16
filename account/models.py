@@ -7,9 +7,10 @@ class User(AbstractUser):
         return f'User: {self.username}'
 
 class Language(models.Model):
-    name = models.CharField(max_length=50, unique=True, blank=True, null=True)
+    name = models.CharField(max_length=50, unique=True)
     def __str__(self):
         return self.name
+
 
 class Lawyer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -20,4 +21,22 @@ class Lawyer(models.Model):
     is_online = models.BooleanField(default=False)
     def __str__(self):
         return f'Lawyer: {self.user.username}'
+
+    def list_specialty(self):
+        return ", ".join(str(category) for category in self.specialty.all())
+
+    def list_language(self):
+        return ", ".join(str(language) for language in self.language.all())
+
+    def is_online(self):
+        if self.is_online:
+            return "online"
+        else:
+            return "in-person"
+
+
+
+
+
+
 

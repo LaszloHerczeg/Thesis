@@ -7,11 +7,50 @@
 </title>
 
 {% block content %}
-    {# TODO: show all the attributes #}
+  {# TODO: show all the attributes #}
+  <table class="case-detail-table">
 
-    <h1>
-        {{ post.title }}
-    </h1>
-    <time datetime="{{ post.published|date:'c' }}">{{ post.published|date:"j F Y" }}</time>
-    <p> {{ post.body }}</p>
+  <tr class="case-detail-table-user">
+    <td class="case-detail-table-first-column">
+      User:
+    </td>
+    <td class="case-detail-table-second-column">
+      {{ case.user.username }}
+    </td>
+  </tr>
+
+  <tr class="case-detail-table-description">
+    <td class="case-detail-table-first-column">
+      Description:
+    </td>
+    <td class="case-detail-table-second-column">
+      {{ case.description }}
+    </td>
+  </tr>
+
+  <tr class="case-detail-table-category">
+    <td class="case-detail-table-first-column">
+      Category:
+    </td>
+    <td class="case-detail-table-second-column">
+      {% if not case.predicted_category %}
+        {{ case.status }}
+      {% else %}
+        {{ case.predicted_category }}
+      {% endif %}
+    </td>
+  </tr>
+
+  <tr class="case-detail-table-created-at">
+    <td class="case-detail-table-first-column">
+      Uploaded at:
+    </td>
+    <td class="case-detail-table-second-column">
+      {# TODO: adjust time row #}
+      <time datetime="{{ case.created_at|date:'c' }}">{{ case.created_at|date:"j F Y" }}</time>
+    </td>
+  </tr>
+
+  </table>
+
 {% endblock %}

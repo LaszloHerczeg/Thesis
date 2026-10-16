@@ -16,10 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import TemplateView
 
 urlpatterns = [
+    path("", TemplateView.as_view(template_name="index.html"), name="index"),
+    path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path("account/", include("account.urls")),
-    path("screening/", include("case.urls")),
+    path("case/", include("case.urls")),
     path("classification/", include("classification.urls")),
     path("matches/", include("matching.urls")),
 # admindocs:

@@ -1,0 +1,113 @@
+A:
+In Django, these are my models:
+
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+
+class User(AbstractUser):
+    def __str__(self):
+        return f'User: {self.username}'
+
+class Language(models.Model):
+    name = models.CharField(max_length=50, unique=True, blank=True, null=True)
+    def __str__(self):
+        return self.name
+
+class Lawyer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    specialty = models.ManyToManyField('case.Category', related_name='lawyer_specialty')
+    language = models.ManyToManyField(Language, blank=True, related_name='lawyer_language')
+    city = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    is_online = models.BooleanField(default=False)
+    def __str__(self):
+        return f'Lawyer: {self.user.username}'
+Admin.py:
+
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .models import User, Lawyer, Language
+
+
+class LawyerInline(admin.StackedInline):
+    model = Lawyer
+
+
+class UserAdmin(BaseUserAdmin):
+    inlines = [LawyerInline]
+
+
+admin.site.register(Language)
+admin.site.register(User, UserAdmin)
+I want the lawyer attributes to be shown on the admin page
+
+A:
+Your inline already puts the lawyer fields on each user’s edit page. To see them in the list views too, register Lawyer with its own admin and add a few lawyer columns to the user list. Many-to-many fields like specialty and language can’t go straight into list_display, so they need small helper methods:
+
+python
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .models import User, Lawyer, Language
+
+
+class LawyerInline(admin.StackedInline):
+    model = Lawyer
+    can_delete = False
+    filter_horizontal = ('specialty', 'language')  # nicer M2M widgets
+
+
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    inlines = [LawyerInline]
+    list_display = ('username', 'email', 'lawyer_city', 'lawyer_price', 'lawyer_online')
+    list_select_related = ('lawyer',)
+
+    def _lawyer(self, obj):
+        return getattr(obj, 'lawyer', None)  # users without a Lawyer row won't crash
+
+    @admin.display(description='City')
+    def lawyer_city(self, obj):
+        l = self._lawyer(obj)
+        return l.city if l else '-'
+
+    @admin.display(description='Price')
+    def lawyer_price(self, obj):
+        l = self._lawyer(obj)
+        return l.price if l else '-'
+
+    @admin.display(description='Online', boolean=True)
+    def lawyer_online(self, obj):
+        l = self._lawyer(obj)
+        return l.is_online if l else None
+
+
+@admin.register(Lawyer)
+class LawyerAdmin(admin.ModelAdmin):
+    list_display = ('user', 'city', 'price', 'is_online', 'specialties', 'languages')
+    list_filter = ('is_online', 'city', 'specialty', 'language')
+    search_fields = ('user__username', 'city')
+    filter_horizontal = ('specialty', 'language')
+    list_select_related = ('user',)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related('specialty', 'language')
+
+    @admin.display(description='Specialties')
+    def specialties(self, obj):
+        return ', '.join(str(s) for s in obj.specialty.all())
+
+    @admin.display(description='Languages')
+    def languages(self, obj):
+        return ', '.join(str(l) for l in obj.language.all())
+
+
+admin.site.register(Language)
+
+After this change you get:
+
+A Lawyers section in the admin. Its list shows city, price, online status, specialties and languages, with filters and search.
+Lawyer columns in the Users list.
+The inline form on each user’s edit page, as before.
+
+One issue in your models: Language.name allows null=True, so __str__ can return None. If that happens, the admin raises TypeError: __str__ returned non-string. Change it to return self.name or ''. Better still, drop blank=True, null=True from a field that’s meant to be unique.

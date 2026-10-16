@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Placeholder title
+{% endblock %}
+
+{% block content %}
+
+
+    <form method="post" id="form-create-case">
+        {% csrf_token %}
+
+        {{ form }}
+
+        <button type="submit">Submit</button>
+    </form>
+{%  endblock %}

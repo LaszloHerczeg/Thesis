@@ -10,19 +10,19 @@
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
     {% block og_extra %}{% endblock %}
     <title>{% block title %}Placeholder title{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'account/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <header>
         <nav>
             <div id="nav-logo">
-                <a href="{% url 'account:index' %}" class="nav-logo">My Blog</a>
+                <a href="{% url 'index' %}" class="nav-logo">Placeholder title</a>
             </div>
             <div class="nav-bar">
                 <ul>
-                    <li> <a href="{% url 'account:index' %}">Home</a> </li>
-                    <li> <a href="{% url 'case:screening' %}">Projects</a> </li>
-                    <li> <a href="{% url 'account:about' %}">About</a> </li>
+                    <li> <a href="{% url 'index' %}">Home</a> </li>
+                    <li> <a href="{% url 'case:create_case' %}">New Case</a> </li>
+                    <li> <a href="{% url 'about' %}">About</a> </li>
                     {% if user.is_authenticated %}
                         <li class="nav-account">
                             <a href="{% url 'account:profile' %}">{{ user.get_short_name|default:user.username }}</a>

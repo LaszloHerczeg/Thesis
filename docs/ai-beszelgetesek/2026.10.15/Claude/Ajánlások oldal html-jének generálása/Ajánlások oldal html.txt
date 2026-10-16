@@ -1,0 +1,28 @@
+Q:
+Create the html for a page in a Django project. Create only the the main block called content.
+At the top, display a table with 2 columns and 1 row. First row says 'Category:', the second displays {{category.name}}
+Below, create 3 tables next to each other, each of them has 6 rows and 2 columns.
+The rows are like this:
+'Name:' -   {{lawyer.name}}
+'Specialty:' - {{lawyer.list_specialty}}
+'Language:' -{{lawyer.list_language}}
+'City:' - {{lawyer.city}}
+'Price:' - {{lawyer.price}}
+'Format?' . {{lawyer.is_online}}
+
+A:
+Here’s the content block in lawyers_content.html: the category table on top, then three lawyer tables side by side (flexbox, wrapping on narrow screens).
+
+A few assumptions you may need to adjust:
+
+The lawyers list: the three tables come from a loop over lawyers|slice:":3", so your view should pass a list named lawyers in the context. If you pass three separate objects instead (e.g. lawyer1, lawyer2, lawyer3), swap the loop for three copies of the table.
+The “Format” row: I labelled it “Format:” to match the other rows. Since is_online is probably a boolean, it will show “True” or “False”. To show something friendlier, use {{ lawyer.is_online|yesno:"Online,In person" }}.
+The styles: they’re inline in a <style> tag so the block works on its own. You can move them to your static CSS file if you have one.
+
+Q:
+Modify the code so number of tables matches the lenght of the array it gets
+
+A:
+I removed the |slice:":3" filter, so the page now makes one table for every lawyer in lawyers. The tables wrap onto new lines when there isn’t room for all of them side by side.
+
+I also added an {% empty %} clause, so if the list is empty the page shows “No lawyers found in this category.” instead of a blank space.
