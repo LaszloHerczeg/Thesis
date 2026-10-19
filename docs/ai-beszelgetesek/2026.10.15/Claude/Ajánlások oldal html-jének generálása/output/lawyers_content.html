@@ -1,0 +1,64 @@
+{% block content %}
+<style>
+  .category-table,
+  .lawyer-table {
+    border-collapse: collapse;
+  }
+  .category-table td,
+  .lawyer-table td {
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+  }
+  .category-table {
+    margin-bottom: 24px;
+  }
+  .label {
+    font-weight: bold;
+  }
+  .lawyer-tables {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+</style>
+
+<table class="category-table">
+  <tr>
+    <td class="label">Category:</td>
+    <td>{{ category.name }}</td>
+  </tr>
+</table>
+
+<div class="lawyer-tables">
+  {% for lawyer in lawyers %}
+  <table class="lawyer-table">
+    <tr>
+      <td class="label">Name:</td>
+      <td>{{ lawyer.name }}</td>
+    </tr>
+    <tr>
+      <td class="label">Specialty:</td>
+      <td>{{ lawyer.list_specialty }}</td>
+    </tr>
+    <tr>
+      <td class="label">Language:</td>
+      <td>{{ lawyer.list_language }}</td>
+    </tr>
+    <tr>
+      <td class="label">City:</td>
+      <td>{{ lawyer.city }}</td>
+    </tr>
+    <tr>
+      <td class="label">Price:</td>
+      <td>{{ lawyer.price }}</td>
+    </tr>
+    <tr>
+      <td class="label">Format:</td>
+      <td>{{ lawyer.is_online }}</td>
+    </tr>
+  </table>
+  {% empty %}
+  <p>No lawyers found in this category.</p>
+  {% endfor %}
+</div>
+{% endblock %}

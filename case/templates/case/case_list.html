@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Placeholder title
+{% endblock %}
+
+{% block content %}
+  <h1>
+    Placeholder title
+  </h1>
+
+  <div class="search">
+    <form method="get" action="{% url 'case:case_list' %}">
+      {{ form.query.label }}
+      {{ form.query }}
+      {{ form.field.label }}
+      {{ form.field }}
+      <button type="submit" aria-label="Search">🔍</button>
+    </form>
+  </div>
+
+  <p class="result-count">{{ page_obj.paginator.count }} posts</p>
+
+  {% if case_list %}
+    <table class="case-list-table">
+      <tr>
+        <th>
+          Case
+        </th>
+        <th>
+          Category
+        </th>
+
+        <th>
+          Uploaded at
+        </th>
+      </tr>
+
+      {% for case in case_list %}
+        <tr>
+          <td> <a class="case-detail-link" id="{{ case.id }}" href="{% url 'case:case_detail' case.id %}">{{ case|truncatechars:20 }}</a></td>
+          <td>
+            {% if not case.predicted_category %}
+              {{ case.status }}
+            {% else %}
+              {{ case.predicted_category }}
+            {% endif %}
+          </td>
+          <td> {{ case.created_at }}</td>
+        </tr>
+        </table>
+      {% endfor %}
+  {% else %}
+    <p>You have no cases yet. Click <a class="screening-link" href="{% url 'case:create_case' %}">here</a> to submit </p>
+  {% endif %}
+
+
+
+
+
+
+
+  <nav class="pagination" aria-label="Cases pages">
+        <span class="step-links">
+            <span class="page-prev">
+                {% if page_obj.has_previous %}
+                  {% if page_obj.previous_page_number > 1 %}
+                    <a href="?page=1&query={{ request.GET.query }}&field={{ request.GET.field }}">&laquo; first</a>
+                  {% endif %}
+                  <a
+                    href="?page={{ page_obj.previous_page_number }}&query={{ request.GET.query }}&field={{ request.GET.field }}">&laquo; previous</a>
+                {% endif %}
+            </span>
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            <span class="page-next">
+                {% if page_obj.has_next %}
+                  <a
+                    href="?page={{ page_obj.next_page_number }}&query={{ request.GET.query }}&field={{ request.GET.field }}">next &raquo;</a>
+                  {% if page_obj.next_page_number < page_obj.paginator.num_pages %}
+                    <a
+                      href="?page={{ page_obj.paginator.num_pages }}&query={{ request.GET.query }}&field={{ request.GET.field }}">last &raquo;</a>
+                  {% endif %}
+                {% endif %}
+            </span>
+        </span>
+  </nav>
+{% endblock %}

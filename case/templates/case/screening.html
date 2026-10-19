@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Placeholder title
+{% endblock %}
+
+{% block content %}
+
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div>
+            <label for="description">Description</label>
+            <input type="text" id="description" name="description" placeholder="Placeholder example description">
+        </div>
+
+        <div>
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" placeholder="e.g. Budapest">
+        </div>
+
+        <fieldset>
+            <legend>Language</legend>
+
+            <input type="checkbox" id="language_hu" name="language" value="hungarian">
+            <label for="language_hu">Hungarian</label>
+
+            <input type="checkbox" id="language_en" name="language" value="english">
+            <label for="language_en">English</label>
+
+            <input type="checkbox" id="language_de" name="language" value="german">
+            <label for="language_de">German</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Format</legend>
+
+            <input type="radio" id="format_either" name="format" value="either" checked>
+            <label for="format_either">Either</label>
+
+            <input type="radio" id="format_in_person" name="format" value="in_person">
+            <label for="format_in_person">In-person</label>
+
+            <input type="radio" id="format_online" name="format" value="online">
+            <label for="format_online">Online</label>
+
+        </fieldset>
+
+        <div>
+            <label for="max_hourly_rate">Maximum hourly rate (Ft)</label>
+            <input type="number" id="max_hourly_rate" name="max_hourly_rate" min="0" step="1" value="60000">
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+{%  endblock %}

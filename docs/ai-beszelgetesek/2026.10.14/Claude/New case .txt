@@ -1,0 +1,141 @@
+Q:
+Create a forms.py file for the model Case in a Django project.
+Case model:
+
+class Case(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField('account.User', on_delete=models.CASCADE)
+    description = models.TextField(max_length=500)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=100, default='in_progress')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    city = models.CharField(max_length=100)
+    language = models.ManyToManyField('account.Language', blank=True, null=True)
+    format = models.CharField(max_length=100)
+    hourly_rate = models.DecimalField(max_digits=5, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+The form:
+
+description field: text input, placeholder is 'Placeholder example case description'. This is a mandatory field. Minimum number of chars is 30, maximum 5000.
+City field: text input, optional, placeholder: 'e.g. Budapest'
+Language field: 3 checkboxes, labels: Hungarian, English, German, all 3 is in the same group, optional field
+Format field: 3 radiobutton, labels: either, in-person or online, either is preselected
+Max hourly rate field: number input, optional, after the field 'Ft' is displayed, placeholder: 60000
+The form only takes this 5 attributes.
+
+Generate the view.py aswell.
+The user is the currently logged-in user.
+Status is 'in_progress'.
+Category is not set yet.
+Created at is the  time when the object is created.
+The case object gets saved into the database.
+The data in the form must stay in the form if the page is reloaded before submittig.
+After a successful submit, redirect the user to a placeholder page
+
+A:
+I’ll write forms.py and views.py. I’ll also add a small template, because keeping the form data after a reload needs a few lines of browser-side script.
+
+The files are ready: forms.py, views.py, the case_form.html template, and a small urls.py with the placeholder page route. Both Python files compile. I couldn’t do a full run because Django won’t install here.
+
+Your Case model needs changes before this will save. As written, three fields don’t match what you asked for:
+
+python
+category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)  # "not set yet" needs null=True
+hourly_rate = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)  # optional, and 60000 needs more than 5 digits
+language = models.ManyToManyField('account.Language', blank=True)  # null=True does nothing on M2M and only triggers a warning
+
+Without these, saving a case with no category fails, and any rate of 1000 or more (including the 60000 placeholder) is rejected. Run makemigrations and migrate after changing the model.
+
+How the requirements are covered:
+
+Form fields: the form contains only the five fields. “Either” is preselected for format, and “Ft” is shown after the rate input.
+Language checkboxes: these come from your Language table, so the rows Hungarian, English and German must exist with a name field.
+Saving: the view sets the user, in_progress status and an empty category. created_at fills itself.
+One case per user: because user is a one-to-one field, a second submit shows a “You already have a case” error instead of crashing.
+Reload before submitting: a short script in the template stores the entered data in the browser and restores it on reload, then clears it on submit. After a failed submit, Django re-shows the entered data itself.
+
+One small difference from your spec: I used a multi-line text box for the description instead of a one-line input, since it can be up to 5000 characters. To make it a single line, change forms.Textarea to forms.TextInput in forms.py.
+
+Q:
+why did you use form.as_div?
+
+A:
+Mostly because it’s the shortest way to render the whole form correctly. {{ form.as_div }} outputs every field with its label, its validation errors and any help text, so the template stays tiny while the form is still being built.
+
+There are two more specific reasons:
+
+Valid, accessible HTML. as_div wraps each field in a plain <div>, unlike as_table (table layout for non-tabular content) or as_p (it can produce invalid HTML when a widget renders block elements inside the <p>). It’s Django’s recommended layout, and since Django 5.0 a plain {{ form }} renders exactly the same thing.
+It handles your “same group” requirement. With the div layout, Django wraps radio and checkbox widgets in a <fieldset> with a <legend>. So the three language checkboxes sit in one labelled group, and so do the three format radio buttons, without any extra code.
+
+The trade-offs: as_div needs Django 4.1 or newer, and you get little control over layout. You can’t easily reorder pieces, add CSS classes around a single field, or put “Ft” anywhere other than where the widget renders it. If you’re on an older Django or want full control over the markup, the usual alternative is to render each field yourself:
+
+django
+<div>
+  {{ form.description.label_tag }}
+  {{ form.description }}
+  {{ form.description.errors }}
+</div>
+
+I can rewrite the template that way if you’d like.
+
+Q:
+so {{form}} is the same as {{form.as_div}}?
+
+A:
+Yes, on Django 5.0 and newer, as long as nothing changes the form’s default template.
+
+Django 5.0+: {{ form }} renders the form’s default template, and that default is the div layout. So the output is identical to {{ form.as_div }}.
+Django 4.1 and 4.2: {{ form }} still renders the old table layout, the same as {{ form.as_table }}. as_div exists, but you have to call it explicitly.
+Before 4.1: {{ form }} is the table layout, and as_div doesn’t exist at all.
+
+The exception is a customised default: a template_name set on the form class, or a custom FORM_RENDERER with a different form_template_name in settings. In those cases {{ form }} uses that template, while {{ form.as_div }} always uses Django’s built-in div template.
+
+So if you’re on Django 5+ with default settings, you can replace {{ form.as_div }} with {{ form }} and nothing will change. Keeping as_div just makes the layout explicit and independent of those settings.
+
+Q:
+The form does not display any error messages when I leave the description field empty. Why is that?
+
+A:
+With the files I gave you, the error only appears after you press Submit, and that’s because of the novalidate attribute I put on the <form> tag.
+
+Django adds required, minlength="30" and maxlength="5000" to the description field’s HTML, and a browser normally uses these to stop the submit and show a “Please fill out this field” bubble. novalidate turns that browser check off, so nothing happens on the page while you type or leave the field. The form is sent to the server, Django validates it, and the page reloads with “This field is required.” above the description field.
+
+If you want the immediate browser message, remove novalidate:
+
+html
+<form method="post" id="case-form">
+
+Django still validates on the server either way, so you’re safe even if someone bypasses the browser check. The browser bubbles look different in each browser and their wording isn’t controlled by Django, which is why I’d left them off.
+
+If you did press Submit and still saw no message, something else is going on. The usual causes are:
+
+The view replaces the failed form. It has to pass the same bound form back to the template. A line like form = CaseForm() after the if form.is_valid(): block erases the errors.
+The template renders fields one by one and leaves out {{ form.description.errors }}.
+Django is older than 4.1. There {{ form.as_div }} renders nothing at all; use {{ form }} or {{ form.as_p }} instead.
+
+If none of these fits, paste your current view and template and I’ll find it.
+
+Q:
+It's not shown after submit either
+
+A:
+I couldn’t reproduce this, because Django can’t be installed in my workspace (it has no internet access here). Reading the code, an empty description makes form.is_valid() return False, and the view then renders the same form back, so “This field is required.” should appear. Something in your setup must differ from that path, and a quick check will tell us where.
+
+Add two print lines to the view, submit the form with an empty description, and look at the terminal where runserver is running:
+
+python
+if request.method == "POST":
+    form = CaseForm(request.POST)
+    print("POST reached create_case:", dict(request.POST))
+    print("valid:", form.is_valid(), "errors:", form.errors.as_json())
+
+What you see tells you where the problem is:
+
+Nothing printed: the form isn’t being posted to this view. Check that the URL you open in the browser is the one mapped to create_case in urls.py, and that your <form> tag has no action pointing somewhere else.
+valid: False with a description error: the view works and the template isn’t showing the errors. In the browser, right-click → View page source and search for errorlist. If it’s there, CSS is probably hiding it. If it’s not, the template being rendered isn’t the one you’re editing; for example, a different case_form.html earlier in your template folders is being used.
+valid: True: the description isn’t actually empty when it’s submitted.
+A redirect instead of the form page: if the browser lands on another page, the request went through a different view or redirect.
+
+If you paste the terminal output, along with your current view, template and Django version (python -m django --version), I can pinpoint it.
+
+Q:
+It works perfectly. I was testing the wrong url

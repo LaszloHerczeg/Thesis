@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>My profile</h1>
+
+<table class="profile-table">
+  <tr>
+    <th>Username</th>
+    <td>{{ user.username }}</td>
+  </tr>
+  <tr>
+    <th>First name</th>
+    <td>{{ user.first_name|default:"—" }}</td>
+  </tr>
+  <tr>
+    <th>Last name</th>
+    <td>{{ user.last_name|default:"—" }}</td>
+  </tr>
+  <tr>
+    <th>Email</th>
+    <td>{{ user.email|default:"—" }}</td>
+  </tr>
+  <tr>
+    <th>Joined</th>
+    <td>{{ user.date_joined|date:"Y. F j." }}</td>
+  </tr>
+  <tr>
+    <th>Last login</th>
+    <td>{{ user.last_login|date:"Y. F j. H:i" }}</td>
+  </tr>
+</table>
+
+
+<p>
+  <a href="{% url 'case:case_list' %}">My cases</a>
+  <a href="{% url 'account:profile_edit' %}">Edit details</a>
+  <a href="{% url 'account:password_change' %}">Change password</a>
+</p>
+
+{% endblock %}

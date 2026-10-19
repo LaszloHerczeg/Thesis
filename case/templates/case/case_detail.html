@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+<title>
+    {% block title %}
+        PLaceholder title
+    {% endblock %}
+</title>
+
+{% block content %}
+  {# TODO: show all the attributes #}
+  <table class="case-detail-table">
+
+  <tr class="case-detail-table-user">
+    <td class="case-detail-table-first-column">
+      User:
+    </td>
+    <td class="case-detail-table-second-column">
+      {{ case.user.username }}
+    </td>
+  </tr>
+
+  <tr class="case-detail-table-description">
+    <td class="case-detail-table-first-column">
+      Description:
+    </td>
+    <td class="case-detail-table-second-column">
+      {{ case.description }}
+    </td>
+  </tr>
+
+  <tr class="case-detail-table-category">
+    <td class="case-detail-table-first-column">
+      Category:
+    </td>
+    <td class="case-detail-table-second-column">
+      {% if not case.predicted_category %}
+        {{ case.status }}
+      {% else %}
+        {{ case.predicted_category }}
+      {% endif %}
+    </td>
+  </tr>
+
+  <tr class="case-detail-table-created-at">
+    <td class="case-detail-table-first-column">
+      Uploaded at:
+    </td>
+    <td class="case-detail-table-second-column">
+      {# TODO: adjust time row #}
+      <time datetime="{{ case.created_at|date:'c' }}">{{ case.created_at|date:"j F Y" }}</time>
+    </td>
+  </tr>
+
+  </table>
+
+{% endblock %}

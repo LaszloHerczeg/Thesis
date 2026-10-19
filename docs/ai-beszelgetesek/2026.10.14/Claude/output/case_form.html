@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>New case</title>
+</head>
+<body>
+  <h1>New case</h1>
+
+  <form method="post" id="case-form" novalidate>
+    {% csrf_token %}
+    {{ form.as_div }}
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    // Keeps what the user typed if the page is reloaded before submitting.
+    (function () {
+      const form = document.getElementById("case-form");
+      const KEY = "case-form-draft";
+      const isBound = {{ form.is_bound|yesno:"true,false" }};
+
+      function save() {
+        const data = {};
+        for (const el of form.elements) {
+          if (!el.name || el.name === "csrfmiddlewaretoken") continue;
+          if (el.type === "checkbox") {
+            data[el.name] = data[el.name] || [];
+            if (el.checked) data[el.name].push(el.value);
+          } else if (el.type === "radio") {
+            if (el.checked) data[el.name] = el.value;
+          } else {
+            data[el.name] = el.value;
+          }
+        }
+        try { sessionStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
+      }
+
+      function restore() {
+        let data;
+        try { data = JSON.parse(sessionStorage.getItem(KEY)); } catch (e) { return; }
+        if (!data) return;
+        for (const el of form.elements) {
+          if (!el.name || el.name === "csrfmiddlewaretoken" || !(el.name in data)) continue;
+          const value = data[el.name];
+          if (el.type === "checkbox") el.checked = value.includes(el.value);
+          else if (el.type === "radio") el.checked = el.value === value;
+          else el.value = value;
+        }
+      }
+
+      // After a failed submit Django already re-renders the entered data.
+      if (!isBound) restore();
+      form.addEventListener("input", save);
+      form.addEventListener("change", save);
+      form.addEventListener("submit", function () {
+        try { sessionStorage.removeItem(KEY); } catch (e) {}
+      });
+    })();
+  </script>
+</body>
+</html>

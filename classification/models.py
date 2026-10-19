@@ -1,8 +1,6 @@
 from django.db import models
 
 
-MODE_CHOICES = [("rule-based", "Rule_based"), ("llm_based", "LLM-based")]
-
 class Rule(models.Model):
     category = models.ForeignKey('case.Category', on_delete=models.CASCADE)
     expression = models.TextField()
@@ -16,9 +14,12 @@ class Rule(models.Model):
 
 
 class Classification(models.Model):
+    class Mode(models.TextChoices):
+        RULE = "rule-based", "Rule-based classification"
+        LLM = "llm", "LLM classification"
     case = models.ForeignKey('case.Case', on_delete=models.CASCADE)
     predicted_category = models.ForeignKey('case.Category', on_delete=models.CASCADE)
-    mode = models.CharField(choices=MODE_CHOICES, default=MODE_CHOICES[0])
+    mode = models.CharField(choices=Mode.choices, default=Mode.RULE, max_length=50)
     rules_applied = models.ManyToManyField(Rule)
     created_at = models.DateTimeField(auto_now_add=True)
 

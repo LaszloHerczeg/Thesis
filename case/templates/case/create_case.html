@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Placeholder title
+{% endblock %}
+
+{% block content %}
+
+
+    <form method="post" id="form-create-case">
+        {% csrf_token %}
+
+        {{ form }}
+
+        <button type="submit">Submit</button>
+    </form>
+{%  endblock %}
