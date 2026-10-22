@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+<title>
+    {% block title %}
+        PLaceholder title
+    {% endblock %}
+</title>
+
+{% block content %}
+
+  <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <fieldset>
+                <legend>{{ field.label }}</legend>
+
+                {% for radio in field %}
+                    <label>
+                        {{ radio.tag }}
+                        {{ radio.choice_label }}
+                    </label>
+                {% endfor %}
+
+                {{ field.errors }}
+            </fieldset>
+        {% endfor %}
+
+        <button type="submit">Tovább</button>
+    </form>
+
+{% endblock %}

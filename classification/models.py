@@ -21,6 +21,7 @@ class Classification(models.Model):
     predicted_category = models.ForeignKey('case.Category', on_delete=models.CASCADE)
     mode = models.CharField(choices=Mode.choices, default=Mode.RULE, max_length=50)
     rules_applied = models.ManyToManyField(Rule)
+    is_matching_made = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

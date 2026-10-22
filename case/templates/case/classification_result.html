@@ -1,3 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Placeholder title
+{% endblock %}
+
 {% block content %}
 <style>
   .category-table,
@@ -44,17 +50,37 @@
       <td class="label">Language:</td>
       <td>{{ recommendation.lawyer.list_language }}</td>
     </tr>
+      <tr>
+      <td class="label">Your language preference:</td>
+      <td>{{ case.list_language }}✅</td>
+    </tr>
     <tr>
       <td class="label">City:</td>
       <td>{{ recommendation.lawyer.city }}</td>
+    </tr>
+    <tr>
+      <td class="label">Your city preference:</td>
+      <td>{{ case.city }}✅</td>
     </tr>
     <tr>
       <td class="label">Price:</td>
       <td>{{ recommendation.lawyer.price }}</td>
     </tr>
     <tr>
+      <td class="label">Your price maximum:</td>
+      <td>{{ case.hourly_rate }}✅</td>
+    </tr>
+    <tr>
       <td class="label">Format:</td>
-      <td>{{ recommendation.lawyer.is_online }}</td>
+      {% if recommendation.lawyer.is_online %}
+        <td>Online</td>
+      {% else %}
+        <td>In-person</td>
+      {% endif %}
+    </tr>
+    <tr>
+      <td class="label">Your format preference:</td>
+        <td>{{ case.format }}✅</td>
     </tr>
   </table>
   {% empty %}

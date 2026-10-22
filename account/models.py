@@ -27,16 +27,3 @@ class Lawyer(models.Model):
 
     def list_language(self):
         return ", ".join(str(language) for language in self.language.all())
-
-    def is_online(self):
-        if self.is_online:
-            return "online"
-        else:
-            return "in-person"
-
-
-
-
-
-
-

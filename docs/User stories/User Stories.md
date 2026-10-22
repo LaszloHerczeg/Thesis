@@ -125,7 +125,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 - Maximum of three profiles are shown. If fewer than three lawyers match all required preferences, only the matching profiles are shown
 - The same input with the same lawyer data always produces the same result (deterministic ranking; ties broken by a fixed rule).
 
-### US-07 · Understand why each lawyer was recommended — *Could*
+### US-07 · Understand why each lawyer was recommended — *Must*
 **As a** client, **I want** to see why each lawyer was recommended, **so that** I can trust the recommendation and choose between the three.
 
 **Acceptance criteria**

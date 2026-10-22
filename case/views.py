@@ -4,9 +4,9 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import generic
-from case.forms import SearchForm, CaseForm
+from case.forms import SearchForm, CaseForm, ClarifyForm
 from case.models import Case
-from case.services import classify
+from case.services import classify, AMBIGUOUS
 from classification.models import Classification
 from matching.models import Recommendation
 from matching.services import matching
@@ -61,17 +61,6 @@ class CaseDetailView(LoginRequiredMixin, generic.DetailView):
             return queryset
         return queryset.filter(user=user)
 
-def screening(request):
-    """
-    Screening view
-
-    Parameters:
-        request: HttpRequest object
-
-    Returns:
-        HttpResponse containing a case/screening.html template
-    """
-    return render(request, "case/screening.html")
 
 @login_required
 def create_case(request):
@@ -85,13 +74,22 @@ def create_case(request):
                 # category is set to None based on the model
                 case.save()
                 form.save_m2m()
+                print("calling classify")
             try:
                 classification = classify(case, Classification.Mode.RULE)
+                if case.status == Case.Status.NOT_SUPPORTED:
+                    return redirect("case:classification_not_supported", case_pk=case.pk)
+                elif case.status == Case.Status.MORE_INFORMATION_NEEDED:
+                    request.session["clarify"] = {
+                        "case_pk": str(case.pk),
+                        "keywords": {kw: AMBIGUOUS[kw] for kw in AMBIGUOUS},
+                    }
+                    return redirect("case:clarify", case_pk=case.pk)
             except Exception as e:
                 case.status = Case.Status.FAILED
                 case.error = str(e)
                 case.save(update_fields=["status", "error"])
-                return redirect("case:classification_fail", case_id=case.pk)
+                return redirect("case:classification_fail", case_pk=case.pk)
 
             return redirect("case:classification_result", case_pk=case.pk, classification_pk=classification.pk)
     else:
@@ -110,5 +108,37 @@ def classification_result(request, case_pk, classification_pk, ):
     return render(request, 'case/classification_result.html', {'case': case, 'classification': classification, 'recommendation_list': recommendation_list})
 
 @login_required()
-def classification_fail(request, pk):
+def classification_fail(request, case_pk):
     return HttpResponse("Classification failed")
+
+@login_required()
+def classification_not_supported(request, case_pk):
+    return HttpResponse("Case not supported")
+
+@login_required()
+def clarify(request, case_pk):
+    data = request.session.get("clarify")
+    if not data or data["case_pk"] != str(case_pk):
+        return redirect("index")
+
+    case = get_object_or_404(Case, id=case_pk, user=request.user)
+
+    form = ClarifyForm(request.POST or None, keywords=data["keywords"])
+
+    if request.method == "POST" and form.is_valid():
+        chosen = form.chosen_phrases()
+        del request.session["clarify"]
+        try:
+            classification = classify(case, Classification.Mode.RULE, extra_phrases=chosen, allow_questions=False)
+            if case.status == Case.Status.NOT_SUPPORTED or case.status == Case.Status.MORE_INFORMATION_NEEDED:
+                return redirect("case:classification_not_supported", case_pk=case.pk)
+        except Exception as e:
+            case.status = Case.Status.FAILED
+            case.error = str(e)
+            case.save(update_fields=["status", "error"])
+            return redirect("case:classification_fail", case_pk=case.pk)
+
+        return redirect("case:classification_result", case_pk=case.pk, classification_pk=classification.pk)
+    else:
+
+        return render(request, "case/clarify.html", {"form": form})

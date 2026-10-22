@@ -20,7 +20,7 @@ def profile_edit(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Your details have been saved.")
-            return redirect("blog:profile")
+            return redirect("account:profile")
     else:
         form = UserForm(instance=request.user)
 
@@ -51,7 +51,7 @@ def registration(request):
             else:
                 login(request, user)
                 messages.success(request, f"Successfully logged in, {username}!")
-                return redirect("blog:index")
+                return redirect("index")
 
     else:
         form = RegisterForm()

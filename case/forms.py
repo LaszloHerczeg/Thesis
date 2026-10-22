@@ -9,6 +9,8 @@ FORMAT_CHOICES = [
     ('online', 'Online')
 ]
 
+NONE = "none"
+
 
 class SearchForm(forms.Form):
     query = forms.CharField(label='Search:',
@@ -69,3 +71,19 @@ class CaseForm(forms.ModelForm):
     class Meta:
         model = Case
         fields = ['description', 'city', 'language', 'format', 'hourly_rate']
+
+
+
+class ClarifyForm(forms.Form):
+    def __init__(self, *args, keywords, **kwargs):
+        super().__init__(*args, **kwargs)
+        for i, (keyword, phrases) in enumerate(keywords.items()):
+            choices = [(p, p.capitalize()) for p in phrases] + [(NONE, "Egyik sem")]
+            self.fields[f"q{i}"] = forms.ChoiceField(
+                label=f"Mire gondolt a „{keyword}” kifejezésnél?",
+                choices=choices,
+                widget=forms.RadioSelect,
+            )
+
+    def chosen_phrases(self):
+        return [v for v in self.cleaned_data.values() if v != NONE]
