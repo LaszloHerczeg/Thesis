@@ -64,56 +64,62 @@
 
 ### 2026.10.15 — [Az ajánlások oldal generálása]
 
-- **Eszköz:**
+- **Eszköz:** Calude Opus 5.5 High
 - **Kategória:** `kód` 
 - **Fájl:** 2026.10.15/Claude/Ajánlások oldal html-jének generálása
 - **Mit kezdtem vele:** A változók neveit a megfelelőkre módosítottam, css kódot töröltem.
 - **Átvett tartalom:** Html teljes egészében, kisebb módosításokkal
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.10.22 — [Szöveg kinyerése pdf-ből txt-be]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `kód`
+- **Fájl:** 2026.10.22 / PDF extraction
+- **Mit kezdtem vele:** A kódot átnéztem, majd az összegyűjtött anonimizált kódleírásokon használtam
+- **Átvett tartalom:** Teljes
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.10.22 — [Txt-ben található szöveg lemmatizálása, lemmák és 2 hosszú lemma párok megszámolása, adatok visszaadása csv fájlban]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `ötletelés` / `kód` 
+- **Fájl:** 2026.10.22 / Text lemmatization
+- **Mit kezdtem vele:** A kód célja az ügyek leírásában szereplő szavak frekvenciájának meghatározása volt és egy szabályalapú osztályozási rendszer kialakítása. A kód jól működött, kísérleteztem is vele, de végül más megközelítés választottam. A lemmatizálás HuSpaCy-val történt.
+- **Átvett tartalom:** A teljes kódot használtam, de a végleges megoldásban nem lesz benne.
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.10.22 — [2 CSV fájl adataiból dictionary létrehozása]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `kód` 
+- **Fájl:** 2026.10.22 / Creating dictionary based on csv files
+- **Mit kezdtem vele:** Szófrekvenciák beolvasása dictionary-be. Szabályalapú osztályozás során kapott pont a szófrekvencia alapján van meghatározva. 1 CSV fájl 1 ügyi kategóriának felel meg, így szószám normalizására 100000 tokenszámra.
+- **Átvett tartalom:** A prototípus készítése során a teljes kódot használtam. Ahogy egyre több kategóriával dolgozok, módosítanom kell a megoldást. A normalizálás célszerűbb lenne a szófrekvenciákat tartalmazó csv fájlok létrehozása közben.
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.10.22 — [Szabályalapú osztályozás - egyedül álló lemmák és 2 vagy 3 szomszédos lemmapárok előfordulása]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `kód` 
+- **Fájl:** 2026.10.22 / Creating legal keywords
+- **Mit kezdtem vele:** 1. lépésben a szkript két jogi ügyleírásokat tartalmazó mappát vizsgál: a vizsgált jogterületét és egy referenciát. Az egyedülálló lemmákat és a 2 vagy 3 hosszú szomszédos lemmákat vizsgálja.
+A vizsgált jogterületben előforduló szavak előfordulását elemzi a referencia mappában 
+(a log_ratio azt fejezi ki, hogy a két kategóriában milyen arányban található meg egy bizonyos szó. Ha mind a kettőben gyakori, 
+akkor a szó nem specifikus a vizsgált jogterületre, így a besoroláskor nem jár pont érte).
+A megadott kritériumok alapján kiszűri a vizsgált jogterületre nem specifikus szavakat. A 2. lépésben az osztályozáskor használandó szavakat exportálja csv fájlba az előfordulásuk számával.
+Lemmatizáláshoz HuSpaCy-t használtam.
+A kód az első verzióban hiánytalanul használva van. A továbbiakban módosítok rajta (pl. az outputban az előfordulások normalizálása egy megadott szószámra).
+- **Átvett tartalom:** Teljes, a továbbiakban módosításra kerül
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.10.22 — [Kulcsszavak keresése a pontosító kérdésekhez]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `ötletelés` / `kód` 
+- **Fájl:** 2026.10.22 / Find ambiguous keywords
+- **Mit kezdtem vele:** A szkript 2 ügytípushoz tartalmazó 2-2 szófrekvenciákat tartalmazó csv fájlt vizsgál (az előző bejegyzés kódja által generált output).
+Cél: azon szavak megtalálása, melyek gyakran előfordulnak önmagukban és más szóval párban, több különböző ügykategóriában úgy, hogy jelentős különbség az előfordulásuk számában.
+Ha az ügyfél leírásában megtalálható egy ilyen kifejezés a rövidebb formájában, akkor értékes információt kaphatunk egy pontosító visszakérdezés alkalmazásával.
+Eredmény: egy csv fájl, melyben ezek a szavak vannak felsorolva a pontszámukkal a különböző rövidebb és hosszabb formájukban.
+A lista nagyon hosszú lett és nagyon kevés volt a gyakorlatban használható információ. A megoldáson pontosítani kell vagy más megközelítést választani.
+- **Átvett tartalom:** A kódot kísérletezésre használtam. Az első verzióban egy kézzel készített táblázattal helyettesítettem. 
+A jövőben vagy átdolgozom a megközelítést vagy más megoldást választok (más adatvezérelt vagy kézzel előállított).
 
 ### ÉÉÉÉ.HH.NN — [rövid cím]
 

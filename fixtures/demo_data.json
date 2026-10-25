@@ -1,0 +1,225 @@
+[
+{
+  "model": "account.language",
+  "pk": 1,
+  "fields": {
+    "name": "Magyar"
+  }
+},
+{
+  "model": "account.language",
+  "pk": 2,
+  "fields": {
+    "name": "Angol"
+  }
+},
+{
+  "model": "account.language",
+  "pk": 3,
+  "fields": {
+    "name": "Német"
+  }
+},
+{
+  "model": "case.category",
+  "pk": 1,
+  "fields": {
+    "name": "Munkajog",
+    "description": "Munkajog leírása",
+    "is_active": true
+  }
+},
+{
+  "model": "case.category",
+  "pk": 2,
+  "fields": {
+    "name": "Családjog",
+    "description": "Családjog leírása",
+    "is_active": true
+  }
+},
+{
+  "model": "case.category",
+  "pk": 3,
+  "fields": {
+    "name": "Büntetõjog",
+    "description": "Büntetõjog leírása",
+    "is_active": true
+  }
+},
+{
+  "model": "account.user",
+  "fields": {
+    "password": "!ohj1igBLEqmCLaBUKenG1OuXynwuu5hazgHnCL9O",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "testuser",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-15T12:56:27.498Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "account.user",
+  "fields": {
+    "password": "!seLJEPzLhqxRCWWm3zy7jSecrjHtFMAn4s1mB4nH",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "testuser1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-15T12:56:37.804Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "account.user",
+  "fields": {
+    "password": "!aLrm7BaK2DU2cFzhuTVkpTfcRtbEMkZ1BXANsGhr",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "testuser2",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-15T12:56:55.707Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "account.user",
+  "fields": {
+    "password": "!QqDoqOzMDrpNExC15WyKMxEFi6hz7Y44THL3ZmC6",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "testlawyer",
+    "first_name": "Károly",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-15T12:57:16Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "account.user",
+  "fields": {
+    "password": "!DzifWhENJsLuk8MfYu3FMVBjt5zBe2HPqHxyp9ws",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "testlawyer1",
+    "first_name": "Aladár",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-15T12:57:39Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "account.user",
+  "fields": {
+    "password": "!hMpeZMMlrQvW4iQVFirkfJxiepPBlBeI1wf1sVBE",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "testlawyer2",
+    "first_name": "Kálmán",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-15T12:58:03Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "account.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$8arrmWWzTHmFCKSJBxCAgw$eUGEmejB0nayeO9cIs7S2SwmelO/mNAe5Y1Z8G6THzU=",
+    "last_login": "2026-10-25T18:04:00.353Z",
+    "is_superuser": true,
+    "username": "teszt_admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-10-25T18:02:51.563Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "account.lawyer",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "testlawyer"
+    ],
+    "city": "Szeged",
+    "price": "40000.00",
+    "is_online": true,
+    "specialty": [
+      1
+    ],
+    "language": [
+      1,
+      2
+    ]
+  }
+},
+{
+  "model": "account.lawyer",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "testlawyer1"
+    ],
+    "city": "Budapest",
+    "price": "60000.00",
+    "is_online": false,
+    "specialty": [
+      2
+    ],
+    "language": [
+      3
+    ]
+  }
+},
+{
+  "model": "account.lawyer",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "testlawyer2"
+    ],
+    "city": "Debrecen",
+    "price": "50000.00",
+    "is_online": false,
+    "specialty": [
+      3
+    ],
+    "language": [
+      1,
+      3
+    ]
+  }
+}
+]

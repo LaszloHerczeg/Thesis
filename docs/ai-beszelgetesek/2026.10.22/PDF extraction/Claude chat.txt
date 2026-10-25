@@ -1,0 +1,20 @@
+Q:
+write me a script to extract text from pdfs in a folder
+
+A:
+Building a script to pull text from PDF files.
+Building a script to pull text from PDF files.
+I’ll write a Python script that walks a folder, pulls the text out of every PDF, and saves one .txt per file.
+
+Created extract_pdf_text.py
+Let me give it a quick test run on some sample PDFs.
+
+Shared a file, ran a command
+Here’s extract_pdf_text.py. Install the one dependency with pip install pypdf, then run it:
+
+bash
+python extract_pdf_text.py ~/Documents/pdfs              # one .txt per PDF, in pdfs/extracted_text/
+python extract_pdf_text.py ~/Documents/pdfs -r           # include subfolders
+python extract_pdf_text.py ~/Documents/pdfs -o out_dir   # choose the output folder
+python extract_pdf_text.py ~/Documents/pdfs --combined all.txt   # everything in one file
+Each output file marks where every page starts. If a PDF won’t open, the script reports it and carries on with the rest. At the end it lists any PDFs that came back with almost no text. Those are usually scanned images, and they need OCR instead of plain extraction. I can add OCR support if you have files like that.

@@ -766,8 +766,9 @@ main form table td:first-child {
 .form-table label { margin-bottom: 0; }
 
 
-/* 12. Data tables (profile) ================================================ */
+/* 12. Data tables  ================================================ */
 
+/* Edit profile */
 .profile-table {
     border-collapse: collapse;
     width: 100%;
@@ -804,6 +805,29 @@ main form table td:first-child {
     display: flex;
     gap: var(--gap);
     font-size: 0.95rem;
+}
+
+/* Lawyer recommendation */
+
+.category-table,
+.lawyer-table {
+border-collapse: collapse;
+}
+.category-table td,
+.lawyer-table td {
+border: 1px solid #ccc;
+padding: 6px 12px;
+}
+.category-table {
+margin-bottom: 24px;
+}
+.label {
+font-weight: bold;
+}
+.lawyer-tables {
+display: flex;
+gap: 24px;
+flex-wrap: wrap;
 }
 
 
