@@ -23,14 +23,14 @@ MI-támogatott, könnyen kezelhető szolgáltatás formájában.
 
 ## Indítás (demó)
 
-A demó videó a `demo-v1` tag-en lévő verzióval készült.
+A demó videó a `demo-v2` tag-en lévő verzióval készült.
 Az alábbi lépésekkel ugyanaz a működés reprodukálható.
 
 ### 1. Klónozás és a demó verzió
 ```
 git clone <REPO_URL>
 cd <PROJEKT_MAPPA>
-git checkout demo-v1
+git checkout demo-v2
 ```
 
 ### 2. Virtuális környezet és függőségek
@@ -58,13 +58,24 @@ A kiírt értéket másolja be a `.env` fájlba:
 ```
 SECRET_KEY=<a_generált_kulcs>
 DEBUG=True
+ANTHROPIC_API_KEY=<ANTHROPIC_API_KEY>
 ```
 
 ### 4. Adatbázis és tesztadatok
 ```
 python manage.py migrate
-python manage.py loaddata fixtures/demo_data.json
+python manage.py loaddata fixtures/demo_data2.json
 ```
+
+A betöltendő adatbázisban a besorolási szabályok is benne vannak.
+
+A besorolási szabályok újragenerálása/frissítése:
+1. python manage.py extract_pdf_text <mappanév>
+    a mappanév a classification/data/pdf mappán belül, pl: hazassag
+2. python manage.py extract_keywords <target mappanév> <reference mappanév>
+    mappanevek a classification/txt mappán belül, target: a mappa, amire a besorolási szabályokat szeretnénk generálni, reference: a mappa, amivel össze akarjuk hasonlítani (következő iterációban át lesz dolgozva)
+3. python manage.py filter_keywords <mappanév>
+    a mappanév a classification/data/full csv mappán belül, pl: hazassag
 
 Tesztfelhasználók:
 

@@ -22,6 +22,7 @@
                 <ul>
                     <li> <a href="{% url 'index' %}">Home</a> </li>
                     <li> <a href="{% url 'case:create_case' %}">New Case</a> </li>
+                    <li> <a href="{% url 'account:lawyer_list' %}">Lawyers</a> </li>
                     <li> <a href="{% url 'about' %}">About</a> </li>
                     {% if user.is_authenticated %}
                         <li class="nav-account">

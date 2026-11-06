@@ -121,50 +121,54 @@ A lista nagyon hosszú lett és nagyon kevés volt a gyakorlatban használható 
 - **Átvett tartalom:** A kódot kísérletezésre használtam. Az első verzióban egy kézzel készített táblázattal helyettesítettem. 
 A jövőben vagy átdolgozom a megközelítést vagy más megoldást választok (más adatvezérelt vagy kézzel előállított).
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.10.22 — [Prompt generálás és ötletelés]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `ötletelés` `
+- **Fájl:** 2026.10.22 / Ötletelés és prompt készítés
+- **Mit kezdtem vele:** Prompt-ok generálása a management command-ok elkészítéséhez. Megfelelő besorolási szabályok létrehozásához ötletelés.
+- **Átvett tartalom:** A prompt-okat felhasználtam másik beszélgetésben és a beszélgetés alapján kialakítottam a besorolás logikáját. Egy kódrészlet át lett emelve teljesen.
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.10.29 — [Management command-ok használatának kényelmesebbé tétele]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `kód`
+- **Fájl:** 2026.10.29 / management command
+- **Mit kezdtem vele:** A kód kényelmesebbé teszi az elérési útvonalak megadását
+- **Átvett tartalom:** Teles
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.10.29 — [Besorolási szabályok mentése adatbázisba]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `kód` 
+- **Fájl:** 2026.10.27 / saving rules into db
+- **Mit kezdtem vele:** A kód a szógyakoriságot tartalmazó csv fájlt beolvassa és a sorokat egyesével szabályként elmenti. 
+- Opcionálisan a korábbi, adott kategóriához tartozó szabályokat törli először.
+- **Átvett tartalom:** Teljes
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.11.03 — [Tesztesetek mentése database-be - Management command]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `kód` 
+- **Fájl:** 2026.11.03 / Load evaluation cases
+- **Mit kezdtem vele:** A célom egy olyan feature elkészítése, amivel gombnyomásra le tudom tesztelni a program futását az összegyűjtött teszteseteken. Az adatok kényelmes betöltésére használom ezt a management command-ot.
+- **Átvett tartalom:** Teljes
 
-### ÉÉÉÉ.HH.NN — [rövid cím]
+### 2026.11.04 — [Formázás - tesztesetek eredményei]
 
-- **Eszköz:**
-- **Kategória:** `megértés` / `ötletelés` / `kód` / `szövegezés` /
-  `fordítás` / `irodalomkutatás`
-- **Fájl:**
-- **Mit kezdtem vele:**
-- **Átvett tartalom:**
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `kód` 
+- **Fájl:** 2026.11.04 / Evaluation table
+- **Mit kezdtem vele:** A tesztesetek kategorizálásának eredményét egy táblázatban jelenítem meg. Ennek a formázásához generáltattam html és css kódot.
+- **Átvett tartalom:** Eredetileg html és css kódban szerettem volna eldönteni, hogy melyik sor legyen piros és melyik zöld, de a válasz hatására áthelyeztem az evaluating_cases függvénybe. Ott elmentetem attribútumként, hogy sikeres volt-e a kategorizálás, majd továbbítom az adatot a view-nak.
+
+### 2026.11.05 — [LawyerDetail, LawyerList, Profile és Stylesheet generálása]
+
+- **Eszköz:** Calude Opus 5.5 High
+- **Kategória:** `kód` 
+- **Fájl:** 2026.11.05 / LawyerList, LawyerDetail, Profile and Stylesheet
+- **Mit kezdtem vele:** Az egységes kinézet miatt legeneráltattam a 3 oldal html fájljait, illetve a profil view-ja nagyon kezdetleges volt, ezért generáltattam egy osztály-alapú view-t. Claude észrevett egy syntax hibát a stylesheet-ben, ezért azt is legeneráltattam. A jövőben a stylesheet szinte biztosan, de a végleges design kialakításakor valószínűleg az html kódok is változni fognak.
+- **Átvett tartalom:** Teljes
 
 ### ÉÉÉÉ.HH.NN — [rövid cím]
 

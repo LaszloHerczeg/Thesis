@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Your profile{% endblock %}
+
+{% block content %}
+<h1>Your profile</h1>
+
+<table class="profile-table" id="account-details">
+    <tbody>
+        <tr>
+            <th scope="row">Username</th>
+            <td>{{ profile_user.username }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Name</th>
+            <td>{{ profile_user.get_full_name|default:"—" }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Email</th>
+            <td>{{ profile_user.email|default:"—" }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Member since</th>
+            <td>{{ profile_user.date_joined|date:"j F Y" }}</td>
+        </tr>
+    </tbody>
+</table>
+
+{# Directly after the table, so .profile-table + p lays it out as an action bar. #}
+<p>
+    <a href="{% url 'profile_edit' %}">Edit profile</a>
+    <a href="{% url 'password_change' %}">Change password</a>
+</p>
+
+{% if lawyer %}
+<h2>Lawyer profile</h2>
+
+<table class="profile-table" id="lawyer-profile">
+    <tbody>
+        <tr>
+            <th scope="row">Specialty</th>
+            <td>{{ lawyer.list_specialty|default:"—" }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Languages</th>
+            <td>{{ lawyer.list_language|default:"—" }}</td>
+        </tr>
+        <tr>
+            <th scope="row">City</th>
+            <td>{{ lawyer.city }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Price</th>
+            <td>{{ lawyer.price }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Online</th>
+            <td>{{ lawyer.is_online|yesno:"Yes,No" }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Introduction</th>
+            <td>{{ lawyer.introduction|default:"—"|linebreaksbr }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    <a href="{% url 'lawyer_detail' lawyer.pk %}">View your public page</a>
+</p>
+{% endif %}
+{% endblock %}

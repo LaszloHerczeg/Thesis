@@ -53,4 +53,34 @@
 
   </table>
 
+  <div>
+  {% if classification %}
+<h1>Top keywords</h1>
+{% for kw in classification.top_keywords %}
+  <p>{{ kw.keyword }}: {{ kw.count }} × → {{ kw.points }} pont</p>
+{% endfor %}
+  {% endif %}
+</div>
+
+  <canvas id="scoreChart" height="120"></canvas>
+
+{{ chart_data|json_script:"chart-data" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const data = JSON.parse(document.getElementById("chart-data").textContent);
+
+  new Chart(document.getElementById("scoreChart"), {
+    type: "bar",
+    data: {
+      labels: data.labels,
+      datasets: [{ label: "Score", data: data.values }],
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } },
+    },
+  });
+</script>
+
 {% endblock %}

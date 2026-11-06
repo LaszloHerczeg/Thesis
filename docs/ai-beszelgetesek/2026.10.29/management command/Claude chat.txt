@@ -1,0 +1,539 @@
+Q:
+from pathlib import Path
+
+from django.core.management.base import BaseCommand, CommandError
+from pypdf import PdfReader
+
+
+def extract_text(pdf_path: Path, password: str | None = None) -> str:
+    """Return the text of a PDF, with a marker between pages."""
+    reader = PdfReader(pdf_path)
+    if reader.is_encrypted:
+        # Many "encrypted" PDFs open fine with an empty password
+        if not reader.decrypt(password or ""):
+            raise ValueError("encrypted (wrong or missing password)")
+
+    pages = []
+    for i, page in enumerate(reader.pages, start=1):
+        text = page.extract_text() or ""
+        pages.append(f"--- Page {i} ---\n{text.strip()}")
+    return "\n\n".join(pages)
+
+
+class Command(BaseCommand):
+    """
+    Reads every PDF from   <DATA_DIR>/pdf/<law_type>/
+    and writes the text to <DATA_DIR>/txt/<law_type>/
+
+    Examples:
+        python manage.py extract_pdf_text csaladjog
+        python manage.py extract_pdf_text csaladjog -r
+        python manage.py extract_pdf_text csaladjog --combined
+    """
+    help = "Extract text from every PDF of a legal field into .txt files."
+
+    def add_arguments(self, parser):
+        parser.add_argument('law_type', type=Path, help='Legal field, i.e. the folder name under data/pdf/ (e.g. csaladjog)')
+        parser.add_argument("-r", "--recursive", action="store_true",
+                            help="Also search subfolders")
+        parser.add_argument("--combined", type=Path,
+                            help="Write everything into data/txt/<law_type>_combined.txt "
+                                 "instead of one .txt per PDF")
+        parser.add_argument("--password", help="Password for encrypted PDFs")
+
+    def handle(self, *args, **options):
+        if not options['folder'].is_dir():
+            raise CommandError(f"Not a folder: {options['folder']}")
+
+        pattern = "**/*" if options['recursive'] else "*"
+        pdfs = sorted(p for p in options['folder'].glob(pattern)
+                      if p.is_file() and p.suffix.lower() == ".pdf")
+        if not pdfs:
+            raise CommandError(f"No PDFs found in {options['folder']}")
+
+        out_dir = options['output'] or options['folder'] / "extracted_text"
+        if not options['combined']:
+            out_dir.mkdir(parents=True, exist_ok=True)
+
+        combined_parts = []
+        ok, failed, empty = 0, [], []
+
+        for pdf in pdfs:
+            rel = pdf.relative_to(options['folder'])
+            try:
+                text = extract_text(pdf, options['password'])
+            except Exception as e:
+                failed.append((rel, str(e)))
+                self.stderr.write(f"  FAIL  {rel}: {e}")
+                continue
+
+            # Little or no text usually means a scanned (image-only) PDF
+            if len(text.replace("--- Page", "").strip()) < 20:
+                empty.append(rel)
+
+            if options['combined']:
+                combined_parts.append(f"===== {rel} =====\n\n{text}")
+            else:
+                txt_path = out_dir / rel.with_suffix(".txt")
+                txt_path.parent.mkdir(parents=True, exist_ok=True)
+                txt_path.write_text(text, encoding="utf-8")
+
+            ok += 1
+            self.stdout.write(f"  OK    {rel}")
+
+        if options['combined']:
+            options['combined'].write_text("\n\n\n".join(combined_parts), encoding="utf-8")
+            self.stdout.write(f"\nWrote combined text to {options['combined']}")
+        else:
+            self.stdout.write(f"\nWrote text files to {out_dir}")
+
+        self.stdout.write(f"Done: {ok} extracted, {len(failed)} failed.")
+        if empty:
+            self.stdout.write("\nThese had little or no text (likely scanned images, need OCR):")
+            for rel in empty:
+                self.stdout.write(f"  - {rel}")
+
+módosítsd úgy a kódot, hogy csak jogtípust kelljen megadni és automatikusan elkezdi olvasni abból a mappából, hogy classification/data/pdf/'a megadott jogtípus' és a végén oda írja a txt fájlokat, hogy classification/data/txt/'a megadott jogtípus'
+a setting.py-ban benne van a data dir elérési útvonala: DATA_DIR = BASE_DIR / "classification" / "data"
+a jogi terület elnevezése magyarul legyen, de minden más angolul a kódban.
+Ha nem megfelelő jogterület lett megadva, akkor írja ki a program az elérhető mappákat, azaz jogterületeket
+
+A:
+Elkészült a módosított extract_pdf_text.py. Most már elég ennyi:
+
+python manage.py extract_pdf_text csaladjog
+
+Mi változott:
+
+Egyetlen kötelező argumentum maradt, a jogterulet. Ez az argumentum kapott magyar nevet, minden más angol maradt a kódban. Az elérési utakat a settings.DATA_DIR-ből rakja össze: a bemenet DATA_DIR/pdf/<jogterulet>/, a kimenet DATA_DIR/txt/<jogterulet>/.
+Rossz jogterület esetén kilistázza az elérhetőket, vagyis a data/pdf/ alatti mappákat. Például:
+  CommandError: Unknown legal field: 'csaldjog'
+  Available legal fields:
+    - buntetojog
+    - csaladjog
+
+Ez egyben azt is kizárja, hogy valaki ../ jellegű útvonalat adjon meg, mert csak létező mappanév fogadható el.
+
+A --combined mostantól sima kapcsoló. Az összefűzött fájl helye data/txt/<jogterulet>_combined.txt lesz, ahogy a help szövegben is szerepelt.
+Javítottam két hibát, amik az eredeti kódban futáskor KeyError-t dobtak volna:
+options['folder'] és options['output'] nem létező argumentumokra hivatkoztak.
+Az üres oldal ellenőrzés regexszel szedi ki az oldaljelölőket, így a megmaradt oldalszámok már nem torzítják a „szkennelt PDF“ felismerést.
+A végén a hibás fájlokat is összegyűjtve kiírja, nem csak futás közben.
+
+A -r és a --password kapcsolók ugyanúgy működnek, mint eddig.
+
+Q:
+import csv
+import math
+import re
+import time
+from collections import Counter
+from pathlib import Path
+
+from django.core.management.base import BaseCommand, CommandError
+
+from django.conf import settings
+
+
+MAX_N = 3
+
+# Tokens with these POS tags end the current run of words, so no n-gram can
+# contain or span across them (punctuation, numerals, symbols).
+BREAK_POS = {"PUNCT", "NUM", "SYM"}
+
+# A valid lemma is made of letters only, optionally joined by a hyphen or an
+# apostrophe (e.g. "ptk", "szülői", "kft", "e-mail"). [^\W\d_] = any Unicode
+# letter, so á, é, ő, ű etc. are all included.
+WORD_RE = re.compile(r"[^\W\d_]+(?:[-'’][^\W\d_]+)*")
+DIGIT_RE = re.compile(r"\d")
+WHITESPACE_RE = re.compile(r"\s+")
+
+STEP1_COLUMNS = ["lemma", "n", "d", "N_d", "r", "N_r", "log_ratio", "total_d"]
+STEP2_COLUMNS = ["lemma", "total_d"]
+
+
+# TODO: normalize total_d
+
+def load_model():
+    try:
+        import spacy
+    except ImportError:
+        raise CommandError("ERROR: spaCy is not installed. Run: pip install huspacy")
+    try:
+        nlp = spacy.load(settings.MODEL_NAME)
+    except OSError:
+        raise  CommandError(f"ERROR: the {settings.MODEL_NAME} model is not installed.\n"
+                 f'Run: python -c "import huspacy; huspacy.download(\'{settings.MODEL_NAME}\')"')
+
+    # Named entity recognition is not needed; switching it off saves time.
+    unneeded = [name for name in ("ner",) if name in nlp.pipe_names]
+    if unneeded:
+        nlp.select_pipes(disable=unneeded)
+
+    # Make sure sentence boundaries are available; add a rule-based
+    # sentencizer only if the model itself does not set them.
+    probe = nlp("Ez az első mondat. Ez a második mondat.")
+    if not probe.has_annotation("SENT_START"):
+        nlp.add_pipe("sentencizer", first=True)
+
+    from spacy.lang.hu.stop_words import STOP_WORDS
+    return nlp, frozenset(w.lower() for w in STOP_WORDS)
+
+
+def word_runs(doc):
+    """Yield lists of consecutive word lemmas. A run never crosses a sentence
+    boundary, punctuation, a number or a symbol."""
+    for sent in doc.sents:
+        run = []
+        for tok in sent:
+            if tok.is_space:
+                continue
+            lemma = clean_lemma(tok)
+            if lemma is None:
+                if run:
+                    yield run
+                run = []
+            else:
+                run.append(lemma)
+        if run:
+            yield run
+
+
+def ngrams_of_runs(runs, stopwords, max_n=MAX_N):
+    """Count 1...max_n-grams in the runs. N-grams starting or ending with a
+    stopword are dropped; stopwords inside a 3-gram are kept."""
+    counts = Counter()
+    for run in runs:
+        length = len(run)
+        for n in range(1, max_n + 1):
+            for i in range(length - n + 1):
+                if run[i] in stopwords or run[i + n - 1] in stopwords:
+                    continue
+                counts[" ".join(run[i:i + n])] += 1
+    return counts
+
+def clean_lemma(tok):
+    """Lowercased lemma of a word token, or None if the token breaks n-grams."""
+    if tok.is_punct or tok.pos_ in BREAK_POS or DIGIT_RE.search(tok.text):
+        return None
+    lemma = (tok.lemma_ or tok.text).strip().lower()
+    lemma = lemma.strip(".")  # abbreviations: "Ptk." -> "ptk"
+    if not WORD_RE.fullmatch(lemma):
+        return None
+    return lemma
+
+def write_csv(path: Path, header, rows, delimiter):
+    # utf-8-sig writes a BOM, which makes Excel recognise UTF-8 so that
+    # á, é, ő, ű etc. display correctly.
+    with open(path, "w", encoding="utf-8-sig", newline="") as f:
+        writer = csv.writer(f, delimiter=delimiter)
+        writer.writerow(header)
+        writer.writerows(rows)
+
+
+class Command(BaseCommand):
+    """
+    extract_keywords.py - characteristic lemmas / n-grams of a legal field.
+
+    Extracts 1-, 2- and 3-word lemma sequences from a TARGET folder of Hungarian case descriptions (.txt, one case per
+    file, UTF-8) and a REFERENCE folder of general cases and stores their n, d, N_d, r, N_r, log_ratio and total_d in a csv file sorted by log_ratio.
+
+    - d = number of target documents containing it
+    - N_d = total number of target documents
+    - r = number of reference documents containing it
+    - N_r = total number of reference documents
+    - log_ratio = log2( ((d + 0.5) / (N_d + 1)) / ((r + 0.5) / (N_r + 1)) )
+    - total_d = total number of occurrences in the target documents
+
+    Two sub-commands:
+
+      extract  - lemmatizes both folders with HuSpaCy (hu_core_news_lg) and writes
+                 the full table (step 1). This is the slow part.
+
+    Examples:
+      python manage.py extract_keywords csaladjog/ altalanos/ -o step1_teljes.csv
+    """
+    help = 'Compares word frequencies of 1-, 2- and 3 word lemma sequences in 2 folders. Results are stored in a csv file'
+
+    def add_arguments(self, parser):
+        parser.add_argument("target", help="Folder with .txt files of the analysed field")
+        parser.add_argument("reference", help="Folder with .txt files of general cases")
+        parser.add_argument("-o", "--output", default="step1_full.csv",
+                        help="Output CSV (default: step1_full.csv)")
+        parser.add_argument("--excel-hu", action="store_true",
+                        help="Use ';' as delimiter and a decimal comma, for Excel "
+                             "with Hungarian regional settings")
+        parser.add_argument("--batch-size", type=int, default=4,
+                        help="Documents per spaCy batch (default: 4)")
+        parser.add_argument("--n-process", type=int, default=1,
+                        help="Parallel processes for lemmatization (default: 1)")
+
+    def handle(self, *args, **options):
+        target_docs = self.read_folder(Path(options['target']), "target")
+        ref_docs = self.read_folder(Path(options['reference']), "reference")
+        N_d, N_r = len(target_docs), len(ref_docs)
+
+        print(f"Loading {settings.MODEL_NAME}...", file=self.stderr)
+        nlp, stopwords = load_model()
+
+        doc_freq_target = Counter()  # d: number of target documents containing it
+        total_target = Counter()  # total_d: occurrences in all target documents
+        for counts in self.analyze(nlp, target_docs, stopwords, "target",
+                              options['batch_size'], options['n_process']):
+            total_target.update(counts)
+            doc_freq_target.update(counts.keys())
+
+        # For the reference folder only lemma options['t'] occur in the target matter,
+        # so only those are counted (keeps memory usage low).
+        vocabulary = doc_freq_target.keys()
+        doc_freq_ref = Counter()  # r: number of reference documents containing it
+        for counts in self.analyze(nlp, ref_docs, stopwords, "reference",
+                              options['batch_size'], options['n_process']):
+            doc_freq_ref.update(k for k in counts if k in vocabulary)
+
+        rows = []
+        for lemma, d in doc_freq_target.items():
+            r = doc_freq_ref.get(lemma, 0)
+            log_ratio = math.log2(((d + 0.5) / (N_d + 1)) / ((r + 0.5) / (N_r + 1)))
+            rows.append((lemma, lemma.count(" ") + 1, d, N_d, r, N_r,
+                         round(log_ratio, 3), total_target[lemma]))
+
+        # log_ratio descending; ties: more target documents first, then alphabetical
+        rows.sort(key=lambda row: (-row[6], -row[2], row[0]))
+
+        if options['excel_hu']:
+            delimiter = ";"
+            out_rows = [row[:6] + (f"{row[6]:.3f}".replace(".", ","),) + row[7:]
+                        for row in rows]
+        else:
+            delimiter = ","
+            out_rows = [row[:6] + (f"{row[6]:.3f}",) + row[7:] for row in rows]
+
+        out_path = Path(options['output'])
+        write_csv(out_path, STEP1_COLUMNS, out_rows, delimiter)
+
+        by_n = Counter(row[1] for row in rows)
+        self.stdout.write()
+        self.stdout.write("=== Summary (step 1) ===")
+        self.stdout.write(f"Target documents:     {N_d}")
+        self.stdout.write(f"Reference documents:  {N_r}")
+        self.stdout.write(f"Lemmas / n-grams:     {len(rows)}  "
+              f"(1-word: {by_n[1]}, 2-word: {by_n[2]}, 3-word: {by_n[3]})")
+        self.stdout.write(f"Written to:           {out_path}")
+
+
+
+    def read_folder(self, folder: Path, label: str):
+        """Return [(file name, normalized text)] for every .txt file in the folder."""
+        if not folder.is_dir():
+            raise CommandError(f"ERROR: the {label} folder does not exist: {folder}")
+        files = sorted(p for p in folder.iterdir()
+                       if p.is_file() and p.suffix.lower() == ".txt")
+        if not files:
+            raise CommandError(f"ERROR: no .txt files found in the {label} folder: {folder}")
+
+        docs = []
+        for path in files:
+            raw = path.read_bytes()
+            try:
+                text = raw.decode("utf-8-sig")  # also strips a BOM if present
+            except UnicodeDecodeError:
+                print(f"  WARNING: {path.name} is not valid UTF-8; "
+                      f"undecodable bytes were replaced.", file=self.stderr)
+                text = raw.decode("utf-8-sig", errors="replace")
+            # Line breaks (and any other whitespace run) become a single space,
+            # so an n-gram can continue on the next line.
+            text = WHITESPACE_RE.sub(" ", text).strip()
+            if not text:
+                print(f"  WARNING: {path.name} is empty (still counted as a document).",
+                      file=self.stderr)
+            docs.append((path.name, text))
+        return docs
+
+    def analyze(self, nlp, docs, stopwords, label, batch_size, n_process):
+        """Yield an n-gram Counter for each document, with progress output."""
+        texts = [text for _, text in docs]
+        longest = max((len(t) for t in texts), default=0)
+        if longest >= nlp.max_length:
+            nlp.max_length = longest + 1
+
+        total = len(texts)
+        step = max(1, total // 20)
+        start = time.time()
+        print(f"Lemmatizing {label} folder ({total} documents)...", file=self.stderr)
+        for i, doc in enumerate(nlp.pipe(texts, batch_size=batch_size,
+                                         n_process=n_process), start=1):
+            yield ngrams_of_runs(word_runs(doc), stopwords)
+            if i % step == 0 or i == total:
+                elapsed = time.time() - start
+                print(f"  {label}: {i}/{total} documents ({elapsed:.0f} s)",
+                      file=self.stderr)
+
+ezt is ugyanígy módosítsd
+az olvasás a classification/data/txt/law_type mappából történjen.
+az írás a classification/data/full csv/law_type mappába történjen.
+a law type is legyen angolul a kódban
+
+A:
+Elkészült a módosított extract_keywords.py. Használat:
+
+python manage.py extract_keywords csaladjog altalanos
+
+Mi változott:
+
+Két jogterületet kell megadni, mappa nélkül: a vizsgáltat (law_type) és a referenciát (reference). Mindkettőt a DATA_DIR/txt/ alól olvassa. Mivel a log_ratio számításhoz kell egy összehasonlító korpusz, a referencia nem maradhatott el. Ha mindig ugyanaz (pl. altalanos), szívesen beállítom alapértelmezettnek, és akkor elég csak a jogterületet megadni.
+Rossz jogterület esetén kilistázza a data/txt/ alatti elérhető mappákat, ugyanúgy, mint az előző parancsnál. Azt is jelzi, ha a cél és a referencia ugyanaz.
+A kimenet helye DATA_DIR/full csv/<law_type>/, a mappát szükség esetén létrehozza. A -o mostantól csak fájlnevet vár, alapértelmezetten step1_full.csv.
+Az argumentum neve angol (law_type). A mappanevek (pl. csaladjog) maradnak magyarul.
+
+Javított hibák:
+
+A self.stdout.write() üres argumentummal TypeError-t dobott volna az összegzésnél. Helyette most write("") van.
+A print(..., file=self.stderr) hívásokat self.stderr.write(...)-ra cseréltem. A Django OutputWrapper saját sortörést tesz a végére, ezért a print dupla üres sorokat okozott.
+Javítottam egy elcsúszott kommentet (only lemma options['t'] occur...). Ez egy korábbi keresés-csere során sérülhetett.
+
+Q:
+import csv
+import io
+from pathlib import Path
+from typing import Any
+
+from django.core.management.base import BaseCommand, CommandError
+
+from classification.management.commands.extract_keywords import write_csv, STEP2_COLUMNS
+
+
+def read_csv(path: Path):
+    """Read a step-1 CSV written with either ',' or ';' as delimiter.
+    Returns (rows as dicts, delimiter)."""
+    if not path.is_file():
+        raise CommandError(f"ERROR: file not found: {path}")
+    text = path.read_text(encoding="utf-8-sig")
+    first_line = text.split("\n", 1)[0]
+    delimiter = ";" if first_line.count(";") > first_line.count(",") else ","
+    reader = csv.DictReader(io.StringIO(text, newline=""), delimiter=delimiter)
+    missing = {"lemma", "d", "log_ratio", "total_d"} - set(reader.fieldnames or [])
+    if missing:
+        raise CommandError(f"ERROR: {path} is not a step-1 table "
+                 f"(missing columns: {', '.join(sorted(missing))}).")
+    return list(reader), delimiter
+
+def to_float(value: str) -> float:
+    return float(value.strip().replace(",", "."))  # accepts decimal comma too
+
+class Command(BaseCommand):
+    """
+ manage.py filter_keywords - characteristic lemmas / n-grams of a legal field.
+
+   Reads the output of extract_keyword management command and keeps only the 1-, 2- or 3-word lemma sequences that pass the threshold in the csv file. Creates a new csv file for the result.
+
+    Two sub-commands:
+
+      extract  - lemmatizes both folders with HuSpaCy (hu_core_news_lg) and writes
+                 the full table (step 1). This is the slow part.
+      filter   - reads the step-1 CSV and keeps the lemmas that pass the
+                 thresholds (step 2). No text processing, runs in seconds.
+
+    Examples:
+      python manage.py filter_keywords step1_teljes.csv -o step2_szurt.csv
+      python manage.py filter_keywords step1_teljes.csv -o step2_szurt.csv --min-docs 5 --min-log-ratio 1.5
+    """
+    help = 'Keeps only the 1-, 2- or 3-word lemma sequences that pass the threshold in the csv file'
+
+    def add_arguments(self, parser):
+        parser.add_argument("input", help="CSV written by the extract step")
+        parser.add_argument("-o", "--output", default="step2_filtered.csv",
+                        help="Output CSV (default: step2_filtered.csv)")
+        parser.add_argument("--min-docs", type=int, default=3,
+                        help="Minimum number of target documents, d (default: 3)")
+        parser.add_argument("--min-log-ratio", type=float, default=1.0,
+                        help="Minimum log_ratio (default: 1.0)")
+
+    def handle(self, *args: Any, **options: Any) -> str | None:
+        in_path = Path(options['input'])
+        rows, delimiter = read_csv(in_path)
+
+        kept = []
+        word_counter = 0
+
+        for row in rows:
+            try:
+                d = int(row["d"])
+                log_ratio = to_float(row["log_ratio"])
+                total_d = int(row["total_d"])
+            except (TypeError, ValueError):
+                self.stderr.write(f"  WARNING: skipping unreadable row: {row}")
+                continue
+            if d >= options['min_docs'] and log_ratio >= options['min_log_ratio']:
+                kept.append((row["lemma"], total_d))
+                word_counter += total_d
+
+        kept.sort(key=lambda item: (-item[1], item[0]))  # total_d descending
+
+        for i, (lemma, total_d) in enumerate(kept):
+            kept[i] = (lemma, round(total_d * 100000 / word_counter, 2))
+
+        out_path = Path(options['output'])
+        write_csv(out_path, STEP2_COLUMNS, kept, delimiter)
+
+        n_docs_info = ""
+        if rows:
+            n_docs_info = (f"Target documents:     {rows[0].get('N_d', '?')}\n"
+                           f"Reference documents:  {rows[0].get('N_r', '?')}\n")
+        self.stdout.write("=== Summary (step 2) ===")
+        self.stdout.write(n_docs_info)
+        self.stdout.write(f"Thresholds:           d >= {options['min_docs']}, "
+              f"log_ratio >= {options['min_log_ratio']}")
+        self.stdout.write(f"Lemmas before filter: {len(rows)}")
+        self.stdout.write(f"Lemmas after filter:  {len(kept)}")
+        self.stdout.write(f"Written to:           {out_path}")
+
+ezt is ugyanúgy módosítsd. input a classification/data/full csv/law_typeból, output a classification/data/filtered csv/law_type-ba
+
+A:
+Elkészült a módosított filter_keywords.py. Használat:
+
+python manage.py filter_keywords csaladjog
+python manage.py filter_keywords csaladjog --min-docs 5 --min-log-ratio 1.5
+
+Mi változott:
+
+Csak a law_type kötelező. A bemenet a DATA_DIR/full csv/<law_type>/step1_full.csv, a kimenet a DATA_DIR/filtered csv/<law_type>/step2_filtered.csv.
+A kimeneti mappát szükség esetén létrehozza.
+A fájlnevek -i és -o kapcsolóval felülírhatók, de mindkettő csak fájlnevet vár, mappát nem.
+Rossz jogterület esetén kilistázza a full csv/ alatti elérhető mappákat. Ehhez az extract_keywords-ből importálja a resolve_law_type-ot és a FULL_CSV_DIR_NAME-et, így a mappanév egy helyen van definiálva.
+Ha a bemeneti fájl nem létezik, kilistázza a mappában lévő CSV-ket. Ha egy sincs, jelzi, hogy előbb az extract_keywords-öt kell futtatni.
+
+Javított hibák:
+
+Ha egyetlen lemma sem ment át a szűrőn, a normalizálás nullával osztott volna. Most üres (csak fejléces) fájlt ír, és figyelmeztet.
+--excel-hu-val készült (;-s) bemenetnél a normalizált értékek eddig tizedesponttal íródtak. Most tizedesvesszővel, a bemenettel egyezően.
+A régi docstringben szereplő elavult „Two sub-commands“ részt kivettem.
+
+Egy dolog, amit nem változtattam: a kimenet második oszlopának fejléce továbbra is total_d. Valójában viszont a normalizált gyakoriság van benne (előfordulás / 100 000 megtartott előfordulás). Ha szeretnéd, átnevezem az extract_keywords.py-ban lévő STEP2_COLUMNS-ban, például freq_per_100k-ra.
+
+Q:
+Mindhárom kód ellenőrizze, hogy van-e olyan nevű fájl már az output mappában, mint amit ő fog készíteni és ha igen, akkor szóljon a felhasználónak és kérdezze meg, hogy biztosan szeretné-e folytatni, mert az adatok felül fognak íródni. Ez után a kód írja felül a már meglévő fájlt teljesen. A kód legyen benne a már meglévő .py fájlokban
+
+A:
+Mindhárom parancsba beépítem a felülírás előtti megerősítést. A közös függvény az extract_keywords.py-ba kerül, a másik kettő onnan importálja.
+Mindhárom fájl elkészült, és mindegyikben benne van a felülírás előtti megerősítés.
+
+Hogyan működik:
+
+Mielőtt bármit írna, a parancs megnézi, hogy a kimeneti mappában van-e már ugyanolyan nevű fájl. Ha van, kiírja, melyek azok (legfeljebb 10-et listáz, a többit csak megszámolja), és megkérdezi:
+  WARNING: 1 output file(s) already exist and will be completely overwritten:
+    - .../classification/data/filtered csv/csaladjog/step2_filtered.csv
+  Are you sure you want to continue? [y/N]
+y/yes válaszra teljesen felülírja a meglévő fájlt. Bármi más válaszra (vagy Enterre, Ctrl+C-re) leáll: Aborted. No files were overwritten.
+Az extract_pdf_text az összes .txt-t ellenőrzi, amit az adott futás létrehozna. --combined esetén a <jogterulet>_combined.txt-t nézi.
+Az extract_keywords a lassú lemmatizálás előtt kérdez, hogy ne a futás végén derüljön ki, hogy nem akartad felülírni.
+
+Két további részlet:
+
+Mindhárom parancs kapott egy -y / --yes kapcsolót, amivel kérdés nélkül felülír. Ez scriptekből vagy ütemezett futtatásnál hasznos.
+Ha nincs terminál, amin válaszolni lehetne (pl. kimenet átirányításával futtatod), a parancs hibával leáll, és jelzi, hogy --yes-szel futtasd újra. Így nem tud csendben felülírni semmit.
+
+A közös confirm_overwrite függvény az extract_keywords.py-ban van, a másik kettő onnan importálja, így egy helyen tudod módosítani.
+
+A fájlokat szintaktikailag ellenőriztem. Futtatni itt nem tudtam őket, mert a Django nem telepíthető ebben a környezetben, ezért érdemes egyszer kipróbálni egy meglévő kimenettel, például python manage.py filter_keywords csaladjog kétszer egymás után.

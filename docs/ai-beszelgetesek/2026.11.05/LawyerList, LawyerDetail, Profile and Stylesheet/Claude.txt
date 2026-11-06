@@ -1,0 +1,117 @@
+Q:
+```
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+
+class User(AbstractUser):
+    def __str__(self):
+        return f'User: {self.username}'
+
+class Language(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    def __str__(self):
+        return self.name
+
+
+class Lawyer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    specialty = models.ManyToManyField('case.Category', related_name='lawyer_specialty')
+    introduction = models.TextField(max_length=500, blank=True, null=True)
+    language = models.ManyToManyField(Language, blank=True, related_name='lawyer_language')
+    city = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    is_online = models.BooleanField(default=False)
+    def __str__(self):
+        return f'Lawyer: {self.user.username}'
+
+    def list_specialty(self):
+        return ", ".join(str(category) for category in self.specialty.all())
+
+    def list_language(self):
+        return ", ".join(str(language) for language in self.language.all())
+
+    @property
+    def full_name(self):
+        return f'{self.user.first_name} {self.user.last_name}'.strip()
+```
+
+Generate templates for LawyerDetailView, LawyerListView and a user's profile page. I include my current CSS. Define class and id attributes based on that.
+
+
+```
+class LawyerListView(ListView):
+    model = Lawyer
+    template_name = "account/lawyer_list.html"
+    context_object_name = "lawyer_list"
+    paginate_by = 20
+
+    def get_queryset(self):
+        return (
+            Lawyer.objects
+            .select_related("user")
+            .prefetch_related("specialty", "language")
+            .order_by("user__last_name", "user__first_name")
+        )
+
+class LawyerDetailView(DetailView):
+    model = Lawyer
+    template_name = "account/lawyer_detail.html"
+    context_object_name = "lawyer"
+
+    def get_queryset(self):
+        return Lawyer.objects.select_related("user").prefetch_related("specialty", "language")
+```
+
+These are the view's for the Lawyer class. Generate one for the profile page
+
+A:
+I'll write the three templates and the profile view, using the class names your stylesheet already defines.
+
+I've written the three templates and `ProfileView`. The profile page always shows the logged-in user, so nobody can open someone else's profile by changing the URL. If that user also has a `Lawyer` record, a "Lawyer profile" section appears below their account details.
+
+**Things to check in your project:**
+- **Base template:** the templates use `{% extends "base.html" %}` and `{% block content %}`. Change these if your base template uses different names.
+- **URL names:** the templates expect `lawyer_list`, `lawyer_detail`, `profile`, `profile_edit` and `password_change`. If your apps use namespaces, add the prefix (for example `account:profile`), or the pages will crash when they render.
+- **Price:** it's shown as a plain number. Add a currency or "/hour" if you want one.
+
+**Bugs in the stylesheet that affect these pages:**
+1. **Section 13 has a misplaced closing brace.** The `}` on line 931 ends the `@media` block too early. That means the pagination rules on lines 933–945, which are meant for phones only, apply at every screen width. On desktop the page counter sits above prev/next instead of between them. Move that `}` to after line 945.
+2. **Hovering a lawyer row makes the text unreadable.** `.clickable-row:hover` turns the row near-white (`#f2f2f2`) behind your light text. Also, the general `main a` rule puts a brass underline on every cell link.
+3. **The lawyer table doesn't match the dark theme.** Its cell borders are light grey (`#ccc`), and its column headings get no styling at all.
+
+This patch fixes 2 and 3:
+
+```css
+.lawyer-table td        { border: 1px solid var(--rule); }
+.clickable-row td a     { border-bottom: none; }
+.clickable-row:hover    { background-color: var(--ink-raised); }
+
+/* add to the label selector in section 11 */
+label,
+.form-table th,
+.profile-table th,
+.lawyer-table th { /* …existing mono small-caps rules… */ }
+```
+
+Q:
+generate the css too
+
+A:
+I'll take your stylesheet, fix the three bugs, and style the lawyer list table to match the profile tables.
+
+Here's `style.css`: your full stylesheet with the fixes in place. I only changed sections 11–13; everything else is as you had it. I checked that the braces balance, but I haven't seen the pages in a browser yet.
+
+**What changed:**
+- **Lawyer list table:** it now matches your profile tables. The column headings use the same mono small-caps as your form labels, rows are separated by thin lines with no vertical borders, and every colour comes from your colour variables.
+  - The name column is set in the heading font as the main text of each row. The other columns are dimmer.
+  - Prices are right-aligned, with the digits lined up.
+- **Clickable rows:**
+  - Hovering a row gives it the slightly raised background instead of near-white, and the name turns brass.
+  - The brass underline from your general link rule no longer shows in the cells.
+  - When someone moves through the list with the keyboard, the current row gets the same highlight, and the focus outline is drawn inside the cell so the row's border doesn't cut it off.
+- **Media query brace:** I moved it, so the stacked pagination layout now applies only on phones. On desktop the page counter sits between prev and next again.
+- **On phones:** the six-column lawyer table scrolls sideways instead of squeezing each column very narrow.
+- **Category table:** its grey borders and pixel spacing now use your colour and spacing variables too.
+
+I didn't touch the evaluation-results tables. They still have `#333` borders, which are nearly invisible on your background. Their pass/fail rows also fill with solid green or red under light text, which is hard to read. I can restyle them the same way if you want.

@@ -20,7 +20,7 @@ urlpatterns = [
          ), name="logout"),
 
     # ex:/account/profile
-    path("profile/", views.profile, name="profile"),
+    path("profile/", views.ProfileView.as_view(), name="profile"),
 
     # ex:/account/profile-edit
     path("profile-edit/", views.profile_edit, name="profile_edit"),
@@ -69,5 +69,11 @@ urlpatterns = [
              template_name="account/password_change_done.html",
          ),
          name="password_change_done"),
+
+    # ex:/account/lawyers
+    path("lawyers/", views.LawyerListView.as_view(), name="lawyer_list"),
+
+    # ex:/account/lawyers
+    path("lawyers/<int:pk>/", views.LawyerDetailView.as_view(), name="lawyer_detail"),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

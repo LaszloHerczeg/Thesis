@@ -1,5 +1,5 @@
 /* ==========================================================================
-   # TODO: regenerate new stylesheet
+   # TODO: re-generate new stylesheet
    Laszlo Herczeg — portfolio & blog
    Dark theme: "ledger"
 
@@ -615,7 +615,8 @@ fieldset.module {
 
 label,
 .form-table th,
-.profile-table th {
+.profile-table th,
+.lawyer-table th {
     font-family: var(--font-mono);
     font-size: 0.72rem;
     font-weight: 400;
@@ -807,29 +808,132 @@ main form table td:first-child {
     font-size: 0.95rem;
 }
 
-/* Lawyer recommendation */
+/* --- lawyer recommendation ------------------------------------------- */
 
-.category-table,
-.lawyer-table {
-border-collapse: collapse;
-}
-.category-table td,
-.lawyer-table td {
-border: 1px solid #ccc;
-padding: 6px 12px;
-}
 .category-table {
-margin-bottom: 24px;
-}
-.label {
-font-weight: bold;
-}
-.lawyer-tables {
-display: flex;
-gap: 24px;
-flex-wrap: wrap;
+    border-collapse: collapse;
+    margin-bottom: var(--gap-lg);
 }
 
+.category-table td {
+    border: 1px solid var(--rule);
+    padding: 0.4rem 0.75rem;
+}
+
+.label { font-weight: 600; }
+
+.lawyer-tables {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap-lg);
+}
+
+/* --- lawyer list ------------------------------------------------------ */
+
+/* Same ledger look as .profile-table: mono small-caps column headings,
+   hairlines between rows only, no vertical rules. */
+.lawyer-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: var(--gap-lg);
+}
+
+.lawyer-table th {
+    text-align: left;
+    vertical-align: bottom;
+    padding: 0 0.75rem var(--gap-sm);
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+}
+
+.lawyer-table td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    font-size: 0.98rem;
+    color: var(--text-dim);
+}
+
+/* The name is the row's content; the other cells are details. */
+.lawyer-table td:first-child {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* Price: right-aligned, figures the same width so the column lines up. */
+.lawyer-table th:nth-child(5),
+.lawyer-table td:nth-child(5) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.lawyer-table tbody tr:last-child td { border-bottom: none; }
+
+/* Evaluation results */
+/* Both tables: every edge shown, text centered */
+.table-evalrun,
+.table-evalclassification {
+    border-collapse: collapse;
+    border: 1px solid #333;
+    margin-bottom: 1.5rem;
+}
+
+.table-evalrun th,
+.table-evalrun td,
+.table-evalclassification th,
+.table-evalclassification td {
+    border: 1px solid #333;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Header rows */
+.table-evalrun-head th,
+.table-evalclassification-head th {
+    background-color: var(--ink-raised);
+    font-weight: bold;
+}
+
+/* Pass: expected == predicted AND followup_expected == followup_asked */
+.table-evalclassification-body.row-pass td {
+    background-color: var(--success);   /* green */
+}
+
+/* Fail: any condition not met */
+.table-evalclassification-body.row-fail td {
+    background-color: var(--danger);   /* red */
+}
+
+/* --- clickable rows (lawyer list, case list) ------------------------- */
+
+/* The link fills the cell, so the padding lives on the link. */
+.clickable-row td { padding: 0; }
+
+/* `main a` adds a brass colour and underline to every link in <main>;
+   both are cleared here so the row reads as a table, not a run of links. */
+main .clickable-row td a {
+    display: block;
+    padding: 0.85rem 0.75rem;
+    color: inherit;
+    border-bottom: none;
+    text-decoration: none;
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+/* :focus-within lights the row when a keyboard user tabs onto its link. */
+.clickable-row:hover,
+.clickable-row:focus-within { background-color: var(--ink-raised); }
+
+main .clickable-row:hover td:first-child a { color: var(--brass-bright); }
+
+/* Draw the focus ring inside the cell so the row border doesn't clip it. */
+.clickable-row a:focus-visible { outline-offset: -2px; }
 
 /* 13. Responsive =========================================================== */
 
@@ -878,8 +982,17 @@ flex-wrap: wrap;
     .form-table td { padding-bottom: var(--gap); }
 
     .profile-table th { width: 40%; }
-}
 
+    /* Six columns don't fit on a phone. Let the table scroll sideways
+       instead of squeezing every cell into a narrow column. */
+    .lawyer-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .lawyer-table td { white-space: nowrap; }
+
+    /* Pagination: the counter goes on its own line, prev/next below it. */
     .step-links {
         grid-template-columns: 1fr 1fr;
         gap: var(--gap-sm);
@@ -893,6 +1006,7 @@ flex-wrap: wrap;
 
     .page-prev { grid-row: 2; grid-column: 1; }
     .page-next { grid-row: 2; grid-column: 2; }
+}
 
 
 /* 14. Accessibility ======================================================== */

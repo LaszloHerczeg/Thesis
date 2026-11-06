@@ -9,6 +9,11 @@ FORMAT_CHOICES = [
     ('online', 'Online')
 ]
 
+MODE_CHOICES = [
+    ('rule', 'Rule-based'),
+    ('llm', 'LLM-based')
+]
+
 NONE = "none"
 
 
@@ -66,6 +71,13 @@ class CaseForm(forms.ModelForm):
         decimal_places=2,
         step_size=1000,
         widget=forms.NumberInput(attrs={'placeholder': '60000'}),
+    )
+
+    mode = forms.ChoiceField(
+        label='Mode:',
+        choices=MODE_CHOICES,
+        initial='rule',
+        widget=forms.RadioSelect(),
     )
 
     class Meta:

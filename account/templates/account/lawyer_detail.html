@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lawyer.full_name|default:lawyer.user.username }}{% endblock %}
+
+{% block content %}
+<h1>{{ lawyer.full_name|default:lawyer.user.username }}</h1>
+
+{% if lawyer.list_specialty %}
+<h3>{{ lawyer.list_specialty }}</h3>
+{% endif %}
+
+{% if lawyer.introduction %}
+{{ lawyer.introduction|linebreaks }}
+{% endif %}
+
+<table class="profile-table" id="lawyer-detail">
+    <tbody>
+        <tr>
+            <th scope="row">Specialty</th>
+            <td>{{ lawyer.list_specialty|default:"—" }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Languages</th>
+            <td>{{ lawyer.list_language|default:"—" }}</td>
+        </tr>
+        <tr>
+            <th scope="row">City</th>
+            <td>{{ lawyer.city }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Price</th>
+            <td>{{ lawyer.price }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Online</th>
+            <td>{{ lawyer.is_online|yesno:"Yes,No" }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    <a href="{% url 'account:lawyer_list' %}">&larr; All lawyers</a>
+    {% if user == lawyer.user %}
+        <a href="{% url 'account:profile' %}">Your profile</a>
+    {% endif %}
+</p>
+{% endblock %}

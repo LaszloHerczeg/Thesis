@@ -10,7 +10,7 @@ def matching(case, classification):
     if classification.is_matching_made:
         recommendation_list  = Recommendation.objects.filter(case=case, classification=classification)
         for i in range(len(recommendation_list)):
-            recommendation = recommendation_list.get(rank = i + 1)
+            recommendation = recommendation_list.get(rank=i+1)
             recommendation_pk_list.append(recommendation.pk)
 
     else:
@@ -26,9 +26,11 @@ def matching(case, classification):
         cheapest = lawyer_list.order_by(F("price").asc(nulls_last=True), "user__last_name")[:3]
 
         for i, lawyer in enumerate(cheapest):
-            recommendation = Recommendation(case=case, classification=classification, lawyer=lawyer, rank=i)
+            recommendation = Recommendation(case=case, classification=classification, lawyer=lawyer, rank=i+1)
             recommendation.save()
             recommendation_pk_list.append(recommendation.pk)
+        classification.is_matching_made = True
+        classification.save(update_fields=["is_matching_made"])
 
     return recommendation_pk_list
 

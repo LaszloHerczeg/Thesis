@@ -15,6 +15,7 @@ class Language(models.Model):
 class Lawyer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     specialty = models.ManyToManyField('case.Category', related_name='lawyer_specialty')
+    introduction = models.TextField(max_length=500, blank=True, null=True)
     language = models.ManyToManyField(Language, blank=True, related_name='lawyer_language')
     city = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -27,3 +28,7 @@ class Lawyer(models.Model):
 
     def list_language(self):
         return ", ".join(str(language) for language in self.language.all())
+
+    @property
+    def full_name(self):
+        return f'{self.user.first_name} {self.user.last_name}'.strip()
