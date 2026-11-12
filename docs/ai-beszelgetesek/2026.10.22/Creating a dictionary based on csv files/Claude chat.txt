@@ -1,0 +1,24 @@
+Q:
+I have 2 .csv files. The first column is the lemma and the second column is the number of how many times it's represented in my documents. The seperator is ','.   Before reading the lines, create sum_hazassag and sum_munkaviszony variables. Count the sum of the numbers in these variables.
+Create 1-1 dictionaries based on the files. The key is the lemma, the value is the number from the csv file multiplied by (100000 / the sum of the numbers in the file).
+The names of the files are:
+
+lemma_frequencies_házasság
+lemma_frequencies_munkaviszony
+Create seperate dictionaries for the files.
+
+A:
+The files aren’t attached here, so I wrote the script to run next to your two CSVs.
+
+The script, normalize_lemmas.py, reads each file twice. The first pass adds up the counts into sum_hazassag and sum_munkaviszony, which start at 0 before any lines are read. The second pass builds hazassag_dict and munkaviszony_dict, where each value is count * (100000 / sum). That makes the values in each dictionary add up to 100,000, so the two files are comparable as frequencies per 100,000 tokens.
+
+The script makes two assumptions you may need to adjust:
+
+File extension: the files are named with a .csv extension. If yours don’t have one, edit the two filenames at the top.
+Header row: there is no header row. If your files have one, add next(reader) after each csv.reader(...) line, or the int() call will fail on the header text.
+
+Q:
+There is one header line in both of the files
+
+A:
+I updated normalize_lemmas.py to skip the header. Each time the script reads a file, it now calls next(reader) first. This happens in both the summing pass and the dictionary-building pass, so the header is never added to the sums or put in the dictionaries.

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Lawyers{% endblock %}
+
+{% block content %}
+<h1>Lawyers</h1>
+
+<p class="result-count">
+    {{ page_obj.paginator.count }} lawyer{{ page_obj.paginator.count|pluralize }}
+</p>
+
+{% if lawyer_list %}
+<table class="lawyer-table" id="lawyer-list">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Specialty</th>
+            <th scope="col">Languages</th>
+            <th scope="col">City</th>
+            <th scope="col">Price</th>
+            <th scope="col">Online</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lawyer in lawyer_list %}
+        {% url 'lawyer_detail' lawyer.pk as lawyer_url %}
+        {# Every cell holds the same link so the whole row is clickable.   #}
+        {# Only the first one is in the tab order, so keyboard users stop #}
+        {# once per row instead of six times.                              #}
+        <tr class="clickable-row">
+            <td><a href="{{ lawyer_url }}">{{ lawyer.full_name|default:lawyer.user.username }}</a></td>
+            <td><a href="{{ lawyer_url }}" tabindex="-1">{{ lawyer.list_specialty|default:"—" }}</a></td>
+            <td><a href="{{ lawyer_url }}" tabindex="-1">{{ lawyer.list_language|default:"—" }}</a></td>
+            <td><a href="{{ lawyer_url }}" tabindex="-1">{{ lawyer.city }}</a></td>
+            <td><a href="{{ lawyer_url }}" tabindex="-1">{{ lawyer.price }}</a></td>
+            <td><a href="{{ lawyer_url }}" tabindex="-1">{{ lawyer.is_online|yesno:"Yes,No" }}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No lawyers are listed yet.</p>
+{% endif %}
+
+{% if is_paginated %}
+<nav class="pagination" aria-label="Pagination">
+    <div class="step-links">
+        {# Both side spans are always rendered, even when empty: the grid #}
+        {# needs all three items to keep the counter centred.             #}
+        <span class="page-prev">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+        </span>
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        <span class="page-next">
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</nav>
+{% endif %}
+{% endblock %}

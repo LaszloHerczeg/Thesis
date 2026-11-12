@@ -1,0 +1,163 @@
+Q:
+{% extends "base.html" %}
+
+
+{% block title %}
+    PLaceholder title
+{% endblock %}
+
+
+{% block content %}
+
+<table class="table-evalrun">
+  <tr class="table-evalrun-head">
+      <th>Id</th>
+      <th>Mode</th>
+      <th>Accuracy</th>
+      <th>Duration</th>
+  </tr>
+  <tr class="table-evalrun-body">
+      <td>{{ id }}</td>
+      <td>{{ mode }}</td>
+      <td>{{ accuracy|floatformat:2 }}</td>
+      <td>{{ duration|floatformat:2 }}</td>
+  </tr>
+</table>
+
+<table class="table-evalclassification">
+    <tr class="table-evalclassification-head">
+        <th>Key</th>
+        <th>Expected category</th>
+        <th>Predicted category</th>
+        <th>Score</th>
+        <th>Follow-up expected</th>
+        <th>Follow-up asked</th>
+        <th>Duration</th>
+    </tr>
+    {% for row in results %}
+        <tr class="table-evalclassification-body">
+            <td>{{ row.key }}</td>
+            <td>{{ row.expected }}</td>
+            <td>{{ row.predicted }}</td>
+            <td>{{ row.score|floatformat:2 }}</td>
+            <td>{{ row.followup_expected|yesno:"Yes,No" }}</td>
+            <td>{{ row.followup_asked|yesno:"Yes,No" }}</td>
+            <td>{{ row.duration|floatformat:2 }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
+Write css commands so:
+
+a row is green in "table-evalclassification" if 2 things are true: (expected == predicted) and (followup_expected == followup_asked)
+a row is red in "table-evalclassification" if the requirements are not met
+texts are center-aligned
+show all of the edges of the tables
+
+A:
+Adding a conditional class to the template row
+CSS can’t compare cell values, so the template has to decide pass/fail and add a class to the row. The CSS then colors rows by that class.
+
+1. Template change. Replace the <tr> inside the for loop:
+
+django
+{% for row in results %}
+    <tr class="table-evalclassification-body {% if row.expected == row.predicted and row.followup_expected == row.followup_asked %}row-pass{% else %}row-fail{% endif %}">
+        <td>{{ row.key }}</td>
+        <td>{{ row.expected }}</td>
+        <td>{{ row.predicted }}</td>
+        <td>{{ row.score|floatformat:2 }}</td>
+        <td>{{ row.followup_expected|yesno:"Yes,No" }}</td>
+        <td>{{ row.followup_asked|yesno:"Yes,No" }}</td>
+        <td>{{ row.duration|floatformat:2 }}</td>
+    </tr>
+{% endfor %}
+2. CSS:
+
+css
+/* Both tables: every edge shown, text centered */
+.table-evalrun,
+.table-evalclassification {
+    border-collapse: collapse;
+    border: 1px solid #333;
+    margin-bottom: 1.5rem;
+}
+
+.table-evalrun th,
+.table-evalrun td,
+.table-evalclassification th,
+.table-evalclassification td {
+    border: 1px solid #333;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Header rows */
+.table-evalrun-head th,
+.table-evalclassification-head th {
+    background-color: #e9ecef;
+    font-weight: bold;
+}
+
+/* Pass: expected == predicted AND followup_expected == followup_asked */
+.table-evalclassification-body.row-pass td {
+    background-color: #c8e6c9;   /* green */
+}
+
+/* Fail: any condition not met */
+.table-evalclassification-body.row-fail td {
+    background-color: #ffcdd2;   /* red */
+}
+Notes:
+
+border-collapse: collapse merges neighboring cell borders into single lines, so every edge shows without doubled borders.
+The colors are light shades so the text stays readable. For solid colors, use 
+#4caf50 and 
+#f44336 and add color: #fff;.
+If expected and predicted are different types (for example, a model instance and a string), the == check is never true and every row turns red. If that happens, compare a field on each, like row.expected.name == row.predicted.name.
+
+Q:
+Change the requirements for the red and the green color:
+
+Green if:
+-(expected == predicted) and (followup_expected == followup_asked == False)
+-(expected != predicted) and (followup_expected == followup_asked == True)
+
+Red:
+-in all other cases
+
+A:
+Checking Django's operator precedence for the condition
+Only the template condition changes. The CSS stays the same.
+
+Django’s {% if %} tag doesn’t allow parentheses. It does give and higher precedence than or, so you can write the two cases one after the other:
+
+django
+{% for row in results %}
+    <tr class="table-evalclassification-body {% if row.expected == row.predicted and not row.followup_expected and not row.followup_asked or row.expected != row.predicted and row.followup_expected and row.followup_asked %}row-pass{% else %}row-fail{% endif %}">
+        <td>{{ row.key }}</td>
+        <td>{{ row.expected }}</td>
+        <td>{{ row.predicted }}</td>
+        <td>{{ row.score|floatformat:2 }}</td>
+        <td>{{ row.followup_expected|yesno:"Yes,No" }}</td>
+        <td>{{ row.followup_asked|yesno:"Yes,No" }}</td>
+        <td>{{ row.duration|floatformat:2 }}</td>
+    </tr>
+{% endfor %}
+Django reads it as:
+
+(expected == predicted AND NOT followup_expected AND NOT followup_asked)
+OR
+(expected != predicted AND followup_expected AND followup_asked)
+Note: not and bare truthiness checks treat None the same as False. If a follow-up field can be None and those rows should be red, compare explicitly: replace not row.followup_expected with row.followup_expected == False, and the plain row.followup_expected with row.followup_expected == True (the same for followup_asked).
+
+The condition is long, so you could compute it in the view instead. That keeps the template simple and makes the logic easy to test:
+
+python
+for row in results:
+    same = row["expected"] == row["predicted"]
+    fe, fa = row["followup_expected"], row["followup_asked"]
+    row["passed"] = (same and fe is False and fa is False) or (not same and fe is True and fa is True)
+Then the template only needs {% if row.passed %}row-pass{% else %}row-fail{% endif %}. This version uses strict is True/is False checks, so None counts as red. If results holds objects instead of dicts, use attribute access, e.g. row.expected.

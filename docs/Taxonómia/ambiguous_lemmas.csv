@@ -1,0 +1,741 @@
+﻿substring,substring_score,longer_phrase,category,weight,difference_percent
+adat,83,peradat,Családjog,20,75.9
+adat,83,rendelkezés álló adat,Családjog,3,96.4
+adat,83,álló adat,Családjog,3,96.4
+adat,83,adat alap,Munkajog,12,85.5
+adat,83,adatvédelmi,Munkajog,4,95.2
+adat,83,adat alap megállapítható,Munkajog,3,96.4
+alapos,29,részben alapos,Családjog,8,72.4
+alapos,29,fellebbezés részben alapos,Családjog,5,82.8
+alapos,29,alapos talál,Munkajog,3,89.7
+alábbi,23,megváltoztat az alábbi,Családjog,4,82.6
+alábbi,23,meghoz az alábbi,Munkajog,8,65.2
+alábbi,23,alábbi mutat,Munkajog,5,78.3
+alábbi,23,alábbi í,Munkajog,5,78.3
+amennyiben,50,amennyiben a gyermek,Családjog,7,86.0
+amennyiben,50,amennyiben a felperes,Munkajog,4,92.0
+arány,30,egyenlő arány,Családjog,5,83.3
+arány,30,arány kötelez,Családjog,4,86.7
+arány,30,azonos arány,Családjog,3,90.0
+arány,30,arány áll,Munkajog,5,83.3
+azonos,48,azonos idő,Családjog,4,91.7
+azonos,48,közel azonos,Családjog,4,91.7
+azonos,48,azonos arány,Családjog,3,93.8
+azonos,48,azonos munkakör,Munkajog,6,87.5
+bizonyít,77,szakértői bizonyítás,Családjog,7,90.9
+bizonyít,77,bizonyítás eredmény,Munkajog,7,90.9
+bizonyít,77,bizonyítás lefolytat,Munkajog,7,90.9
+bizonyít,77,tud bizonyít,Munkajog,7,90.9
+bizonyítás,74,szakértői bizonyítás,Családjog,7,90.5
+bizonyítás,74,bizonyítás eredmény,Munkajog,7,90.5
+bizonyítás,74,bizonyítás lefolytat,Munkajog,7,90.5
+bizonyítás,74,lefolytatott bizonyítási,Munkajog,5,93.2
+biztosít,40,biztosítható,Családjog,9,77.5
+biztosít,40,biztosít a gyermek,Családjog,7,82.5
+biztosít,40,lehetőség biztosít,Munkajog,5,87.5
+budapest,32,budapesti,Családjog,5,84.4
+budapest,32,per a budapesti,Családjog,3,90.6
+budapest,32,budapest környéki,Munkajog,5,84.4
+budapest,32,budapest környéki törvényszék,Munkajog,5,84.4
+budapest,32,per a budapest,Munkajog,4,87.5
+bíró,38,bíró a tanács,Családjog,4,89.5
+bíró,38,elnök bíró,Családjog,4,89.5
+bíró,38,k előadó bíró,Családjog,4,89.5
+bíró,38,bíró bíró,Munkajog,10,73.7
+bíró,38,elnök előadó bíró,Munkajog,9,76.3
+bíró,38,előadó bíró bíró,Munkajog,9,76.3
+bíróság ítélet,61,bíróság ítélet írt,Családjog,4,93.4
+bíróság ítélet,61,bíróság ítélet megváltoztatás,Munkajog,5,91.8
+bíróság ítélet,61,bíróság ítélet hatály,Munkajog,3,95.1
+bírósági,28,jogerős bírósági,Családjog,4,85.7
+bírósági,28,bírósági határozat,Családjog,3,89.3
+bírósági,28,bírósági határozat hozó,Családjog,3,89.3
+bírósági,28,bírósági eljárás megállapítható,Munkajog,14,50.0
+cím,65,kapcsolattartás cím,Családjog,11,83.1
+cím,65,ügyvéd cím,Családjog,5,92.3
+cím,65,időszakos kapcsolattartás cím,Családjog,4,93.8
+cím,65,cím járó,Munkajog,13,80.0
+cím,65,jövedelem cím,Munkajog,13,80.0
+cím,65,cím járó kártérítés,Munkajog,11,83.1
+december,79,év december,Családjog,13,83.5
+december,79,óra december,Családjog,11,86.1
+december,79,páros év december,Családjog,7,91.1
+december,79,decemberi,Munkajog,3,96.2
+dolgozik,31,kft dolgozik,Családjog,3,90.3
+dolgozik,31,dolgozik az alperes,Munkajog,3,90.3
+dí,1,szakértői díj,Családjog,27,2600.0
+dí,1,forint szakértői díj,Családjog,11,1000.0
+dí,1,díj megfizetés,Családjog,4,300.0
+dí,1,távolléti díj,Munkajog,11,1000.0
+dönt,48,közös dönt,Családjog,4,91.7
+dönt,48,dönthet,Munkajog,4,91.7
+döntés,161,eseti döntés,Családjog,5,96.9
+döntés,161,vonatkozó döntés,Családjog,3,98.1
+döntés,161,másodfokú bíróság döntés,Munkajog,11,93.2
+döntés,161,döntési,Munkajog,9,94.4
+döntés,161,elsőfokú bíróság döntés,Munkajog,9,94.4
+egyenlő,72,egyenlő arány,Családjog,5,93.1
+egyenlő,72,egyenlő bánásmód követelmény,Munkajog,32,55.6
+egyenlő,72,egyenlő bánásmód megsértés,Munkajog,16,77.8
+együtt,30,együttműködik,Családjog,6,80.0
+együtt,30,együttműködési,Munkajog,15,50.0
+elem,11,kérelem terjeszt,Családjog,5,54.5
+elem,11,kérelem terjeszt elő,Családjog,5,54.5
+elem,11,alperes kérelem,Családjog,3,72.7
+elem,11,védelem,Munkajog,36,227.3
+elem,11,másodlagos kereseti kérelem,Munkajog,5,54.5
+elem,11,pont értelem,Munkajog,5,54.5
+ellátás,36,egészségügyi ellátás,Családjog,8,77.8
+ellátás,36,munkakör ellátás,Munkajog,16,55.6
+ellátás,36,feladat ellátás,Munkajog,11,69.4
+ellátás,36,ellátás szükséges,Munkajog,6,83.3
+elmarad,22,elmaradt kapcsolattartás,Családjog,11,50.0
+elmarad,22,elmaradt időszakos,Családjog,4,81.8
+elmarad,22,elmaradt időszakos kapcsolattartás,Családjog,4,81.8
+elmarad,22,elmaradt jövedelem cím,Munkajog,9,59.1
+elmarad,22,elmarad jövedelem,Munkajog,7,68.2
+elmarad,22,forint elmarad jövedelem,Munkajog,7,68.2
+elmaradt,39,elmaradt kapcsolattartás,Családjog,11,71.8
+elmaradt,39,elmaradt időszakos,Családjog,4,89.7
+elmaradt,39,elmaradt időszakos kapcsolattartás,Családjog,4,89.7
+elmaradt,39,elmaradt jövedelem,Munkajog,15,61.5
+elmaradt,39,elmaradt munkabér,Munkajog,12,69.2
+elmaradt,39,elmaradt jövedelem cím,Munkajog,9,76.9
+elnök,19,elnök bíró,Családjog,4,78.9
+elnök,19,tanács elnök bíró,Családjog,4,78.9
+elnök,19,elnök előadó,Munkajog,9,52.6
+elnök,19,elnök előadó bíró,Munkajog,9,52.6
+elnök,19,tanács elnök előadó,Munkajog,9,52.6
+elsőfokú bíróság,435,elsőfokú bíróság elmulaszt,Családjog,3,99.3
+elsőfokú bíróság,435,elsőfokú bíróság megállapít,Munkajog,12,97.2
+elsőfokú bíróság,435,elsőfokú bíróság döntés,Munkajog,9,97.9
+elsőfokú bíróság,435,elsőfokú bíróság téves,Munkajog,8,98.2
+elsőfokú ítélet,82,elsőfokú ítélet meghozatal,Családjog,5,93.9
+elsőfokú ítélet,82,elsőfokú ítélet részbeni,Családjog,5,93.9
+elsőfokú ítélet,82,elsőfokú ítélet megváltoztatás,Munkajog,10,87.8
+elsőfokú ítélet,82,elsőfokú ítélet megállapított,Munkajog,3,96.3
+elutasít,16,viszontkereset elutasít,Családjog,6,62.5
+elutasít,16,viszontkereset elutasítás,Családjog,3,81.2
+elutasít,16,viszontkereset elutasítás kér,Családjog,3,81.2
+elutasít,16,elutasítás irányul,Munkajog,4,75.0
+elutasít,16,kereset elutasítás irányul,Munkajog,4,75.0
+elutasítás,41,viszontkereset elutasítás,Családjog,3,92.7
+elutasítás,41,viszontkereset elutasítás kér,Családjog,3,92.7
+elutasítás,41,kereset elutasítás,Munkajog,16,61.0
+elutasítás,41,elutasítás irányul,Munkajog,4,90.2
+elutasítás,41,kereset elutasítás irányul,Munkajog,4,90.2
+eredmény,27,tanulmányi eredmény,Családjog,4,85.2
+eredmény,27,vezet eredmény,Családjog,4,85.2
+eredmény,27,bizonyítás eredmény,Munkajog,7,74.1
+eredmény,27,bizonyítás eredmény okszerűtlen,Munkajog,4,85.2
+eredmény,27,eredmény okszerűtlen,Munkajog,4,85.2
+eset,188,kapcsolattartás eset,Családjog,11,94.1
+eset,188,eseti,Családjog,6,96.8
+eset,188,eset a gyermek,Családjog,5,97.3
+eset,188,jelen eset,Munkajog,11,94.1
+eset,188,felperes eset,Munkajog,8,95.7
+eset,188,perbeli eset,Munkajog,8,95.7
+fa,1,áfa növelt,Családjog,4,300.0
+fa,1,forint és áfa,Munkajog,11,1000.0
+fa,1,áfa másodfokú,Munkajog,8,700.0
+fa,1,áfa másodfokú perköltség,Munkajog,8,700.0
+felhív,15,hivatala külön felhívás,Családjog,5,66.7
+felhív,15,bíróság felhív,Családjog,3,80.0
+felhív,15,másodfokú bíróság felhív,Családjog,3,80.0
+felhív,15,felhív a figyelem,Munkajog,3,80.0
+fellebbezési,79,alperes fellebbezési ellenkérelm,Családjog,3,96.2
+fellebbezési,79,fellebbezési eljárás,Munkajog,9,88.6
+fellebbezési,79,felperes fellebbezési ellenkérelem,Munkajog,6,92.4
+fellebbezési,79,rótt fellebbezési,Munkajog,6,92.4
+feltétel,76,feltétel fennáll,Családjog,3,96.1
+feltétel,76,foglalt feltétel,Munkajog,8,89.5
+feltétel,76,feltétel fennállás,Munkajog,3,96.1
+feltétel,76,feltétel nem teljesül,Munkajog,3,96.1
+felül,10,folyamatos gyermektartásdíj felül,Családjog,3,70.0
+felül,10,gyermektartásdíj felül,Családjog,3,70.0
+felül,10,bírói mérlegelés felülbírálat,Munkajog,3,70.0
+felül,10,bíróság szabad felülmérlegelhet,Munkajog,3,70.0
+felül,10,felülbírálat általános,Munkajog,3,70.0
+fenn,28,nap áll fenn,Családjog,6,78.6
+fenn,28,feltétel fennáll,Családjog,3,89.3
+fenn,28,munkaviszony fenntartás,Munkajog,14,50.0
+fenn,28,fennállás,Munkajog,13,53.6
+fenn,28,feltétel fennállás,Munkajog,3,89.3
+fennáll,15,feltétel fennáll,Családjog,3,80.0
+fennáll,15,feltétel fennállás,Munkajog,3,80.0
+figyelem,148,figyelem kísér,Családjog,5,96.6
+figyelem,148,figyelem kívül hagy,Munkajog,10,93.2
+figyelem,148,bekezdés figyelem,Munkajog,8,94.6
+figyelem,148,elsőfokú bíróság figyelem,Munkajog,4,97.3
+folyt,1,jog folytán,Családjog,6,500.0
+folyt,1,költségfeljegyzési jog folytán,Családjog,6,500.0
+folyt,1,előterjesztett fellebbezés folytán,Munkajog,5,400.0
+folyt,1,folytán alkalmazandó,Munkajog,3,200.0
+folytán,31,jog folytán,Családjog,6,80.6
+folytán,31,költségfeljegyzési jog folytán,Családjog,6,80.6
+folytán,31,előterjesztett fellebbezés folytán,Munkajog,5,83.9
+folytán,31,folytán alkalmazandó,Munkajog,3,90.3
+fővárosi,236,fővárosi törvényszék gazdasági,Családjog,11,95.3
+fővárosi,236,per a fővárosi,Munkajog,7,97.0
+gazdaság,1,gazdasági hivatala,Családjog,13,1200.0
+gazdaság,1,törvényszék gazdasági,Családjog,13,1200.0
+gazdaság,1,törvényszék gazdasági hivatala,Családjog,13,1200.0
+gazdaság,1,gazdasági érdek,Munkajog,8,700.0
+gazdaság,1,jogos gazdasági,Munkajog,6,500.0
+gazdaság,1,jogos gazdasági érdek,Munkajog,5,400.0
+gazdasági,38,gazdasági hivatala,Családjog,13,65.8
+gazdasági,38,törvényszék gazdasági,Családjog,13,65.8
+gazdasági,38,törvényszék gazdasági hivatala,Családjog,13,65.8
+gazdasági,38,gazdasági érdek,Munkajog,8,78.9
+gazdasági,38,jogos gazdasági,Munkajog,6,84.2
+gazdasági,38,jogos gazdasági érdek,Munkajog,5,86.8
+gyakorlat,108,ítélkezési gyakorlat,Családjog,10,90.7
+gyakorlat,108,bírói gyakorlat,Munkajog,21,80.6
+gyakorlat,108,gyakorlat alap,Munkajog,5,95.4
+gyakorlás,115,jog gyakorlás,Családjog,15,87.0
+gyakorlás,115,felügyeleti jog gyakorlás,Családjog,14,87.8
+gyakorlás,115,gyakorlás a felperes,Családjog,10,91.3
+gyakorlás,115,joggyakorlás,Munkajog,8,93.0
+határozat,76,határozat hozó,Családjog,4,94.7
+határozat,76,határozat hozó bíróság,Családjog,4,94.7
+határozat,76,bírósági határozat,Családjog,3,96.1
+határozat,76,ab határozat,Munkajog,15,80.3
+határozat,76,precedensképes határozat,Munkajog,9,88.2
+határozat,76,számú határozat,Munkajog,9,88.2
+ható,3,biztosítható,Családjog,9,200.0
+ható,3,róható,Családjog,6,100.0
+ható,3,róható ok marad,Családjog,5,66.7
+ható,3,bírósági eljárás megállapítható,Munkajog,14,366.7
+ható,3,eljárás megállapítható,Munkajog,14,366.7
+ható,3,eljárás megállapítható ügyvédi,Munkajog,13,333.3
+havi,74,havi nettó,Családjog,10,86.5
+havi,74,gyermek havi,Családjog,6,91.9
+havi,74,havi nettó jövedelem,Családjog,5,93.2
+havi,74,havi bruttó,Munkajog,4,94.6
+hely,53,mindenkori lakóhely,Családjog,18,66.0
+hely,53,felperes mindenkori lakóhely,Családjog,13,75.5
+hely,53,átvétel hely,Családjog,9,83.0
+hely,53,hagy hely,Munkajog,6,88.7
+hely,53,hely fellebbezés,Munkajog,6,88.7
+helybenhagy,14,rendelkezés helybenhagyás,Családjog,4,71.4
+helybenhagy,14,rendelkezés helybenhagyás kér,Családjog,4,71.4
+helybenhagy,14,támadott rendelkezés helybenhagyás,Családjog,3,78.6
+helybenhagy,14,helybenhagyás irányul,Munkajog,5,64.3
+helybenhagy,14,ítélet helybenhagyás irányul,Munkajog,5,64.3
+helybenhagy,14,alap helybenhagy,Munkajog,4,71.4
+helybenhagyás,13,rendelkezés helybenhagyás,Családjog,4,69.2
+helybenhagyás,13,rendelkezés helybenhagyás kér,Családjog,4,69.2
+helybenhagyás,13,támadott rendelkezés helybenhagyás,Családjog,3,76.9
+helybenhagyás,13,helybenhagyás irányul,Munkajog,5,61.5
+helybenhagyás,13,ítélet helybenhagyás irányul,Munkajog,5,61.5
+helyreállít,1,életközösség helyreállítás,Családjog,3,200.0
+helyreállít,1,munkaviszony helyreállítás,Munkajog,5,400.0
+het,1,heti,Családjog,18,1700.0
+het,1,heti váltás,Családjog,13,1200.0
+het,1,minősülhet,Munkajog,10,900.0
+het,1,felmondás megszüntethet,Munkajog,9,800.0
+het,1,megszüntethet,Munkajog,9,800.0
+igény,69,felperes által igény,Családjog,3,95.7
+igény,69,sérelemdíj iránti igény,Munkajog,4,94.2
+igény,69,kártérítési igény,Munkajog,3,95.7
+igény,69,perköltség igény,Munkajog,3,95.7
+illeték,91,eljárási illeték,Családjog,30,67.0
+illeték,91,forint eljárási illeték,Családjog,9,90.1
+illeték,91,illeték az állami,Családjog,7,92.3
+illeték,91,illeték szóló,Munkajog,12,86.8
+illeték,91,illeték a nemzeti,Munkajog,6,93.4
+illeték,91,rótt fellebbezési illeték,Munkajog,6,93.4
+illeték megfizetés,13,illeték megfizetés sor,Családjog,5,61.5
+illeték megfizetés,13,fellebbezési illeték megfizetés,Munkajog,4,69.2
+indokol,21,indokolt szükséglet,Családjog,7,66.7
+indokol,21,ítélet jogi indokolás,Családjog,4,81.0
+indokol,21,indokolás a házasság,Családjog,3,85.7
+indokol,21,felmondás indokolás,Munkajog,33,57.1
+indokol,21,határozat indokolás,Munkajog,6,71.4
+indokol,21,indokolás világos,Munkajog,4,81.0
+indokolás,126,ítélet jogi indokolás,Családjog,4,96.8
+indokolás,126,indokolás a házasság,Családjog,3,97.6
+indokolás,126,felmondás indokolás,Munkajog,33,73.8
+indokolás,126,határozat indokolás,Munkajog,6,95.2
+indokolás,126,indokolás világos,Munkajog,4,96.8
+indul,15,indult per,Családjog,4,73.3
+indul,15,iránt indult,Családjog,4,73.3
+indul,15,iránt indult per,Családjog,4,73.3
+indul,15,indul per,Munkajog,3,80.0
+intézkedés,85,ideiglenes intézkedés,Családjog,13,84.7
+intézkedés,85,külön intézkedés,Családjog,4,95.3
+intézkedés,85,munkáltatói intézkedés,Munkajog,24,71.8
+iránt,13,felbontás iránti,Családjog,6,53.8
+iránt,13,házasság felbontás iránti,Családjog,6,53.8
+iránt,13,rendezés iránti,Családjog,6,53.8
+iránt,13,sérelemdíj iránti,Munkajog,5,61.5
+iránt,13,jogkövetkezmény iránt,Munkajog,4,69.2
+iránt,13,jogkövetkezmény iránt indított,Munkajog,4,69.2
+iránti,39,felbontás iránti,Családjog,6,84.6
+iránti,39,házasság felbontás iránti,Családjog,6,84.6
+iránti,39,rendezés iránti,Családjog,6,84.6
+iránti,39,sérelemdíj iránti,Munkajog,5,87.2
+iránti,39,sérelemdíj iránti igény,Munkajog,4,89.7
+j,5,szakértői díj,Családjog,27,440.0
+j,5,forint szakértői díj,Családjog,11,120.0
+j,5,távolléti díj,Munkajog,11,120.0
+jegyző,2,alatti jegyzőkönyv,Családjog,6,200.0
+jegyző,2,sorszám alatti jegyzőkönyv,Családjog,6,200.0
+jegyző,2,jegyzőkönyv,Munkajog,42,2000.0
+jegyző,2,sorszámú jegyzőkönyv,Munkajog,9,350.0
+jegyző,2,számú jegyzőkönyv,Munkajog,6,200.0
+jegyzőkönyv,42,alatti jegyzőkönyv,Családjog,6,85.7
+jegyzőkönyv,42,sorszám alatti jegyzőkönyv,Családjog,6,85.7
+jegyzőkönyv,42,sorszámú jegyzőkönyv,Munkajog,9,78.6
+jegyzőkönyv,42,számú jegyzőkönyv,Munkajog,6,85.7
+jegyzőkönyv,42,tárgyalási jegyzőkönyv,Munkajog,4,90.5
+jelen,50,gyermek jelenlét,Családjog,3,94.0
+jelen,50,jelen eljárás,Családjog,3,94.0
+jelen,50,jelen határozat,Családjog,3,94.0
+jelen,50,jelen eset,Munkajog,11,78.0
+jelen,50,jelen ügy,Munkajog,11,78.0
+jogi,130,eljárásjogi,Családjog,18,86.2
+jogi,130,anyagi jogi,Családjog,12,90.8
+jogi,130,ítélet jogi,Családjog,4,96.9
+jogi,130,munkajogi,Munkajog,13,90.0
+jogi,130,jogi indok,Munkajog,11,91.5
+jogi,130,jogi érvelés,Munkajog,9,93.1
+jogkör,46,jogkör a pp,Családjog,4,91.3
+jogkör,46,jogkör gyakorló,Munkajog,22,52.2
+jogkör,46,munkáltatói jogkör gyakorló,Munkajog,19,58.7
+jövedelem,27,nettó jövedelem,Családjog,7,74.1
+jövedelem,27,havi nettó jövedelem,Családjog,5,81.5
+jövedelem,27,jövedelem cím,Munkajog,13,51.9
+jövedelem,27,jövedelem cím járó,Munkajog,11,59.3
+jövedelem,27,elmaradt jövedelem cím,Munkajog,9,66.7
+kel,6,nap kel,Családjog,3,50.0
+kel,6,kelt felmondás,Munkajog,3,50.0
+kel,6,nap kelt felmondás,Munkajog,3,50.0
+kereset,104,kereset kér,Családjog,6,94.2
+kereset,104,felperes kereset kér,Családjog,5,95.2
+kereset,104,iránti kereset,Családjog,5,95.2
+kereset,104,kereset elutasítás,Munkajog,16,84.6
+kereset,104,kereset elutasít,Munkajog,11,89.4
+kereset,104,keresetváltoztatás,Munkajog,10,90.4
+kereseti,34,kapcsolatos kereseti,Családjog,4,88.2
+kereseti,34,kapcsolatos kereseti kérelem,Családjog,3,91.2
+kereseti,34,másodlagos kereseti,Munkajog,5,85.3
+kereseti,34,másodlagos kereseti kérelem,Munkajog,5,85.3
+kereseti kérelem,32,kapcsolatos kereseti kérelem,Családjog,3,90.6
+kereseti kérelem,32,másodlagos kereseti kérelem,Munkajog,5,84.4
+képvisel,2,képviselt alperes,Családjog,4,100.0
+képvisel,2,képviselt felperes,Családjog,4,100.0
+képvisel,2,képviselt,Munkajog,23,1050.0
+képviselő,72,felperes képviselő,Családjog,4,94.4
+képviselő,72,törvényes képviselő,Munkajog,16,77.8
+képviselő,72,alperesi törvényes képviselő,Munkajog,10,86.1
+képviselő,72,alperes törvényes képviselő,Munkajog,4,94.4
+kérelem,79,viszontkereseti kérelem,Családjog,7,91.1
+kérelem,79,kérelem terjeszt,Családjog,5,93.7
+kérelem,79,kérelem terjeszt elő,Családjog,5,93.7
+kérelem,79,másodlagos kereseti kérelem,Munkajog,5,93.7
+kérelem,79,kérelem elutasító,Munkajog,3,96.2
+költségfeljegyzés,1,költségfeljegyzési jog,Családjog,8,700.0
+költségfeljegyzés,1,tárgyi költségfeljegyzési jog,Családjog,8,700.0
+költségfeljegyzés,1,költségfeljegyzési jog folytán,Családjog,6,500.0
+költségfeljegyzés,1,költségfeljegyzési jogos,Munkajog,4,300.0
+költségfeljegyzés,1,költségfeljegyzési jogos per,Munkajog,4,300.0
+költségfeljegyzés,1,tárgyi költségfeljegyzési jogos,Munkajog,4,300.0
+könyv,1,alatti jegyzőkönyv,Családjog,6,500.0
+könyv,1,sorszám alatti jegyzőkönyv,Családjog,6,500.0
+könyv,1,jegyzőkönyv,Munkajog,42,4100.0
+könyv,1,törvénykönyv,Munkajog,13,1200.0
+könyv,1,törvénykönyv szóló,Munkajog,10,900.0
+köteles,79,alperes köteles,Családjog,15,81.0
+köteles,79,köteles megfizet,Családjog,12,84.8
+köteles,79,felperes köteles,Családjog,9,88.6
+köteles,79,alap köteles,Munkajog,6,92.4
+köteles,79,bekezdés alap köteles,Munkajog,6,92.4
+köteles,79,köteles megtart,Munkajog,5,93.7
+kötelez,81,alperes kötelez,Családjog,4,95.1
+kötelez,81,arány kötelez,Családjog,4,95.1
+kötelez,81,másodfokú bíróság kötelez,Családjog,4,95.1
+kötelez,81,kér kötelez,Munkajog,14,82.7
+kötelez,81,megfizetés kér kötelez,Munkajog,10,87.7
+kötelez,81,megfizetés kötelez,Munkajog,9,88.9
+kötelezettség,133,fizetési kötelezettség,Családjog,7,94.7
+kötelezettség,133,kötelezettség terhel,Családjog,5,96.2
+kötelezettség,133,gyermektartásdíj fizetési kötelezettség,Családjog,4,97.0
+kötelezettség,133,lényeges kötelezettség,Munkajog,12,91.0
+kötelezettség,133,származó lényeges kötelezettség,Munkajog,12,91.0
+kötelezettség,133,munkavégzési kötelezettség,Munkajog,11,91.7
+következmény,23,következmény jár,Családjog,3,87.0
+következmény,23,jogkövetkezmény,Munkajog,39,69.6
+következmény,23,jogellenes megszüntetés jogkövetkezmény,Munkajog,7,69.6
+következmény,23,munkaviszony megszüntetés jogkövetkezmény,Munkajog,7,69.6
+követő,114,emelkedés követő,Családjog,14,87.7
+követő,114,jogerő emelkedés követő,Családjog,14,87.7
+követő,114,nap követő,Családjog,8,93.0
+követő,114,közlés követő,Munkajog,4,96.5
+követő,114,egyeztetés követő,Munkajog,3,97.4
+közös,123,közös lakás,Családjog,24,80.5
+közös,123,közös szülői,Családjog,18,85.4
+közös,123,közös szülői felügyelet,Családjog,17,86.2
+közös,123,közös megegyezés,Munkajog,17,86.2
+közötti,42,gyermek közötti,Családjog,15,64.3
+közötti,42,közötti kapcsolattartás,Családjog,13,69.0
+közötti,42,gyermek közötti kapcsolattartás,Családjog,11,73.8
+közötti,42,közötti időszak,Munkajog,5,88.1
+kúria,27,kúria a pfv,Családjog,3,88.9
+kúria,27,kúria mfv,Munkajog,9,66.7
+kúria,27,kúriai,Munkajog,6,77.8
+kúria,27,kúria precedensképes,Munkajog,5,81.5
+l,14,lakás él,Családjog,3,78.6
+l,14,felel,Munkajog,42,200.0
+l,14,l e t,Munkajog,7,50.0
+l,14,t é l,Munkajog,7,50.0
+lát,50,láthatás,Családjog,3,94.0
+lát,50,feladat lát,Munkajog,14,72.0
+lét,16,gyermek jelenlét,Családjog,3,81.2
+lét,16,létszám,Munkajog,5,68.8
+magatartás,136,szülői magatartás,Családjog,3,97.8
+magatartás,136,felperes magatartás,Munkajog,14,89.7
+magatartás,136,magatartási,Munkajog,13,90.4
+magatartás,136,tanúsított magatartás,Munkajog,10,92.6
+magyar,18,megfizet a magyar,Családjog,9,50.0
+magyar,18,magyar állam visel,Munkajog,4,77.8
+megelőző,40,nap megelőző,Családjog,4,90.0
+megelőző,40,felmondás megelőző,Munkajog,10,75.0
+megelőző,40,megszüntetés megelőző,Munkajog,5,87.5
+megelőző,40,munkaviszony megszüntetés megelőző,Munkajog,5,87.5
+megfelelő,116,életkor megfelelő,Családjog,8,93.1
+megfelelő,116,gyermek megfelelő,Családjog,4,96.6
+megfelelő,116,megfelelő felkészítve,Családjog,4,96.6
+megfelelő,116,megfelelő jogszabályi,Munkajog,6,94.8
+megfelelő,116,megfelelő jogszabályi rendelkezés,Munkajog,6,94.8
+megfelelő,116,követelmény megfelelő,Munkajog,3,97.4
+megfizet,24,köteles megfizet,Családjog,12,50.0
+megfizet,24,megfizet a magyar,Családjog,9,62.5
+megfizet,24,felperes köteles megfizet,Családjog,4,83.3
+megfizet,24,számla kell megfizet,Munkajog,5,79.2
+megnevezés,42,bíróság megnevezés,Családjog,3,92.9
+megnevezés,42,hozó bíróság megnevezés,Családjog,3,92.9
+megnevezés,42,ítélőtábla megnevezés,Munkajog,5,88.1
+megszűnés,31,megszűnés követő,Családjog,5,83.9
+megszűnés,31,megszűnés óta,Családjog,4,87.1
+megszűnés,31,munkaviszony megszűnés,Munkajog,13,58.1
+megváltoztat,22,részbeni megváltoztatás,Családjog,8,63.6
+megváltoztat,22,ítélet részbeni megváltoztatás,Családjog,7,68.2
+megváltoztat,22,megváltoztatás kér,Családjog,6,72.7
+megváltoztat,22,elsőfokú ítélet megváltoztatás,Munkajog,10,54.5
+megváltoztat,22,bíróság ítélet megváltoztatás,Munkajog,5,77.3
+megváltoztatás,31,részbeni megváltoztatás,Családjog,8,74.2
+megváltoztatás,31,ítélet részbeni megváltoztatás,Családjog,7,77.4
+megváltoztatás,31,megváltoztatás kér,Családjog,6,80.6
+megváltoztatás,31,elsőfokú ítélet megváltoztatás,Munkajog,10,67.7
+megváltoztatás,31,bíróság ítélet megváltoztatás,Munkajog,5,83.9
+megállapodás,33,megállapodás hiány,Családjog,12,63.6
+megállapodás,33,megállapodás alap,Munkajog,6,81.8
+megállapít,68,szakértői vélemény megállapítás,Családjog,3,95.6
+megállapít,68,vélemény megállapítás,Családjog,3,95.6
+megállapít,68,bíróság megállapít,Munkajog,20,70.6
+megállapít,68,bírósági eljárás megállapítható,Munkajog,14,79.4
+megállapít,68,eljárás megállapítható,Munkajog,14,79.4
+megállapított,20,megállapított tényállás,Családjog,9,55.0
+megállapított,20,megállapított ítéleti,Munkajog,6,70.0
+megállapított,20,megállapított ítéleti tényállás,Munkajog,6,70.0
+megállapított,20,elsőfokú ítélet megállapított,Munkajog,3,85.0
+megállapítás,80,szakértői vélemény megállapítás,Családjog,3,96.2
+megállapítás,80,vélemény megállapítás,Családjog,3,96.2
+megállapítás,80,ítéleti megállapítás,Munkajog,6,92.5
+mutat,22,mutatható,Családjog,4,81.8
+mutat,22,alábbi mutat,Munkajog,5,77.3
+másodfokú,261,törvényszék mint másodfokú,Családjog,16,93.9
+másodfokú,261,másodfokú bíróság álláspont,Családjog,5,98.1
+másodfokú,261,másodfokú eljárás sor,Családjog,5,98.1
+másodfokú,261,ítélőtábla mint másodfokú,Munkajog,22,91.6
+másodfokú,261,másodfokú bíróság döntés,Munkajog,11,95.8
+másodfokú,261,másodfokú bíróság megállapít,Munkajog,8,96.9
+másodfokú bíróság,203,másodfokú bíróság álláspont,Családjog,5,97.5
+másodfokú bíróság,203,másodfokú bíróság kötelez,Családjog,4,98.0
+másodfokú bíróság,203,másodfokú bíróság felhív,Családjog,3,98.5
+másodfokú bíróság,203,másodfokú bíróság döntés,Munkajog,11,94.6
+másodfokú bíróság,203,másodfokú bíróság megállapít,Munkajog,8,96.1
+másodfokú bíróság,203,másodfokú bíróság szabad,Munkajog,3,98.5
+mérlegelés,37,mérlegelési kör,Családjog,13,64.9
+mérlegelés,37,felülmérlegelés,Családjog,6,83.8
+mérlegelés,37,mérlegelési kör von,Családjog,4,89.2
+mérlegelés,37,bizonyíték okszerű mérlegelés,Munkajog,3,91.9
+mérlegelés,37,bírói mérlegelés,Munkajog,3,91.9
+mérlegelés,37,bírói mérlegelés felülbírálat,Munkajog,3,91.9
+mód,80,mód és idő,Családjog,16,80.0
+mód,80,megjelölt mód,Családjog,11,86.2
+mód,80,mód kér,Családjog,5,93.8
+mód,80,jogsértő mód,Munkajog,4,95.0
+mód,80,semmilyen mód,Munkajog,4,95.0
+mód,80,ütköző mód,Munkajog,3,96.2
+nyilatkozat,76,vonatkozó nyilatkozat,Családjog,3,96.1
+nyilatkozat,76,jognyilatkozat,Munkajog,17,77.6
+nyilatkozat,76,tett nyilatkozat,Munkajog,9,88.2
+nyilatkozat,76,nyilatkozat tesz,Munkajog,6,92.1
+perbeli,47,perbeli gyermek,Családjog,14,70.2
+perbeli,47,perbeli eset,Munkajog,8,83.0
+perbeli,47,felperes perbeli,Munkajog,5,89.4
+perbeli,47,perbeli nyilatkozat,Munkajog,4,91.5
+perköltség,114,perköltség viselés,Családjog,12,89.5
+perköltség,114,álló perköltség,Családjog,5,95.6
+perköltség,114,perköltség megfizetés,Munkajog,11,90.4
+perköltség,114,elsőfokú perköltség összeg,Munkajog,8,93.0
+perköltség,114,áfa másodfokú perköltség,Munkajog,8,93.0
+pf,1,kúria a pfv,Családjog,3,200.0
+pf,1,kúria precedensképes pfv,Munkajog,4,300.0
+pf,1,precedensképes pfv,Munkajog,4,300.0
+pont,157,kezdő időpont,Családjog,8,94.9
+pont,157,bíróság álláspont,Családjog,7,95.5
+pont,157,záró időpont,Családjog,7,95.5
+pont,157,pont szerinti,Munkajog,21,86.6
+pont,157,pont foglalt,Munkajog,12,92.4
+pont,157,pont értelem,Munkajog,5,96.8
+pp,132,jogkör a pp,Családjog,4,97.0
+pp,132,rendelkezés a pp,Családjog,3,97.7
+pp,132,fellebbezés a pp,Munkajog,13,90.2
+pp,132,alperes a pp,Munkajog,5,96.2
+részben,58,részben megváltoztat,Családjog,14,75.9
+részben,58,részbeni,Családjog,10,82.8
+részben,58,részben alapos,Családjog,8,86.2
+részben,58,részben foglalt,Munkajog,4,93.1
+részben,58,rendelkező részben,Munkajog,3,94.8
+rót,1,rótt illeték,Családjog,4,300.0
+rót,1,rótt fellebbezési,Munkajog,6,500.0
+rót,1,rótt fellebbezési illeték,Munkajog,6,500.0
+rót,1,teher rótt,Munkajog,6,500.0
+rótt,14,rótt illeték,Családjog,4,71.4
+rótt,14,rótt fellebbezési,Munkajog,6,57.1
+rótt,14,rótt fellebbezési illeték,Munkajog,6,57.1
+rótt,14,teher rótt,Munkajog,6,57.1
+sor,211,kapcsolattartás sor,Családjog,12,94.3
+sor,211,sor a gyermek,Családjog,9,95.7
+sor,211,sor következő,Családjog,9,95.7
+sor,211,sorszámú,Munkajog,24,88.6
+sor,211,sorszámú jegyzőkönyv,Munkajog,9,95.7
+sor,211,munkavégzés sor,Munkajog,8,96.2
+sorszám,22,sorszám alatti,Családjog,7,68.2
+sorszám,22,sorszám alatti jegyzőkönyv,Családjog,6,72.7
+sorszám,22,sorszám előterjesztett,Munkajog,5,77.3
+sorszám,22,sorszám előterjesztett fellebbezés,Munkajog,5,77.3
+szabály,81,általános szabály,Családjog,3,96.3
+szabály,81,vonatkozó szabály,Munkajog,24,70.4
+szabály,81,irányadó szabály,Munkajog,6,92.6
+szabály,81,eljárás érvényesülő szabály,Munkajog,3,96.3
+szak,3,szakvélemény,Családjog,43,1333.3
+szak,3,szakmai,Munkajog,81,2600.0
+szak,3,szakmai tapasztalat,Munkajog,10,233.3
+szak,3,szaktudás,Munkajog,6,100.0
+szem,8,dr szemán,Családjog,4,50.0
+szem,8,dr szemán felicitász,Családjog,4,50.0
+szem,8,k dr szemán,Családjog,4,50.0
+szem,8,szempont a felperes,Munkajog,3,62.5
+személy,77,személyi igazolvány,Családjog,4,94.8
+személy,77,jogi személy,Munkajog,7,90.9
+személyes,65,gyermek személyes,Családjog,5,92.3
+személyes,65,fél személyes,Családjog,4,93.8
+személyes,65,felperes személyes,Munkajog,7,89.2
+szolgál,15,szolgál a gyermek,Családjog,4,73.3
+szolgál,15,szolgálhat,Munkajog,6,60.0
+szolgáló,16,közös lakóhely szolgáló,Családjog,4,75.0
+szolgáló,16,lakóhely szolgáló,Családjog,4,75.0
+szolgáló,16,alap szolgáló tényállás,Munkajog,4,75.0
+szolgáló,16,szolgáló tényállás,Munkajog,4,75.0
+szám,55,szám alatti,Családjog,24,56.4
+szám,55,szám alatti ingatlan,Családjog,10,81.8
+szám,55,sorszám alatti,Családjog,7,87.3
+szám,55,létszám,Munkajog,5,90.9
+szám,55,sorszám előterjesztett,Munkajog,5,90.9
+szám,55,sorszám előterjesztett fellebbezés,Munkajog,5,90.9
+számú,63,páratlan számú,Családjog,6,90.5
+számú,63,sorszámú,Munkajog,24,61.9
+számú,63,sorszámú jegyzőkönyv,Munkajog,9,85.7
+számú,63,számú határozat,Munkajog,9,85.7
+szükséges,71,szükséges tart,Családjog,4,94.4
+szükséges,71,bíróság a szükséges,Munkajog,6,91.5
+szükséges,71,ellátás szükséges,Munkajog,6,91.5
+szükséges,71,szükséges bizonyítás,Munkajog,4,94.4
+súlyos,43,hangsúlyos,Családjog,5,88.4
+súlyos,43,súlyos gondatlanság,Munkajog,10,76.7
+tanács,19,bíró a tanács,Családjog,4,78.9
+tanács,19,tanács elnök bíró,Családjog,4,78.9
+tanács,19,tanács elnök előadó,Munkajog,9,52.6
+tart,58,gyermek tartás,Családjog,11,81.0
+tart,58,kapcsolat tart,Családjog,6,89.7
+tart,58,tart a felperes,Családjog,5,91.4
+tart,58,tart fenn,Munkajog,3,94.8
+teher,21,alperes teher,Családjog,3,85.7
+teher,21,teher rótt,Munkajog,6,71.4
+teher,21,munkateher,Munkajog,4,81.0
+teher,21,felperes teher rótt,Munkajog,3,85.7
+tekintet,172,gyermek tekintet,Családjog,4,97.7
+tekintet,172,jogviszony tekintet,Munkajog,8,95.3
+tekintet,172,mindez tekintet,Munkajog,7,95.9
+tekintet,172,megszüntetés tekintet,Munkajog,5,97.1
+terjeszt,18,kérelem terjeszt,Családjog,5,72.2
+terjeszt,18,kérelem terjeszt elő,Családjog,5,72.2
+terjeszt,18,előterjeszt,Munkajog,7,61.1
+terjeszt,18,terjeszt elő fellebbezés,Munkajog,7,61.1
+terjeszt,18,alperes terjeszt,Munkajog,5,72.2
+terjeszt elő,18,kérelem terjeszt elő,Családjog,5,72.2
+terjeszt elő,18,terjeszt elő fellebbezés,Munkajog,7,61.1
+terjeszt elő,18,alperes terjeszt elő,Munkajog,5,72.2
+tárgy,42,tárgyi költségfeljegyzési jog,Családjog,8,81.0
+tárgy,42,pertárgy érték,Munkajog,5,88.1
+tárgy,42,tárgyi költségfeljegyzési jogos,Munkajog,4,90.5
+tárgyalás,60,megtartott tárgyalás,Családjog,4,93.3
+tárgyalás,60,tárgyalási,Munkajog,8,86.7
+tárgyalás,60,alap tárgyalás,Munkajog,6,90.0
+tárgyalás,60,bekezdés alap tárgyalás,Munkajog,5,91.7
+társ,3,élettárs,Családjog,12,300.0
+társ,3,házastárs,Családjog,11,266.7
+társ,3,munkatárs,Munkajog,42,1300.0
+tény,87,megállapított tényállás,Családjog,9,89.7
+tény,87,írt tényállás,Családjog,3,96.6
+tény,87,ítélet írt tényállás,Családjog,3,96.6
+tény,87,ítéleti tényállás,Munkajog,14,83.9
+tény,87,megállapított ítéleti tényállás,Munkajog,6,93.1
+tény,87,tényállás helyes,Munkajog,6,93.1
+tényállás,62,megállapított tényállás,Családjog,9,85.5
+tényállás,62,írt tényállás,Családjog,3,95.2
+tényállás,62,ítélet írt tényállás,Családjog,3,95.2
+tényállás,62,ítéleti tényállás,Munkajog,14,77.4
+tényállás,62,megállapított ítéleti tényállás,Munkajog,6,90.3
+tényállás,62,tényállás helyes,Munkajog,6,90.3
+történő,99,gyakorlás történő,Családjog,3,97.0
+történő,99,történő megszüntetés,Munkajog,9,90.9
+történő,99,történő megfizetés,Munkajog,3,97.0
+törvényszék,150,törvényszék mint másodfokú,Családjog,16,89.3
+törvényszék,150,törvényszék gazdasági,Családjog,13,91.3
+törvényszék,150,törvényszék gazdasági hivatala,Családjog,13,91.3
+törvényszék,150,budapest környéki törvényszék,Munkajog,5,96.7
+törvényszék,150,környéki törvényszék,Munkajog,5,96.7
+ugyanakkor,41,ugyanakkor a másodfokú,Családjog,3,92.7
+ugyanakkor,41,ugyanakkor a felperes,Munkajog,3,92.7
+utasít,9,határozat hozatal utasítás,Családjog,3,66.7
+utasít,9,hozatal utasítás,Családjog,3,66.7
+utasít,9,bíróság utasítás,Munkajog,3,66.7
+utasít,9,elsőfokú bíróság utasítás,Munkajog,3,66.7
+utasít,9,utasítás új eljárás,Munkajog,3,66.7
+utasítás,61,határozat hozatal utasítás,Családjog,3,95.1
+utasítás,61,hozatal utasítás,Családjog,3,95.1
+utasítás,61,bíróság utasítás,Munkajog,3,95.1
+utasítás,61,elsőfokú bíróság utasítás,Munkajog,3,95.1
+utasítás,61,utasítás új eljárás,Munkajog,3,95.1
+v,29,év december,Családjog,13,55.2
+v,29,verbális,Családjog,8,72.4
+v,29,páros év december,Családjog,7,75.9
+v,29,dr v,Munkajog,7,75.9
+v,29,szerv,Munkajog,7,75.9
+v,29,dr v ajassándor,Munkajog,6,79.3
+vezet,25,vezet eredmény,Családjog,4,84.0
+vezet,25,vezethet,Munkajog,3,88.0
+vezető,90,házasság megromlás vezető,Családjog,8,91.1
+vezető,90,megromlás vezető,Családjog,8,91.1
+vezető,90,hr vezető,Munkajog,20,77.8
+vezető,90,vezetői,Munkajog,8,91.1
+vezető,90,alperesi ügyvezető,Munkajog,6,93.3
+visel,22,köteles visel,Családjog,5,77.3
+visel,22,fél maga visel,Családjog,3,86.4
+visel,22,költség maga visel,Családjog,3,86.4
+visel,22,állam visel,Munkajog,9,59.1
+visel,22,magyar állam visel,Munkajog,4,81.8
+vonatkozó,116,vonatkozó rendelkezés,Családjog,20,82.8
+vonatkozó,116,kapcsolattartás vonatkozó,Családjog,8,93.1
+vonatkozó,116,kapcsolattartás vonatkozó rendelkezés,Családjog,8,93.1
+vonatkozó,116,vonatkozó szabály,Munkajog,24,79.3
+vonatkozó,116,vonatkozó szabályzat,Munkajog,6,94.8
+vonatkozó,116,vonatkozó előírás,Munkajog,3,97.4
+véd,2,ügyvéd cím,Családjog,5,150.0
+véd,2,eljáró ügyvéd,Családjog,4,100.0
+véd,2,védelem,Munkajog,36,1700.0
+végi,4,hétvégi,Családjog,6,50.0
+végi,4,végig,Munkajog,12,200.0
+vélemény,81,szakértői vélemény,Családjog,25,69.1
+vélemény,81,pedagógiai vélemény,Családjog,8,90.1
+vélemény,81,szakértői vélemény megállapítás,Családjog,3,96.3
+vélemény,81,véleménynyilvánítás,Munkajog,40,50.6
+vélemény,81,kmk vélemény,Munkajog,9,88.9
+vélemény,81,véleménynyilvánítás elfojtás,Munkajog,4,95.1
+záró,11,zárónap,Családjog,23,109.1
+záró,11,óra a zárónap,Családjog,17,54.5
+záró,11,záró rendelkezés,Munkajog,4,63.6
+áfa,55,áfa növelt,Családjog,4,92.7
+áfa,55,áfakör,Családjog,3,94.5
+áfa,55,forint és áfa,Munkajog,11,80.0
+áfa,55,áfa másodfokú,Munkajog,8,85.5
+áfa,55,áfa másodfokú perköltség,Munkajog,8,85.5
+áll,95,nap áll,Családjog,9,90.5
+áll,95,nap áll fenn,Családjog,6,93.7
+áll,95,feltétel fennáll,Családjog,3,96.8
+áll,95,rendelkezés áll,Munkajog,6,93.7
+áll,95,áll rendelkezés,Munkajog,6,93.7
+áll,95,arány áll,Munkajog,5,94.7
+állam,49,állam által előlegezett,Családjog,10,79.6
+állam,49,illeték az állami,Családjog,7,85.7
+állam,49,állam visel,Munkajog,9,81.6
+állam,49,magyar állam visel,Munkajog,4,91.8
+általános,32,általános iskola,Családjog,5,84.4
+általános,32,általános szabály,Családjog,3,90.6
+általános,32,általános magatartási,Munkajog,6,81.2
+általános,32,általános magatartási követelmény,Munkajog,4,87.5
+általános,32,felülbírálat általános,Munkajog,3,90.6
+ám,3,szám alatti,Családjog,24,700.0
+ám,3,szám alatti ingatlan,Családjog,10,233.3
+ám,3,nap szám,Családjog,5,66.7
+ám,3,szám ad,Munkajog,5,66.7
+án,1,jog folytán,Családjog,6,500.0
+án,1,költségfeljegyzési jog folytán,Családjog,6,500.0
+án,1,dr szemán,Családjog,4,300.0
+án,1,előterjesztett fellebbezés folytán,Munkajog,5,400.0
+án,1,folytán alkalmazandó,Munkajog,3,200.0
+ár,3,tár,Családjog,6,100.0
+ár,3,kár,Munkajog,22,633.3
+ár,3,kár okoz,Munkajog,5,66.7
+é,7,páratlan év,Családjog,29,314.3
+é,7,páros év,Családjog,29,314.3
+é,7,év december,Családjog,13,85.7
+é,7,közé tartozik,Munkajog,3,57.1
+érdek,91,gyermek érdek,Családjog,44,51.6
+érdek,91,érdek szem,Családjog,3,96.7
+érdek,91,jogos érdek,Munkajog,11,87.9
+érdek,91,gazdasági érdek,Munkajog,8,91.2
+érdek,91,alperes érdek,Munkajog,5,94.5
+érint,35,rendelkezés nem érint,Családjog,8,77.1
+érint,35,rész nem érint,Munkajog,4,88.6
+érték,14,fellebbezés pertárgyérték,Családjog,3,78.6
+érték,14,pertárgy érték,Munkajog,5,64.3
+év,113,páratlan év,Családjog,29,74.3
+év,113,páros év,Családjog,29,74.3
+év,113,év december,Családjog,13,88.5
+év,113,évi cxxv,Munkajog,3,97.3
+ír,30,írt,Családjog,13,56.7
+ír,30,bíróság ítélet írt,Családjog,4,86.7
+ír,30,ítélet írt,Családjog,4,86.7
+ír,30,ír alá,Munkajog,9,70.0
+ír,30,ír elő,Munkajog,9,70.0
+ír,30,előír,Munkajog,8,73.3
+óra,266,óra a zárónap,Családjog,17,93.6
+óra,266,óra vasárnap,Családjog,16,94.0
+óra,266,óra december,Családjog,11,95.9
+óra,266,munkaóra,Munkajog,34,87.2
+óra,266,óradíj,Munkajog,20,92.5
+ölt,2,idő tölt,Családjog,4,100.0
+ölt,2,közölt,Munkajog,19,850.0
+ölt,2,közölt indok,Munkajog,5,150.0
+ölt,2,felmondás közölt,Munkajog,4,100.0
+összeg,142,tartásdíj összeg,Családjog,4,97.2
+összeg,142,forint összeg,Munkajog,9,93.7
+összeg,142,elsőfokú perköltség összeg,Munkajog,8,94.4
+összeg,142,fellebbezési illeték összeg,Munkajog,5,96.5
+ügy,77,ügyvéd cím,Családjog,5,93.5
+ügy,77,eljáró ügyvéd,Családjog,4,94.8
+ügy,77,ügyszám,Családjog,4,94.8
+ügy,77,jelen ügy,Munkajog,11,85.7
+ügy,77,alperesi ügyvezető,Munkajog,6,92.2
+ügy,77,alperes ügyvezető,Munkajog,4,94.8
+ügyvéd,36,ügyvéd cím,Családjog,5,86.1
+ügyvéd,36,eljáró ügyvéd,Családjog,4,88.9
+ügyvéd,36,eljárás megállapítható ügyvédi,Munkajog,13,63.9
+ügyvéd,36,megállapítható ügyvédi,Munkajog,13,63.9
+ügyvéd,36,ügyvédi tevékenység,Munkajog,11,69.4

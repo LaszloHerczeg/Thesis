@@ -122,7 +122,7 @@ Numbers such as "70%" or "10 seconds" are suggested starting values. They should
 - The same input with the same lawyer data always produces the same result (deterministic ranking; ties broken by a fixed rule).
 - If there are 0 matches, a message of "There are no matching lawyers" is shown.
 
-### US-07 · Understand why each lawyer was recommended — *Could*
+### US-07 · Understand why each lawyer was recommended — *Must*
 **As a** client, **I want** to see why each lawyer was recommended, **so that** I can trust the recommendation and choose between the three.
 
 **Acceptance criteria**

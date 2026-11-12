@@ -1,0 +1,1380 @@
+Q:
+I have a list of 13000 words extractred from legal documents. How can I decide whether a word's meaning is related to a divorce case or not?
+
+A:
+The most reliable approach combines evidence from your own documents with a semantic check, then validates the result on a small hand-labeled sample. No single method works well alone. Here's how I'd approach it.
+
+**1. Decide what "related" means first.** Words fall on a spectrum. Some are core divorce terms (alimony, custody, dissolution). Some are family-law adjacent (prenuptial, paternity, guardianship). Some are general legal terms that appear everywhere (petition, hearing, plaintiff). The rest are unrelated. A 3–4 level scheme like this is easier to apply consistently than yes/no, and you can collapse it later.
+
+**2. Use your documents if you can (strongest signal).** If you know which source documents are divorce cases and which aren't, run a keyness analysis. For each word, compare how often it appears in divorce documents with how often it appears in the others, using log-likelihood, a log-odds ratio, or TF-IDF per class. Words that are strongly overrepresented in divorce documents are your candidates. This is cheap and data-driven, and it captures your corpus's actual vocabulary, including local terms and jargon.
+
+**3. Add a semantic similarity score.** Pick a small set of seed words: divorce, spouse, marriage, custody, alimony, child support, marital property. Embed every word with a legal or general embedding model, such as Legal-BERT, a sentence-transformer, or word2vec trained on your own documents. Score each word by its cosine similarity to the seeds. This catches related words that are rare in your corpus.
+
+**4. Optionally, classify with an LLM.** 13,000 words is small enough to send in batches of a few hundred with a clear rubric (your categories from step 1) and ask for a label plus a confidence score. It's fast and often quite accurate, but treat it as one opinion, not ground truth.
+
+**5. Watch out for ambiguous words.** Many words only belong to divorce in some contexts: custody (criminal vs. child), support, maintenance, settlement, separation, property, visitation. A word list strips away that context. For these, look at a few example sentences from your documents, or classify the word in context rather than in isolation.
+
+**6. Validate.** Hand-label a random sample of 300–500 words, ideally with two people, and check their agreement using Cohen's kappa. Then measure how well your automatic method matches. This tells you where to set thresholds and whether the approach is trustworthy.
+
+**A practical pipeline:**
+1. Remove stopwords and general vocabulary. This often shrinks the list a lot.
+2. Rank the rest by keyness and embedding similarity.
+3. Auto-accept the clear top, auto-reject the clear bottom.
+4. Manually review the uncertain middle band, plus the ambiguous words.
+
+If the documents aren't in English, use embeddings for that language. Controlled vocabularies such as the EU's multilingual EuroVoc thesaurus, which has family-law descriptors, can also help as a reference list.
+
+If you upload the word list, and ideally some divorce and non-divorce documents, I can run this and give you back a labeled spreadsheet.
+
+Q:
+that's the issue. I have a lot of overrepresented word that are not related to the theme. I want to filter out the general legal terms and the words not related to any legal theme
+
+A:
+That pattern usually has two separate causes, so it needs two separate filters.
+
+**Why general legal terms show up:** they're overrepresented because your reference corpus is general language, or a mix that doesn't include enough legal text. Against everyday language, *every* legal word looks special.
+
+**Fix: compare divorce documents against other legal documents.** Use court decisions from other case types (contracts, inheritance, criminal, labor, etc.) as the reference corpus. Words like *plaintiff*, *appeal*, *pursuant* are equally common in both, so they drop out. Only words specific to divorce stay overrepresented. If you don't have such documents, public court-decision databases in your language are a good source. The documents don't need to be labeled in detail, just "not divorce."
+
+You can even run a two-stage comparison and keep the words that pass both:
+1. legal vs. general language → identifies legal vocabulary
+2. divorce vs. other legal → identifies divorce-specific vocabulary
+
+Look at effect size (log ratio), not just significance. With large corpora, log-likelihood flags tiny differences as "significant." Require something like a log ratio ≥ 1 (at least twice as frequent) in addition to significance.
+
+**Why non-legal words show up:** they're usually concentrated in a few documents: party names, towns, street names, a specific car or company in one case, dates, amounts, OCR errors, or boilerplate from one court's template. Their total count is high, but they aren't spread across cases.
+
+**Fix: require dispersion, not just frequency.**
+- Count in how many divorce documents each word appears (document frequency), and drop words that appear in fewer than, say, 5% of documents or fewer than 5–10 documents. Pick the threshold by checking a sample.
+- Better still, run keyness on document frequency instead of raw counts, or use a dispersion measure (Gries' DP, Juilland's D).
+- Remove names, places, numbers and dates with a named-entity recognizer and simple regex filters.
+
+**For what's left: a semantic check.** Some general words will still slip through (e.g., *child*, *home*, *money*), which are related in context but not legal terms. Handle these with one of the following:
+- Embeddings: compute each word's similarity to a set of divorce seed words *and* to a set of general legal seed words, and keep it only if it's closer to the divorce side.
+- An LLM: classify the remaining words into 4 categories (divorce-specific / family-law / general legal / non-legal) with a short rubric. By this point the list should be small enough for a manual check of the uncertain cases.
+
+**Combined filter:**
+
+| Step | Removes |
+|---|---|
+| Divorce vs. other legal corpus, log ratio ≥ 1 | General legal terms |
+| Document frequency ≥ threshold | Case-specific words, names, noise |
+| NER + regex | Names, places, numbers, dates |
+| Embedding or LLM category check | Remaining everyday words |
+| Manual review of the borderline band | Errors |
+
+If you share the word list with frequencies and document counts, or the documents themselves, I can run these filters and send back a sorted spreadsheet.
+
+Q:
+What is log ratio?
+I'm thinking that I could compare 2 different fields' list. Like worklaw and divorce. If a word is in both category, they are probably not related to a specific field
+
+A:
+**Log ratio** measures how many times more frequent a word is in one corpus than in another, on a log scale.
+
+First you normalize the counts, because your two corpora probably aren't the same size. Then you take the base-2 logarithm of the ratio:
+
+> log ratio = log₂ ( (count in divorce ÷ total words in divorce) / (count in labor law ÷ total words in labor law) )
+
+How to read it:
+
+| Log ratio | Meaning |
+|---|---|
+| 0 | Equally frequent in both |
+| 1 | 2× more frequent in divorce |
+| 2 | 4× more frequent |
+| 3 | 8× more frequent |
+| −1, −2 … | More frequent in labor law |
+
+An example, assuming both corpora have 1 million words:
+
+| Word | Divorce | Labor law | Log ratio |
+|---|---|---|---|
+| alimony | 300 | 3 | +6.6 → divorce-specific |
+| court | 2000 | 1900 | +0.07 → general legal |
+| employee | 50 | 4000 | −6.3 → labor-specific |
+
+If a word never appears in one corpus, the ratio is undefined. The usual workaround is to add a small number (e.g. 0.5) to every count before dividing.
+
+**About your idea:** comparing two fields is exactly the right direction. That's the "divorce vs. other legal documents" comparison. But I'd compare **frequencies**, not just whether a word is present in both lists. Presence is too blunt:
+
+- With thousands of documents, almost every common word shows up in both fields at least once. *Alimony* will probably appear somewhere in labor law too, for example when wages are garnished for support. A strict "in both → remove" rule would throw away many words you want to keep.
+- Frequency handles this naturally: 300 vs. 3 is clearly divorce, while 2000 vs. 1900 is clearly shared. The log ratio is just a way to put a number on that difference.
+
+**One more suggestion: use 3 or more fields if you can.** Divorce and labor law share some topics that other fields don't, such as income, salary and employers (relevant to support payments). With only labor law as the comparison, those words look "general" when they aren't. If you add, say, inheritance, contract and criminal cases, then:
+
+- General legal terms are frequent in **all** fields → low log ratio against every one → remove
+- Divorce terms are frequent only in divorce → high log ratio against all others → keep
+
+A simple rule is to keep a word if its log ratio is ≥ 1 against *each* comparison field, or against all of them combined into one reference corpus.
+
+If you have the counts per field, I can calculate this for your 13,000 words and give you a sorted spreadsheet.
+
+Q:
+I don't have thousands of documents yet. That's the issue I think. But I want to build the basic logic of the program first with a smaller database and expand it later
+
+A:
+
+Starting small makes sense: the logic stays the same, only the reliability of the numbers improves as you add documents. I’ll write a starter script you can run now and keep using as the corpus grows.
+
+Created a file
+Stopped
+Claude’s response was interrupted.
+
+Q:
+reliability will get worse by time because the top words are not related to the field of the cases. What are my options now?
+
+A:
+When the top of the list is dominated by unrelated words, the problem is usually the type of counting, not the amount of data. With few documents, raw frequency rewards words that are repeated many times *within one case*: names, places, the specific facts of that case, amounts, the court's template text. One long document can push dozens of such words to the top.
+
+Here are your options, roughly from quickest to most robust.
+
+**1. Count documents, not occurrences.** Count each word once per document, and require it to appear in at least 2–3 documents. A party's name repeated 80 times in one case then counts as 1, while *custody* appearing in 6 of your 8 divorce cases counts as 6. This alone often clears most of the noise. Also lemmatize, so *divorced*, *divorcing* and *divorce* pool into one count, and strip names and numbers.
+
+This is also why more data helps rather than hurts with this method: case-specific words stay stuck in one or two documents, while topical words spread across every case.
+
+**2. Use a clean reference text instead of (or alongside) your cases.** The divorce sections of the civil or family code, a family-law textbook chapter, or a legal glossary are small, but they contain *only* topical vocabulary, with no case facts. You can:
+- keep a word only if it also appears in the statute/glossary, or
+- use those texts as your "divorce" corpus while your case collection is still small.
+
+The same works for labor law: take the labor code as the comparison text.
+
+**3. Use methods that don't depend on your corpus size at all.**
+- **Embedding similarity:** score each of your 13,000 words by how close it is in meaning to divorce seed words (*divorce, custody, alimony, marriage, spouse, child support*) vs. general legal seeds (*court, appeal, judgment, plaintiff*).
+- **LLM classification:** send the words in batches with a rubric (divorce-specific / family law / general legal / not legal).
+
+Both work today with zero additional documents, and their quality doesn't change as the corpus grows.
+
+**4. Build a persistent allow/deny list.** Whatever you or the methods above decide, save it. Every word you confirm once never needs checking again, so the manual work shrinks over time instead of growing.
+
+**A practical setup for now:** use statistics (option 1) only to *generate candidates*, then let a semantic check (option 3) do the actual *filtering*, and store the decisions (option 4). As your corpus grows, the statistics get stronger, but the program logic doesn't change.
+
+If you paste the top 50 or so words you're getting now, I can tell you which of these problems is causing them and which filter would remove them.
+
+Q:
+```
+lemma,count
+gyermek,871
+alperes,704
+felperes,701
+bíróság,542
+kapcsolattartás,367
+elsőfokú,349
+fél,337
+nap,321
+forint,277
+óra,266
+másodfokú,261
+ítélet,239
+elsőfokú bíróság,209
+másodfokú bíróság,203
+szülői,188
+bekezdés,180
+alap,159
+szülő,150
+törvényszék,150
+felügyelet,148
+sor,147
+szülői felügyelet,147
+eljárás,144
+fellebbezés,142
+kér,140
+page,139
+közös,123
+gyakorlás,115
+év,113
+kapcsolat,111
+hét,108
+házasság,107
+szünet,107
+rendelkezés,100
+figyelem,95
+életközösség,95
+döntés,94
+gyermektartásdíj,94
+tekintet,94
+megfelelő,92
+illeték,91
+per,90
+folyamatos,87
+eset,86
+jogosult,86
+követő,86
+elsőfokú ítélet,82
+fővárosi,82
+jog,81
+kötelez,81
+páratlan,81
+vélemény,81
+mód,80
+december,79
+fővárosi törvényszék,79
+köteles,79
+érdek,78
+felügyelet gyakorlás,77
+páros,77
+rész,77
+megfizetés,75
+perköltség,75
+havi,74
+idő,71
+szakértői,71
+szakértő,70
+időtartam,66
+kör,65
+fellebbezési,63
+bíróság ítélet,61
+folyamatos kapcsolattartás,61
+lakás,60
+kérelem,59
+mindkét,59
+január,58
+részben,58
+tart,58
+kapcsolatos,57
+él,57
+első,56
+```
+
+these are not case specific words as you can see
+and this is only the first 80
+
+A:
+You're right, these aren't case-specific. This is a raw frequency list, so it shows what's *common* in your divorce decisions, not what's *specific* to them. Sorting your top 80 by hand, they fall into four groups:
+
+| Group | Examples from your list | Roughly |
+|---|---|---|
+| Divorce / family law | gyermek, kapcsolattartás, szülői felügyelet, gyermektartásdíj, házasság, életközösség, szülő | ~15 |
+| Divorce-related only in context | páros, páratlan, szünet, hét, óra, nap, december, január (visitation schedules), közös (joint custody), érdek (the child's interest), lakás, havi, szakértő | ~15 |
+| General legal / procedural | felperes, alperes, bíróság, elsőfokú, másodfokú, ítélet, törvényszék, fellebbezés, perköltség, illeték, bekezdés, kérelem, köteles | ~30 |
+| General language | alap, tekintet, figyelem, sor (from *alapján, tekintettel, figyelemmel, sor kerül*), megfelelő, eset, mód, rész, idő, első, mindkét | ~20 |
+
+Plus *page*, a PDF artifact.
+
+**The main option: compare against other Hungarian court decisions.** Groups 3 and 4 have one thing in common: they appear in *every* court decision, whatever the topic. Hungarian decisions follow a fixed structure (felperes, alperes, elsőfokú, másodfokú, perköltség…) and use the same phrasing (*alapján, tekintettel, figyelemmel*). So a single comparison against non-family cases removes both groups at once.
+
+This also solves the data problem. You don't need thousands of documents for the reference side, because procedural language is extremely repetitive: 50–100 decisions from other fields (labor, contract, damages, inheritance) are enough. The courts publish anonymized decisions, so you can download these now. Use several fields, not just labor law, otherwise words like *óra, nap, hét* (working hours) would wrongly drop out.
+
+Use document frequency in the comparison, as before.
+
+**Why not a semantic or LLM filter as the main method:** group 2 is the reason. Out of context, *páros*, *szünet*, *december* or *közös* look like everyday words, and a word-level classifier would throw them out. But in your corpus they are clearly divorce vocabulary (visitation every other weekend, school holidays, joint custody). A corpus comparison keeps them, because they're much rarer in labor or contract cases.
+
+**Two smaller fixes:**
+- **Keep the n-grams.** You already have them, and they're often more precise than single words: *szülői felügyelet*, *folyamatos kapcsolattartás*, *páros hét*, *gyermek érdeke*.
+- **Add a stoplist for lemmatization fragments** like alap, tekintet, figyelem, sor, kör. Hungarian postpositional phrases produce these. Most will disappear in the comparison anyway, but the stoplist cleans up what's left. A general Hungarian frequency list (e.g., from the Hungarian National Corpus or the Hungarian Webcorpus) can serve as a backup filter.
+
+If you collect a reference set of other decisions, I can write the script that does the comparison and outputs a CSV sorted by log ratio, with the thresholds as settings you can adjust as the corpus grows.
+
+Q:
+you literally did not explain what to do
+
+A:
+
+You’re right, that was a diagnosis, not instructions. Here are the concrete steps, plus a script that does the calculation.
+
+Created a file
+Stopped
+Claude’s response was interrupted.
+
+Q:
+nobody asked you to make a script
+
+A:
+Understood, no script. Here's what to do, step by step.
+
+**1. Collect reference decisions.** Download 50–100 anonymized Hungarian court decisions that are *not* family law: labor, contract, damages, inheritance, mixed. Get them from the courts' public decision database (Bírósági Határozatok Gyűjteménye). This is your reference set.
+
+**2. Process them exactly like your divorce decisions.** Use the same lemmatizer and the same n-gram settings, so *szülői felügyelet* in one set matches *szülői felügyelet* in the other.
+
+**3. Count per document, not in total.** For every lemma, record how many divorce decisions contain it and how many reference decisions contain it. A lemma that appears 50 times in one decision still counts as 1. You'll end up with four numbers per lemma:
+- d = number of divorce decisions containing it
+- N_d = total number of divorce decisions
+- r = number of reference decisions containing it
+- N_r = total number of reference decisions
+
+**4. Calculate the log ratio for each lemma:**
+
+> log₂ ( ((d + 0.5) / (N_d + 1)) ÷ ((r + 0.5) / (N_r + 1)) )
+
+The +0.5 and +1 prevent division by zero when a lemma never appears in the reference set.
+
+**5. Apply two thresholds:**
+- Keep only lemmas that appear in at least 3 divorce decisions. This removes one-off words.
+- Of those, keep only lemmas with a log ratio of at least 1, meaning they appear in at least twice as large a share of divorce decisions.
+
+Everything else is either general legal or general language, and goes out.
+
+**6. Sort the remaining lemmas by log ratio and check the top 100–200 by hand.** Write your decisions into a keep list and a remove list (for example *page*). Reuse these lists every time you rerun, so you only judge each word once.
+
+**What this does to your list** (the numbers are made up for illustration, with 40 divorce and 100 reference decisions):
+
+| Lemma | d / 40 | r / 100 | Log ratio | Result |
+|---|---|---|---|---|
+| felperes | 40 | 95 | ≈ 0.05 | removed (procedural) |
+| tekintet | 38 | 92 | ≈ 0.04 | removed (general language) |
+| kapcsolattartás | 35 | 1 | ≈ 5.9 | kept |
+| páros | 20 | 2 | ≈ 4.3 | kept |
+
+Procedural and general words appear in nearly every decision on both sides, so their ratio stays near 0. Divorce vocabulary, including the visitation words like *páros* and *szünet*, is rare in the reference set, so its ratio is high.
+
+**As your corpus grows,** you don't change anything except the thresholds. You can raise "at least 3 decisions" to a percentage (e.g. 10% of divorce decisions) and tighten the log ratio to 1.5 or 2 if too many borderline words get through.
+
+Q:
+what are n-grams?
+
+A:
+An n-gram is a sequence of *n* consecutive words treated as one unit.
+
+- **1-gram (unigram):** a single word, e.g. *szülői*, *felügyelet*
+- **2-gram (bigram):** two words in a row, e.g. *szülői felügyelet*
+- **3-gram (trigram):** three words in a row, e.g. *közös szülői felügyelet*
+
+Your list already contains some. *elsőfokú bíróság*, *szülői felügyelet*, *folyamatos kapcsolattartás* and *fővárosi törvényszék* are bigrams, which is why they appear next to their single-word parts.
+
+They matter because some meanings only exist in the combination. *közös* alone is an everyday word, and *érdek* alone is too, but *közös szülői felügyelet* and *gyermek érdeke* are clearly divorce terms. Similarly, *páros* is general, but *páros hét* is a visitation schedule. If you only count single words, you lose that information.
+
+How they're made: slide a window over the text. From "a gyermek érdeke szerint", the bigrams are *a gyermek*, *gyermek érdeke*, *érdeke szerint*. Most of these combinations are meaningless, so you usually keep only bigrams that occur often enough, and the log ratio comparison then filters them the same way as single words.
+
+That's why step 2 said to process both sets with the same n-gram settings: if you create bigrams for the divorce decisions, create them for the reference decisions too, so you can compare their counts.
+
+Q:
+I think I could check the log of these words as well. If folyamatos kapcsolattartás appears as often as folyamatos and kapcsolattartás as single words, that means that they are always next to each other. I can delete the single ones from the list. When a client gives a description 'kapcsolattartás', I can easily ask them 'What kind of kapcsolattartás?'
+'Debt' could be a better example or contract. If the client say contract, that does not mean anything to me. But if they say work contract, that has a huge value
+
+A:
+Yes, that works, and it's a standard technique in term extraction. Two refinements make it reliable.
+
+**1. Check the ratio in both directions.** Divide the bigram's count by each single word's count separately. With your own numbers:
+
+- *folyamatos kapcsolattartás* 61 ÷ *folyamatos* 87 = **70%**. Most of the time, *folyamatos* appears in this phrase.
+- *folyamatos kapcsolattartás* 61 ÷ *kapcsolattartás* 367 = **17%**. *kapcsolattartás* mostly appears on its own or in other combinations.
+
+So you could drop *folyamatos* as a standalone entry, but you need to keep *kapcsolattartás*. Use a high cutoff, around 80–90%, because with a small corpus the numbers fluctuate.
+
+**2. Your clarifying-question idea can come straight from the data.** For each word, look at which field its *variants* belong to:
+
+- **Field-specific on its own** (*kapcsolattartás*, *gyermektartásdíj*): no question needed.
+- **Generic on its own, but its variants are field-specific** (*szerződés*, *tartozás*): this is where you ask. The answer options come from the corpus: the most frequent variants of the word, grouped by the field where they have a high log ratio. E.g. *tartozás* → *bértartozás* (labor), *kölcsöntartozás* (contract), *közös tartozás* (divorce, property division).
+- **Generic, and the variants are generic too** (*bíróság*, *eljárás*): ignore it, a question wouldn't help.
+
+**Two things to watch for:**
+
+**Hungarian compounds.** *Work contract* is two words in English but one in Hungarian: *munkaszerződés*. Your lemmatizer will treat it as a single word, not as *munka* + *szerződés*. That's actually fine, because *munkaszerződés* will get a high log ratio for labor law on its own. But to find all variants of *szerződés* for the question, you need to search for words *ending in* -szerződés as well as bigrams like *bérleti szerződés*.
+
+**Clients don't talk like judges.** Your vocabulary comes from court decisions, but a client will say *láthatás* instead of *kapcsolattartás*, *válás* instead of *házasság felbontása*, *tartásdíj* or *gyerektartás* instead of *gyermektartásdíj*, *albérlet* instead of *bérleti szerződés*. You'll need a synonym list that maps everyday words onto your extracted terms, otherwise many client descriptions won't match anything. Collecting a few dozen real client descriptions (or forum posts where people describe their legal problems) would show you quickly which everyday words are missing.
+
+Q:
+So
+I need the script that gets two folders. Both folders have multiple txt files containing 1-1 case description. First folder as the parameter is the special field I analyze and the second folder has the general descriptions. I want the script to create 1 csv files based on the 2 folders. It must contain d, N_d, r, N_r and the log ratio.
+After this, I want to be able to provide the 2 thresholds via CLI. The standard option is at least 3 divorce decisions and min log ratio of 1. Make a prompt I can send you because I want you to make this in a differenct chat. Do not include any reference of this chat.
+After inputting the thresholds, the function creates a .csv file containing only the appropriate lemmas.
+Very important that the script must be able to examine 1 word lemmas, 2 word lemmas and  3 word lemmas too
+
+A:
+Here's the prompt:
+
+```
+Write a Python script that finds lemmas (single words and multi-word phrases) that are characteristic of one legal field, by comparing two collections of Hungarian legal case descriptions.
+
+INPUT
+- Two folders, given as command-line arguments:
+  1. Target folder: .txt files from the field I'm analyzing.
+  2. Reference folder: .txt files from other, general cases.
+- Each .txt file contains exactly one case description, in Hungarian, UTF-8.
+
+PROCESSING
+- Lemmatize the texts with a Hungarian lemmatizer (HuSpaCy, or suggest a better option). Lowercase all lemmas.
+- Extract 1-word, 2-word and 3-word lemma sequences (n-grams), e.g. "gyermek", "szülői felügyelet", "közös szülői felügyelet". The script must handle all three lengths.
+- N-grams must not cross sentence boundaries and must not contain punctuation or numbers.
+- Drop n-grams that start or end with a Hungarian stopword (e.g. "a", "az", "és", "hogy"), but keep stopwords inside 3-word n-grams.
+- Count per document, not in total: a lemma that appears 50 times in one file counts as 1.
+
+STEP 1 – full table
+Create one CSV containing every lemma/n-gram found in the target folder, with these columns:
+- lemma
+- n (1, 2 or 3)
+- d = number of target documents containing it
+- N_d = total number of target documents
+- r = number of reference documents containing it
+- N_r = total number of reference documents
+- log_ratio = log2( ((d + 0.5) / (N_d + 1)) / ((r + 0.5) / (N_r + 1)) )
+Sort by log_ratio descending.
+
+STEP 2 – filtering
+A separate command reads the CSV from step 1 (without reprocessing the texts, since lemmatization is slow) and writes a second CSV containing only the lemmas that meet both thresholds:
+- d >= minimum document count (default: 3)
+- log_ratio >= minimum log ratio (default: 1.0)
+Both thresholds must be settable as optional command-line arguments; if omitted, the defaults apply.
+
+OUTPUT REQUIREMENTS
+- CSV files must display Hungarian characters (á, ő, ű etc.) correctly when opened in Excel.
+- Round log_ratio to 3 decimals.
+- Print a short summary to the console (number of documents in each folder, number of lemmas before and after filtering).
+
+Please also give me installation instructions and example commands for both steps.
+```
+
+The two-step design means you can run the slow part once and then try different thresholds in seconds.
+
+Q:
+Include using huspacy's `hu_core_news_lg`model
+
+A:
+Replace the first bullet under PROCESSING with this:
+
+```
+- Lemmatize the texts with HuSpaCy using the hu_core_news_lg model. Lowercase all lemmas.
+```
+
+And at the end, change the last line to:
+
+```
+Please also give me installation instructions (including how to install HuSpaCy and the hu_core_news_lg model) and example commands for both steps.
+```
+
+Q:
+But I need to weight the value of lemmas too. So I need to know how many times they appear in total too
+
+A:
+Two changes. Replace the last bullet under PROCESSING:
+
+```
+- Count each lemma in two ways: the number of documents it appears in (a lemma that appears 50 times in one file counts as 1), and the total number of occurrences across all files.
+```
+
+And in STEP 1, add these two columns after `N_r`:
+
+```
+- total_d = total number of occurrences in the target documents
+- total_r = total number of occurrences in the reference documents
+```
+
+The log ratio stays based on document counts, so a word repeated many times in a single case still can't push itself to the top. The totals are there as extra information for your weighting.
+
+Q:
+But I only want to count the total number of occurrences in the target folder. I don't need that stat from the reference documents.
+And to make it easier to use, I want a seperate .csv file containing only the lemmas satisfying the thresholds in a descending order of the total number of occurrences.
+So the output is 2 .csv files:
+1 has d, N_d, r, N_r, log_ratio and total number of occurrences in the target documents, sorted by log_ratio descending
+the other only has the lemmas satisfying the thresholds and the total number of occurrences in the target folder, sort by total number of occurrences descending.
+Include that N-grams can cross break lines. 
+Include huspacy with the specific model.
+Generate the whole propmt again with these changes.
+
+A:
+```
+Write a Python script that finds lemmas (single words and multi-word phrases) that are characteristic of one legal field, by comparing two collections of Hungarian legal case descriptions.
+
+INPUT
+- Two folders, given as command-line arguments:
+  1. Target folder: .txt files from the field I'm analyzing.
+  2. Reference folder: .txt files from other, general cases.
+- Each .txt file contains exactly one case description, in Hungarian, UTF-8.
+
+PROCESSING
+- Lemmatize the texts with HuSpaCy using the hu_core_news_lg model. Lowercase all lemmas.
+- Extract 1-word, 2-word and 3-word lemma sequences (n-grams), e.g. "gyermek", "szülői felügyelet", "közös szülői felügyelet". The script must handle all three lengths.
+- Line breaks must not split n-grams: treat line breaks as ordinary spaces (replace them before processing), so an n-gram can continue on the next line. N-grams must not cross sentence boundaries and must not contain punctuation or numbers.
+- Drop n-grams that start or end with a Hungarian stopword (e.g. "a", "az", "és", "hogy"), but keep stopwords inside 3-word n-grams.
+- For both folders, count the number of documents each lemma appears in (a lemma that appears 50 times in one file counts as 1).
+- For the target folder only, also count the total number of occurrences of each lemma across all files.
+
+STEP 1 – full table
+Create a CSV containing every lemma/n-gram found in the target folder, with these columns:
+- lemma
+- n (1, 2 or 3)
+- d = number of target documents containing it
+- N_d = total number of target documents
+- r = number of reference documents containing it
+- N_r = total number of reference documents
+- log_ratio = log2( ((d + 0.5) / (N_d + 1)) / ((r + 0.5) / (N_r + 1)) )
+- total_d = total number of occurrences in the target documents
+Sort by log_ratio descending.
+
+STEP 2 – filtering
+A separate command reads the CSV from step 1 (without reprocessing the texts, since lemmatization is slow) and writes a second CSV containing only the lemmas that meet both thresholds:
+- d >= minimum document count (default: 3)
+- log_ratio >= minimum log ratio (default: 1.0)
+Both thresholds must be settable as optional command-line arguments; if omitted, the defaults apply.
+This second CSV has only two columns: lemma and total_d. Sort by total_d descending.
+
+OUTPUT REQUIREMENTS
+- CSV files must display Hungarian characters (á, ő, ű etc.) correctly when opened in Excel.
+- Round log_ratio to 3 decimals.
+- Print a short summary to the console (number of documents in each folder, number of lemmas before and after filtering).
+
+Please also give me installation instructions (including how to install HuSpaCy and the hu_core_news_lg model) and example commands for both steps.
+```
+
+Q:
+váltsunk magyarra
+valahogy úgy kéne elintézni a visszakérdezést, hogy összekötni a dictionary-ket valamilyen módon, akár más fajta data structure-t. A lényeg, ha kapunk olyan n=1 lemmát, ami substringje olyan n=2 vagy n=3 kifejezéseknek, amik különböző jogi kategóriához tartoznak. Akkor rá kell kérdezni, hogy melyik hosszabb kifejezésre gondol a pontosítás miatt.
+Tehát kapunk n=1 inputot, pl "tartozás". Megnézzük a data structure-ben, hogy van-e több olyan n=2 vagy n=3 kifejezés, amelyek nem ugyanahhoz a jogi kategóriához tartoznak és ha igen, akkor megkérdezzük az ügyfelet, hogy melyikre gondolt
+
+A:
+Rendben, váltok magyarra.
+
+Erre a legjobb adatszerkezet egy **fordított index** (inverted index): minden egyszavas lemmához eltárolod, hogy mely hosszabb kifejezésekben szerepel, és azok melyik jogterülethez tartoznak.
+
+**1. Előtte kell egy közös kifejezéstábla.** Minden jogterületre lefuttatod a szűrést (családjog vs. referencia, munkajog vs. referencia, stb.), majd a szűrt listákat egy táblába gyűjtöd:
+
+```
+kifejezés            → jogterület(ek), súly
+"bértartozás"        → munkajog, 120
+"kölcsöntartozás"    → polgári jog, 85
+"közös hiteltartozás"→ családjog, 40
+"szülői felügyelet"  → családjog, 147
+```
+
+Ha egy kifejezés több terület listáján is átment, mindegyiket tárold el.
+
+**2. Ebből építed az indexet.** Minden n=2 és n=3 kifejezést szétbontasz szavakra, és mindegyik szónál felveszed a kifejezést:
+
+```
+"tartozás" → [("közös hiteltartozás", családjog, 40), ...]
+"szülői"   → [("szülői felügyelet", családjog, 147), ...]
+```
+
+**Fontos magyar sajátosság:** a *bértartozás* és a *kölcsöntartozás* egyetlen szó, nem n=2 kifejezés, így a szavakra bontás nem találja meg őket. Ezért az összetett szavakat is indexelni kell: ha egy lemma **végződése** egy másik lemma (bér**tartozás**), akkor azt is felveszed a *tartozás* alá.
+
+Nyers substring-keresést viszont ne használj, mert rengeteg hamis találatot ad: a *kár* benne van a *határ*-ban és a *határozat*-ban, a *per* a *felperes*-ben. Elég, ha két szabályt betartasz:
+- csak a szó végén keresel (az összetett szó utótagja),
+- a megmaradó előtag legalább 3 betű (*bér-*, *kölcsön-*).
+
+Ezeket a találatokat érdemes egyszer kézzel átnézni.
+
+**3. A lekérdezés logikája:**
+
+1. Az ügyfél szavát lemmatizálod (*tartozást* → *tartozás*).
+2. Kikeresed az indexből a hozzá tartozó kifejezéseket.
+3. Jogterület szerint csoportosítod őket.
+   - **Ha 2 vagy több terület jön ki:** visszakérdezel. Minden területről a legnagyobb súlyú 1–2 kifejezést ajánlod fel, és adsz egy „egyik sem” lehetőséget is.
+   - **Ha csak 1 terület jön ki:** nem kell kérdezni, besorolod.
+   - **Ha nincs találat:** nyitott kérdést teszel fel, pl. „Kifejtené bővebben?”
+
+Példa a visszakérdezésre: *„Milyen tartozásra gondol? Bértartozás / Kölcsöntartozás / Közös hiteltartozás (házastárssal) / Egyik sem”*. A jogterület nevét az ügyfélnek nem kell látnia, az csak a háttérben kell.
+
+**Két apróság:**
+- **Súlyozás:** ha a jogterületek korpuszai eltérő méretűek, a total_d-t oszd el a dokumentumszámmal (total_d / N_d). Különben a nagyobb korpuszból jövő kifejezések mindig előre kerülnek.
+- **Előre kiszámolható:** az index alapján előre kilistázhatod az összes kétértelmű szót, vagyis azokat, amelyekhez több jogterület tartozik. Ezt egyszer átnézve látod, hol lesz visszakérdezés, és kézzel javíthatsz, ha valami rosszul van besorolva.
+
+Ha kéred, ezt is megírom promptként a másik chathez.
+
+Q:
+Most nagyon idő szűkében vagyok, tehát nem csináljuk meg elegánsra. Egyelőre két jogi kategória van implementálva, a munkaviszony megszüntetése és a házasság felmondása. Ezekre kell nekem egy olyan szkript, ami beolvassa mindkettőhöz tartozó csv szólistát. Megvizsgálja, hogy milyen n=1 kifejezés van, ami szubsztringje egy n=2 vagy n=3 kifejezésnek és milyen n=2 kifejezés van, ami szubsztringje n=3 kifejezésnek, fontos, hogy vizsgálva mindkettő jogi kategóriát egyszerre, nem külön külön. Majd ezeket exportálja egy új csv fájlba, ahol az első oszlop a szubsztring, második oszlop pedig a jogi kategória, amiben az a szó van, aminek a szubsztringje, a harmadik oszlop a súly. Mindezt a szubsztring szerint sorrendbe helyezve, hogy egymás alatt legyenek az azonos kifejezések. Erről mit gondolsz? kéne még pontosítani valamin?
+a kapott listát én most hardcode-olom, mert mindjárt demóznom kell és a következő napokban automatizálom ennek a folyamatát
+
+A:
+Demóra jó így, és két kategóriánál gyorsan lefut. Négy dolgot pontosítanék, mindegyikhez írok javaslatot, így elég, ha annyit válaszolsz, hogy „ok”, vagy szólsz, ha valamit másképp akarsz.
+
+**1. Kell egy oszlop a hosszabb kifejezésnek is.** A jelenlegi oszlopokból nem derül ki, *melyik* kifejezésről van szó, csak a kategóriája és a súlya. Visszakérdezni viszont épp a hosszabb kifejezéssel tudsz („Bértartozásra vagy közös hiteltartozásra gondol?”).
+Javaslat: **szubsztring | hosszabb kifejezés | jogi kategória | súly**.
+
+**2. A rövid szavak honnan jönnek?** A *tartozás*-féle általános szavak valószínűleg egyik szűrt listán sem lesznek rajta, mert épp azért kétértelműek, mert mindkét területen gyakoriak. Ha csak a szűrt listákból keresed a szubsztringeket, pont ezek maradnak ki.
+Javaslat: a szubsztringeket a **teljes** (1. lépésből jövő) CSV-kből veszed, a hosszabb kifejezéseket a **szűrt** listákból.
+
+**3. Szó vagy karakter szinten keressen?**
+- Szó szinten (*tartozás* ⊂ *közös tartozás*): nincs hamis találat, de a *bértartozás* kimarad, mert az egy szó (n=1).
+- Karakter szinten: a *bértartozás* is bekerül, de lesz szemét is (*per* ⊂ *felperes*, *kár* ⊂ *határozat*).
+
+Javaslat: **szó szinten, plusz szóvégi egyezés** (a *tartozás* illeszkedik a *bértartozás* végére, a *per* nem illeszkedik a *felperes*-re). Ehhez az n=1-ben n=1 esetet is vizsgálni kell, ami most nincs benne a leírásodban.
+
+**4. Mindent exportáljon, vagy csak a kétértelműeket?** Visszakérdezni csak ott kell, ahol a hosszabb kifejezések **mindkét** kategóriában előfordulnak.
+Javaslat: csak ezeket exportálja, így a demóhoz rövid, áttekinthető lista lesz. Ha mégis mindent látni akarsz, legyen ez egy kapcsoló.
+
+Rendezés: szubsztring szerint, azon belül kategória, azon belül súly szerint csökkenően. A *súly* a hosszabb kifejezés total_d-je.
+
+Ha jó így, megírom a szkriptet.
+
+Q:
+1. Igen, kell egy oszlop. Viszont szerintem egy sorban csak 1 hosszabb kifejezés legyen, tehát minden egyezésnek külön sor. Úgy is egymás alatt lesznek
+2. Ez is igaz. Azon gondolkozok, hogy van-e értelme a hosszabb kifejezéseket a teljes listából venni. De ha jól gondolom, akkor nem, mivel azokat úgysem használjuk azonosításra. Tehát legyen úgy, ahogy te javasoltad
+3. Ez is jó javaslat
+4. Csak a kétértelműeket
+
+A promptot angolul írjad
+
+A:
+```
+Write a simple, single-file Python script (standard library only) that finds ambiguous lemmas across two legal categories. I need it quickly for a demo, so keep it straightforward.
+
+INPUT
+For each of the two categories there are two CSV files (UTF-8, possibly with BOM):
+- Full list: columns lemma, n, d, N_d, r, N_r, log_ratio, total_d. n is the number of words in the lemma (1, 2 or 3).
+- Filtered list: columns lemma, total_d. There is no n column here; derive n from the number of space-separated words.
+The script takes as command-line arguments: the category name, the full CSV and the filtered CSV for each of the two categories. Example category names: "munkaviszony megszüntetése" and "házasság felbontása".
+
+WHAT TO FIND
+- Short lemmas: all n=1 and n=2 lemmas from BOTH full lists (union).
+- Longer phrases: all lemmas from BOTH filtered lists, each remembered with its category and its total_d from that filtered list. If the same phrase appears in both filtered lists, keep both entries.
+- A short lemma matches a longer phrase (never the same string) if:
+  a) n=1 short, n=2 or n=3 long: the short lemma equals one of the long phrase's words, OR one of the long phrase's words ends with the short lemma (Hungarian compound, e.g. "tartozás" in "bértartozás"), where the remaining prefix is at least 3 characters and the short lemma is at least 3 characters.
+  b) n=1 short, n=1 long: the long word ends with the short lemma (compound), with the same length rules as above.
+  c) n=2 short, n=3 long: the two words of the short lemma appear as consecutive words in the long phrase.
+- Treat both categories together, not separately: collect all matches for a short lemma across both categories.
+- Keep only ambiguous short lemmas: those whose matched longer phrases include at least one phrase from EACH category. Drop all others.
+
+OUTPUT
+One CSV file with these columns:
+- substring (the short lemma)
+- longer_phrase
+- category (the category of the longer phrase)
+- weight (total_d of the longer phrase in that category's filtered list)
+One row per match. Sort by substring, then by category, then by weight descending, so all rows for the same substring are directly below each other.
+The CSV must display Hungarian characters correctly in Excel.
+Print a short summary to the console: number of short lemmas checked, number of ambiguous lemmas found, number of rows written.
+
+Give me an example command to run it.
+```
+
+Q:
+nem túl hasznos az output
+De lehet azért mert a munkaszerződés és a válás nagyon távoli kategóriák
+
+A:
+Részben valószínűleg igen. Két ennyire távoli kategóriánál kevés a valódi kétértelműség: a legtöbb szó egyértelműen az egyikhez tartozik, így a visszakérdezésre ritkán van szükség. Ami mégis átjut a szűrőn, az többnyire általános szó (*nap*, *idő*, *költség*), amit az ügyfél úgysem írna be magában. A módszer igazi haszna akkor jön elő, ha közeli kategóriák is lesznek, pl. munkaviszony megszüntetése vs. bérkövetelés, vagy válás vs. vagyonmegosztás vs. gyermekelhelyezés.
+
+**A demóra:** mivel úgyis hardcode-olsz, válassz ki kézzel 3–4 jó példát, ahol a kétértelműség valódi és érthető. Ennél a két kategóriánál ilyenek lehetnek:
+
+- **közös megegyezés**: munkaviszony megszüntetése közös megegyezéssel vs. közös megegyezéses válás
+- **megszüntetés / megszűnés**: munkaviszony megszüntetése vs. életközösség megszűnése, vagyonközösség megszüntetése
+- **lakás**: szolgálati lakás vs. közös lakás használata
+- **tartozás / megfizetés**: bértartozás, végkielégítés megfizetése vs. tartásdíj-hátralék, közös hitel
+
+Érdemes megnézni, hogy ezek megvannak-e az outputban; ha igen, akkor a módszer működik, csak a lista többi része zaj.
+
+Ha a demó után javítani akarsz rajta, mondd meg, mi a baj az outputtal: túl kevés sor, sok értelmetlen találat, vagy a jó példák hiányoznak. A három más-más javítást igényel.
+
+Q:
+well
+a közös megegyezéses megszüntetés az 4 szó, az nincs benne a listában
+de ha 4 egymás melletti szót is vizsgálok a lemmatizálásnál, az már nagyon sok memória
+tartásdíjjal lehetne jól bemutatni, hogy azt írja, hogy fizetem a tartást és visszakérdezünk, hogy milyen tartást. de az nincs benne mert postfixet nézünk csak
+
+A:
+Két külön probléma van itt, és egyik sem igényel 4-gramokat.
+
+**1. Közös megegyezés:** ehhez elég a 2-gram *közös megegyezés*, ha mindkét kategória listáján rajta van. A gond inkább a lemmatizálás lehet: a munkajogi szövegekben *közös megegyezéssel* → *közös megegyezés*, a családjogiakban *közös megegyezéses válás* → *közös megegyezéses*. Ez két különböző lemma, így nem találkoznak. Nézd meg, melyik alak van a két listán.
+
+Ha később mégis kellenek 4-gramok, a memória kezelhető: csak azokat a 3-gramokat bővítsd egy szóval, amelyek már átmentek a szűrésen (d ≥ 3). Így a 4-gramok száma nagyságrendekkel kisebb.
+
+**2. Tartás → tartásdíj:** igen, itt az előtagot kellene nézni, nem a végződést. Ha az előtagot is engeded, sok lesz a szemét (*bér* → *bérlet*, *kár* → *kártya*). Erre van egy egyszerű szűrő: csak akkor fogadd el a találatot, ha **a maradék rész is létező lemma** a listákban. *tartás* + *díj* → a *díj* létező szó, elfogadva. *bér* + *let* → nem létező szó, kiesik. Ez a végződéses egyezést is tisztítja.
+
+**De van egy harmadik gond:** a *tartás* valószínűleg csak a családjogi listán fordul elő (tartásdíj, gyermektartás, házastársi tartás). Ez nem a két kategória közötti kétértelműség, hanem kategórián belüli pontosítás. A 4. szabály (csak a mindkét kategóriában előforduló) ezért kiszűri. Két távoli kategóriánál épp ezek a jó demópéldák.
+
+Ha kell, ezt a részt cseréld le a promptban:
+
+```
+- A short lemma matches a longer phrase (never the same string) if:
+  a) n=1 short, n=2 or n=3 long: the short lemma equals one of the long phrase's words, OR one of the long phrase's words starts or ends with the short lemma (Hungarian compound, e.g. "tartás" in "tartásdíj", "tartozás" in "bértartozás").
+  b) n=1 short, n=1 long: the long word starts or ends with the short lemma.
+  c) n=2 short, n=3 long: the two words of the short lemma appear as consecutive words in the long phrase.
+  For compound matches (starts/ends with), accept the match only if the remaining part of the word (e.g. "díj", "bér") is itself an n=1 lemma in either full list.
+- Keep a short lemma if its matched longer phrases include at least one phrase from EACH category (type "between categories"), OR at least two different phrases from the same category (type "within category").
+- Add a fifth column "type" with the value "between categories" or "within category".
+```
+
+Q:
+de példának bemutatható lenne, mert van olyan is, hogy feleségtartás
+ami még nincs fent a listán szerintem, de csak amiatt, mert a minta kicsi
+
+A:
+Igen, jó demópélda: az ügyfél azt írja, hogy *„fizetem a tartást”*, és a rendszer visszakérdez: *gyermektartás vagy házastársi tartás?* Ezt mindenki azonnal érti, és jól mutatja, miért kell a pontosítás.
+
+A demóra nyugodtan vedd fel kézzel a hiányzó kifejezéseket. A logika ugyanaz, a nagyobb mintából később magától is előjönnek.
+
+Egy apróság: a bírósági szövegekben a *feleségtartás* helyett inkább *házastársi tartás* szerepel, a *feleségtartás* inkább köznyelvi. Lehet, hogy nagyobb mintában sem lesz gyakori. Ez épp a korábban említett szinonimaprobléma: az ügyfél *feleségtartás*-t ír, a lista *házastársi tartás*-t tartalmaz. A demóban ezt úgy is bemutathatod, hogy a visszakérdezés opcióinál az ügyfél nyelvén fogalmazol (*„a gyerek tartása vagy a volt házastárs tartása?”*), a háttérben pedig a jogi kifejezésre képezed le.
+
+Q:
+a probléma inkább az hogy túl sok használhatatlan sor van a listán
+
+A:
+A gyors javítások, a leghatékonyabbtól kezdve:
+
+1. **Kategóriánként csak a 2–3 legnagyobb súlyú hosszabb kifejezés maradjon** minden szubsztringhez. Visszakérdezni úgyis csak ennyi opciót tudsz felajánlani, a többi sor csak zaj. Ez egymagában a lista nagy részét eltünteti.
+2. **Minimális súly:** a 3–5 alatti total_d-jű hosszabb kifejezések kiesnek, mert kis mintán ezek véletlenek.
+3. **Túl általános szubsztringek kiszűrése:** ha egy szó 15–20-nál több különböző kifejezésben szerepel (*nap*, *bíróság*, *fél*), arra értelmetlen visszakérdezni. Az ilyen szubsztring teljesen kiesik.
+4. **Rövid stoplista** a maradék általános szavakra (*év*, *idő*, *első*, *kér*, *rész*, *mód* stb.), amit a lista átnézése közben bővítesz.
+
+Promptba:
+
+```
+- Ignore longer phrases with weight below a minimum (default: 3).
+- For each substring, keep only the top 3 longer phrases per category by weight.
+- Drop a substring entirely if it matches more than a maximum number of different longer phrases before the top-3 cut (default: 20), because it is too general to ask about.
+- Read an optional stoplist file (one lemma per line) and skip those substrings.
+- All these limits must be settable as optional command-line arguments.
+```
+
+A mai demóhoz a leggyorsabb, ha az Excelben szubsztring szerint szűrve kézzel kiválasztod a 3–4 jó példát. A fenti szabályok a holnaputáni automatizáláshoz kellenek.
+
+Q:
+Az biztos, ha a pontszámok relatíve közel vannak egymáshoz a kategorizálás után, akkor átirányítom az ügyfelet egy sikertelen kategorizálás oldalra
+mondjuk ha a 2. legtöbb pontot kapó kategória több mint 50% pontja van az elsőhöz képest
+visszakérdezni is csak akkor lenne értelme, ha a substring vagy a hozzá kapcsolódó kifejezések közül van olyan, amelyik jelentősen más pontot ér a többihez képest
+ha minden kb ugyanannyi pont, mondjuk a substring 10 pont 1. és a 2. kategóriában, és az egyik  hosszabb kifejezés ugyancsak 10 pont, a 2. hosszabb kifejezés meg 11 pont a 2. kategóriában, akkor azzal felesleges foglalkozni
+
+A:
+Egyetértek, és a két szabályodat egy közös logikába lehet foglalni: **csak akkor kérdezz vissza, ha a válasz megváltoztathatja a kategorizálás eredményét.**
+
+Ezt visszakérdezés előtt ki lehet számolni: minden felajánlható opcióra kiszámolod, mi lenne az eredmény, ha az ügyfél azt választaná.
+
+- Ha **legalább egy opció** átviszi az eredményt a sikertelenből a sikeresbe (a második kategória az első 50%-a alá kerül), vagy megváltoztatja a nyertes kategóriát, akkor **érdemes kérdezni**.
+- Ha egyik opció sem változtat, akkor **felesleges kérdezni**, és a jelenlegi eredmény marad (sikeres vagy sikertelen).
+
+A te példádban a 10 és 11 pontos kifejezés egyike sem változtat semmin, így a kérdés automatikusan elmarad, külön szabály nélkül.
+
+**Ehhez fontos, hogy mit jelent a pont.** Nem az számít, mekkora egy kifejezés pontszáma, hanem hogy **mennyire egyoldalú** a kategóriák között:
+
+| Kifejezés | 1. kategória | 2. kategória | Értéke a döntéshez |
+|---|---|---|---|
+| A | 10 | 11 | semmi |
+| B | 40 | 0 | nagy |
+| C | 5 | 0 | kicsi, de egyértelmű |
+
+Ha a pont a total_d, akkor egy gyakori, de mindkét oldalon előforduló kifejezés sok pontot ad mindkét kategóriának, és csak elmossa a különbséget. Erre két egyszerű megoldás van:
+- a pontot a log ratio-ból számolod (az eleve a különbséget méri), vagy
+- csak azt a kategóriát pontozod, ahol a kifejezés lényegesen erősebb, a másikat nem.
+
+**Még egy dolog:** az 50%-os szabály csak akkor működik megbízhatóan, ha a két kategória pontjai összemérhetők. Ha az egyik korpusz sokkal nagyobb, annak kifejezései eleve több pontot kapnak. Ezért érdemes a total_d-t a dokumentumszámmal elosztani, ahogy korábban írtam.
+
+Q:
+úgy van normalizálva, hogy mindkettő kategória total_d =  100000-re van kiszámolva, hogy ne kelljen kis számokkal számolni
+így pár ezres pontszámok jönnek ki, aminél a kerekítési hibák eltörpülnek
+viszont nekem a célom az előbbivel a lista drasztikus lecsökkentése
+utána jó lenne megnézni a külön opciókat is kalkulálásnál, de egyelőre rövidítsunk a listán
+írd le ezt az elvárást angolul, hogy vizsgálja meg mekkora a pontkülönbség a különböző formáknál
+
+A:
+Itt a szabály: egy hosszabb kifejezés akkor **döntő**, ha a gyengébb kategóriában kapott pontja legfeljebb 50%-a az erősebbikben kapottnak (ugyanaz a határ, mint a sikertelen kategorizálásnál). Egy szubsztring csak akkor marad a listán, ha **ő maga nem döntő, de legalább egy hosszabb kifejezése igen**. Ha ő maga is döntő, nincs mit kérdezni; ha egyik kifejezése sem az, a kérdés nem segít. A te példádban a 10 és 11 pontos kifejezés aránya 0,91, így kiesik.
+
+```
+SCORE-DIFFERENCE FILTER
+The total_d values in all CSV files are already normalized to a per-100,000 scale in both categories, so they are directly comparable.
+
+For every form (the substring itself and each of its longer phrases), look up its total_d in BOTH full lists (use 0 if it is missing from a list). Call the larger value "strong" and the smaller value "weak", and compute ratio = weak / strong.
+A form is "decisive" if ratio <= a threshold (default: 0.5).
+
+Keep a substring and its rows only if:
+- the substring itself is NOT decisive (otherwise it already points to one category, no question needed), AND
+- at least one of its longer phrases IS decisive (otherwise asking would not change the categorization).
+Drop all other substrings, including all "within category" rows.
+In the output, keep only the decisive longer phrases.
+
+Add these columns to the output: score in category 1, score in category 2, ratio (rounded to 3 decimals).
+The threshold must be settable as an optional command-line argument.
+Print to the console how many substrings were kept and how many were dropped by this filter.
+```
+
+A *tartás*-féle kategórián belüli példák ettől kiesnek, mert azok nem változtatnak a kategorizáláson. A demóhoz azokat kézzel vedd fel.
+
+Q:
+viszont a másik programnál, ahol kiszűrtük az egyik jogi területhez specifikus kifejezéseket, nem normalizáltuk total_d-t
+
+A:
+Akkor a normalizálást az új szkriptbe kell beépíteni, mert a beolvasott CSV-kben nyers számok vannak. Cseréld le a SCORE-DIFFERENCE FILTER első mondatát erre:
+
+```
+The total_d values in the input CSV files are raw counts, so normalize them first. For each category, compute the sum of total_d over all lemmas in that category's FULL list, then normalize every total_d of that category (in both its full and filtered list) as:
+normalized = total_d / category_sum * 100,000
+Use the normalized values everywhere: for the weight column, the top-3 selection, the minimum weight, and the ratio calculation.
+```
+
+Ha a kategorizálásnál más módon normalizálsz (pl. tokenszámra vagy dokumentumszámra), akkor ide is azt írd, különben a két program pontjai nem lesznek összemérhetők. Az arányszűrőt ez nem nagyon befolyásolja, de a súlyokat és a minimális súly küszöbét igen.
+
+Q:
+#!/usr/bin/env python3
+"""
+jogi_kulcsszavak.py - characteristic lemmas / n-grams of a legal field.
+
+Compares a TARGET folder of Hungarian case descriptions (.txt, one case per
+file, UTF-8) with a REFERENCE folder of general cases and finds 1-, 2- and
+3-word lemma sequences that are over-represented in the target field.
+
+Two sub-commands:
+
+  extract  - lemmatizes both folders with HuSpaCy (hu_core_news_lg) and writes
+             the full table (step 1). This is the slow part.
+  filter   - reads the step-1 CSV and keeps the lemmas that pass the
+             thresholds (step 2). No text processing, runs in seconds.
+
+Examples:
+  python jogi_kulcsszavak.py extract csaladjog/ altalanos/ -o step1_teljes.csv
+  python jogi_kulcsszavak.py filter step1_teljes.csv -o step2_szurt.csv
+  python jogi_kulcsszavak.py filter step1_teljes.csv -o step2_szurt.csv --min-docs 5 --min-log-ratio 1.5
+"""
+
+import argparse
+import csv
+import io
+import math
+import re
+import sys
+import time
+from collections import Counter
+from pathlib import Path
+
+MODEL_NAME = "hu_core_news_lg"
+MAX_N = 3
+
+# Tokens with these POS tags end the current run of words, so no n-gram can
+# contain or span across them (punctuation, numerals, symbols).
+BREAK_POS = {"PUNCT", "NUM", "SYM"}
+
+# A valid lemma is made of letters only, optionally joined by a hyphen or an
+# apostrophe (e.g. "ptk", "szülői", "kft", "e-mail"). [^\W\d_] = any Unicode
+# letter, so á, é, ő, ű etc. are all included.
+WORD_RE = re.compile(r"[^\W\d_]+(?:[-'’][^\W\d_]+)*")
+DIGIT_RE = re.compile(r"\d")
+WHITESPACE_RE = re.compile(r"\s+")
+
+STEP1_COLUMNS = ["lemma", "n", "d", "N_d", "r", "N_r", "log_ratio", "total_d"]
+STEP2_COLUMNS = ["lemma", "total_d"]
+
+
+# --------------------------------------------------------------------------
+# Reading files
+# --------------------------------------------------------------------------
+
+def read_folder(folder: Path, label: str):
+    """Return [(file name, normalized text)] for every .txt file in the folder."""
+    if not folder.is_dir():
+        sys.exit(f"ERROR: the {label} folder does not exist: {folder}")
+    files = sorted(p for p in folder.iterdir()
+                   if p.is_file() and p.suffix.lower() == ".txt")
+    if not files:
+        sys.exit(f"ERROR: no .txt files found in the {label} folder: {folder}")
+
+    docs = []
+    for path in files:
+        raw = path.read_bytes()
+        try:
+            text = raw.decode("utf-8-sig")          # also strips a BOM if present
+        except UnicodeDecodeError:
+            print(f"  WARNING: {path.name} is not valid UTF-8; "
+                  f"undecodable bytes were replaced.", file=sys.stderr)
+            text = raw.decode("utf-8-sig", errors="replace")
+        # Line breaks (and any other whitespace run) become a single space,
+        # so an n-gram can continue on the next line.
+        text = WHITESPACE_RE.sub(" ", text).strip()
+        if not text:
+            print(f"  WARNING: {path.name} is empty (still counted as a document).",
+                  file=sys.stderr)
+        docs.append((path.name, text))
+    return docs
+
+
+# --------------------------------------------------------------------------
+# NLP
+# --------------------------------------------------------------------------
+
+def load_model():
+    try:
+        import spacy
+    except ImportError:
+        sys.exit("ERROR: spaCy is not installed. Run: pip install huspacy")
+    try:
+        nlp = spacy.load(MODEL_NAME)
+    except OSError:
+        sys.exit(f"ERROR: the {MODEL_NAME} model is not installed.\n"
+                 f'Run: python -c "import huspacy; huspacy.download(\'{MODEL_NAME}\')"')
+
+    # Named entity recognition is not needed; switching it off saves time.
+    unneeded = [name for name in ("ner",) if name in nlp.pipe_names]
+    if unneeded:
+        nlp.select_pipes(disable=unneeded)
+
+    # Make sure sentence boundaries are available; add a rule-based
+    # sentencizer only if the model itself does not set them.
+    probe = nlp("Ez az első mondat. Ez a második mondat.")
+    if not probe.has_annotation("SENT_START"):
+        nlp.add_pipe("sentencizer", first=True)
+
+    from spacy.lang.hu.stop_words import STOP_WORDS
+    return nlp, frozenset(w.lower() for w in STOP_WORDS)
+
+
+def clean_lemma(tok):
+    """Lowercased lemma of a word token, or None if the token breaks n-grams."""
+    if tok.is_punct or tok.pos_ in BREAK_POS or DIGIT_RE.search(tok.text):
+        return None
+    lemma = (tok.lemma_ or tok.text).strip().lower()
+    lemma = lemma.strip(".")                 # abbreviations: "Ptk." -> "ptk"
+    if not WORD_RE.fullmatch(lemma):
+        return None
+    return lemma
+
+
+def word_runs(doc):
+    """Yield lists of consecutive word lemmas. A run never crosses a sentence
+    boundary, punctuation, a number or a symbol."""
+    for sent in doc.sents:
+        run = []
+        for tok in sent:
+            if tok.is_space:
+                continue
+            lemma = clean_lemma(tok)
+            if lemma is None:
+                if run:
+                    yield run
+                run = []
+            else:
+                run.append(lemma)
+        if run:
+            yield run
+
+
+def ngrams_of_runs(runs, stopwords, max_n=MAX_N):
+    """Count 1..max_n-grams in the runs. N-grams starting or ending with a
+    stopword are dropped; stopwords inside a 3-gram are kept."""
+    counts = Counter()
+    for run in runs:
+        length = len(run)
+        for n in range(1, max_n + 1):
+            for i in range(length - n + 1):
+                if run[i] in stopwords or run[i + n - 1] in stopwords:
+                    continue
+                counts[" ".join(run[i:i + n])] += 1
+    return counts
+
+
+def analyze(nlp, docs, stopwords, label, batch_size, n_process):
+    """Yield an n-gram Counter for each document, with progress output."""
+    texts = [text for _, text in docs]
+    longest = max((len(t) for t in texts), default=0)
+    if longest >= nlp.max_length:
+        nlp.max_length = longest + 1
+
+    total = len(texts)
+    step = max(1, total // 20)
+    start = time.time()
+    print(f"Lemmatizing {label} folder ({total} documents)...", file=sys.stderr)
+    for i, doc in enumerate(nlp.pipe(texts, batch_size=batch_size,
+                                     n_process=n_process), start=1):
+        yield ngrams_of_runs(word_runs(doc), stopwords)
+        if i % step == 0 or i == total:
+            elapsed = time.time() - start
+            print(f"  {label}: {i}/{total} documents ({elapsed:.0f} s)",
+                  file=sys.stderr)
+
+
+# --------------------------------------------------------------------------
+# CSV helpers
+# --------------------------------------------------------------------------
+
+def write_csv(path: Path, header, rows, delimiter):
+    # utf-8-sig writes a BOM, which makes Excel recognise UTF-8 so that
+    # á, é, ő, ű etc. display correctly.
+    with open(path, "w", encoding="utf-8-sig", newline="") as f:
+        writer = csv.writer(f, delimiter=delimiter)
+        writer.writerow(header)
+        writer.writerows(rows)
+
+
+def read_csv(path: Path):
+    """Read a step-1 CSV written with either ',' or ';' as delimiter.
+    Returns (rows as dicts, delimiter)."""
+    if not path.is_file():
+        sys.exit(f"ERROR: file not found: {path}")
+    text = path.read_text(encoding="utf-8-sig")
+    first_line = text.split("\n", 1)[0]
+    delimiter = ";" if first_line.count(";") > first_line.count(",") else ","
+    reader = csv.DictReader(io.StringIO(text, newline=""), delimiter=delimiter)
+    missing = {"lemma", "d", "log_ratio", "total_d"} - set(reader.fieldnames or [])
+    if missing:
+        sys.exit(f"ERROR: {path} is not a step-1 table "
+                 f"(missing columns: {', '.join(sorted(missing))}).")
+    return list(reader), delimiter
+
+
+def to_float(value: str) -> float:
+    return float(value.strip().replace(",", "."))   # accepts decimal comma too
+
+
+# --------------------------------------------------------------------------
+# Step 1: extract
+# --------------------------------------------------------------------------
+
+def cmd_extract(args):
+    target_docs = read_folder(Path(args.target), "target")
+    ref_docs = read_folder(Path(args.reference), "reference")
+    N_d, N_r = len(target_docs), len(ref_docs)
+
+    print(f"Loading {MODEL_NAME}...", file=sys.stderr)
+    nlp, stopwords = load_model()
+
+    doc_freq_target = Counter()   # d: number of target documents containing it
+    total_target = Counter()      # total_d: occurrences in all target documents
+    for counts in analyze(nlp, target_docs, stopwords, "target",
+                          args.batch_size, args.n_process):
+        total_target.update(counts)
+        doc_freq_target.update(counts.keys())
+
+    # For the reference folder only lemmas that occur in the target matter,
+    # so only those are counted (keeps memory usage low).
+    vocabulary = doc_freq_target.keys()
+    doc_freq_ref = Counter()      # r: number of reference documents containing it
+    for counts in analyze(nlp, ref_docs, stopwords, "reference",
+                          args.batch_size, args.n_process):
+        doc_freq_ref.update(k for k in counts if k in vocabulary)
+
+    rows = []
+    for lemma, d in doc_freq_target.items():
+        r = doc_freq_ref.get(lemma, 0)
+        log_ratio = math.log2(((d + 0.5) / (N_d + 1)) / ((r + 0.5) / (N_r + 1)))
+        rows.append((lemma, lemma.count(" ") + 1, d, N_d, r, N_r,
+                     round(log_ratio, 3), total_target[lemma]))
+
+    # log_ratio descending; ties: more target documents first, then alphabetical
+    rows.sort(key=lambda row: (-row[6], -row[2], row[0]))
+
+    if args.excel_hu:
+        delimiter = ";"
+        out_rows = [row[:6] + (f"{row[6]:.3f}".replace(".", ","),) + row[7:]
+                    for row in rows]
+    else:
+        delimiter = ","
+        out_rows = [row[:6] + (f"{row[6]:.3f}",) + row[7:] for row in rows]
+
+    out_path = Path(args.output)
+    write_csv(out_path, STEP1_COLUMNS, out_rows, delimiter)
+
+    by_n = Counter(row[1] for row in rows)
+    print()
+    print("=== Summary (step 1) ===")
+    print(f"Target documents:     {N_d}")
+    print(f"Reference documents:  {N_r}")
+    print(f"Lemmas / n-grams:     {len(rows)}  "
+          f"(1-word: {by_n[1]}, 2-word: {by_n[2]}, 3-word: {by_n[3]})")
+    print(f"Written to:           {out_path}")
+
+
+# --------------------------------------------------------------------------
+# Step 2: filter
+# --------------------------------------------------------------------------
+
+def cmd_filter(args):
+    in_path = Path(args.input)
+    rows, delimiter = read_csv(in_path)
+
+    kept = []
+    for row in rows:
+        try:
+            d = int(row["d"])
+            log_ratio = to_float(row["log_ratio"])
+            total_d = int(row["total_d"])
+        except (TypeError, ValueError):
+            print(f"  WARNING: skipping unreadable row: {row}", file=sys.stderr)
+            continue
+        if d >= args.min_docs and log_ratio >= args.min_log_ratio:
+            kept.append((row["lemma"], total_d))
+
+    kept.sort(key=lambda item: (-item[1], item[0]))   # total_d descending
+
+    out_path = Path(args.output)
+    write_csv(out_path, STEP2_COLUMNS, kept, delimiter)
+
+    n_docs_info = ""
+    if rows:
+        n_docs_info = (f"Target documents:     {rows[0].get('N_d', '?')}\n"
+                       f"Reference documents:  {rows[0].get('N_r', '?')}\n")
+    print("=== Summary (step 2) ===")
+    print(n_docs_info, end="")
+    print(f"Thresholds:           d >= {args.min_docs}, "
+          f"log_ratio >= {args.min_log_ratio}")
+    print(f"Lemmas before filter: {len(rows)}")
+    print(f"Lemmas after filter:  {len(kept)}")
+    print(f"Written to:           {out_path}")
+
+
+# --------------------------------------------------------------------------
+# Command line
+# --------------------------------------------------------------------------
+
+def build_parser():
+    parser = argparse.ArgumentParser(
+        description="Find lemmas and n-grams characteristic of a legal field "
+                    "by comparing two folders of Hungarian case descriptions.")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p1 = sub.add_parser("extract", help="Step 1: lemmatize and build the full table.")
+    p1.add_argument("target", help="Folder with .txt files of the analysed field")
+    p1.add_argument("reference", help="Folder with .txt files of general cases")
+    p1.add_argument("-o", "--output", default="step1_full.csv",
+                    help="Output CSV (default: step1_full.csv)")
+    p1.add_argument("--excel-hu", action="store_true",
+                    help="Use ';' as delimiter and a decimal comma, for Excel "
+                         "with Hungarian regional settings")
+    p1.add_argument("--batch-size", type=int, default=16,
+                    help="Documents per spaCy batch (default: 16)")
+    p1.add_argument("--n-process", type=int, default=1,
+                    help="Parallel processes for lemmatization (default: 1)")
+    p1.set_defaults(func=cmd_extract)
+
+    p2 = sub.add_parser("filter", help="Step 2: filter the step-1 table.")
+    p2.add_argument("input", help="CSV written by the extract step")
+    p2.add_argument("-o", "--output", default="step2_filtered.csv",
+                    help="Output CSV (default: step2_filtered.csv)")
+    p2.add_argument("--min-docs", type=int, default=3,
+                    help="Minimum number of target documents, d (default: 3)")
+    p2.add_argument("--min-log-ratio", type=float, default=1.0,
+                    help="Minimum log_ratio (default: 1.0)")
+    p2.set_defaults(func=cmd_filter)
+    return parser
+
+
+def main():
+    args = build_parser().parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()
+ebben nincs normalizálás?
+
+A:
+Nincs. A `total_d` nyers szám: a `cmd_extract`-ban egyszerűen `total_target[lemma]` kerül a CSV-be, vagyis hányszor fordul elő a lemma összesen a célmappa fájljaiban. A szűrt CSV is ezt a nyers értéket kapja.
+
+Ami viszont normalizált: a **log_ratio**, mert dokumentumarányokból számol (d / N_d és r / N_r), így az különböző méretű korpuszoknál is összemérhető.
+
+Ha a `total_d`-t is itt akarod normalizálni, a legegyszerűbb hely a `rows.append(...)` sor a `cmd_extract`-ban. Például 100 000 előfordulásra vetítve:
+
+```python
+category_sum = sum(total_target.values())
+...
+total_target[lemma] / category_sum * 100_000
+```
+
+Egy dolgot vegyél figyelembe: a `total_target` az 1-, 2- és 3-gramokat együtt számolja, így ez az összeg nem a szavak száma, hanem az összes n-gram előfordulásé. Ez nem baj, amíg mindkét kategóriát ugyanígy normalizálod, de ha a kategorizálásnál tokenszámra normalizálsz, a két program pontjai nem lesznek pontosan összemérhetők.
+
+Q:
+nem tudom mi az a tokenszám
+kiszámoltam 100000 / total_d-t mindkét kategóriára és amikor a dictionarybe behelyezem az értéket, ezzel megszorzom
+
+A:
+A tokenszám egyszerűen a szövegben lévő szavak száma. Nem kell vele foglalkoznod, a te módszered jó.
+
+Amit csinálsz, az pontosan ugyanaz, mint amit a prompt kér: `total_d × (100 000 / összeg)` = `total_d / összeg × 100 000`. Egy dolgon múlik, hogy a két program összemérhető legyen: **melyik lista total_d-jét adtad össze**, a teljes listáét vagy a szűrtét?
+
+- Ha a **szűrt** listáét, akkor a promptban a „FULL list” helyett ez kell:
+  ```
+  compute the sum of total_d over all lemmas in that category's FILTERED list
+  ```
+- Ha a **teljes** listáét, a prompt úgy jó, ahogy van.
+
+A lényeg, hogy mindkét programban ugyanazzal a szorzóval számolj, és a szubsztringek (amik a teljes listából jönnek) is ezt a szorzót kapják. Ha akarod, a szkriptnek parancssorban is megadhatod a két szorzót, így biztosan ugyanazt használja, mint a kategorizálásod:
+
+```
+Instead of computing the normalization, take one multiplier per category as a command-line argument and multiply every total_d of that category by it.
+```
+
+Q:
+most ezzel nem húzom az időt
+felírom a todo listámra
+írd le a teljes promptot azzal a módosítással, hogy vizsgálja meg a különbséget az értékekben a szubsztring és a hozzá kapcsolódó kifejezéseknél
+paraméterként híváskor várjon egy százalék értéket és ha annál nagyobb vagy egyenlő az eltérés, akkor maradjon a listán, ha kisebb, akkor ne kerüljön fel a listára
+alapértelmezett érték legyen 50%
+tehát ha van a szerződés szó például és az 10 pont a munkajognál és a albérletszerződés 14 pont a másik kategóriánál, akkor ne legyen fent az ambiguous listán, de ha már 15 pont, akkor legyen fent
+
+A:
+Itt a teljes prompt. A pontokat egyelőre a CSV-kben lévő nyers total_d értékekből számolja; a normalizálás a todo listádon marad.
+
+```
+Write a simple, single-file Python script (standard library only) that finds ambiguous lemmas across two legal categories. I need it quickly for a demo, so keep it straightforward.
+
+INPUT
+For each of the two categories there are two CSV files (UTF-8, possibly with BOM, delimiter "," or ";"):
+- Full list: columns lemma, n, d, N_d, r, N_r, log_ratio, total_d. n is the number of words in the lemma (1, 2 or 3).
+- Filtered list: columns lemma, total_d. There is no n column here; derive n from the number of space-separated words.
+The script takes as command-line arguments: the category name, the full CSV and the filtered CSV for each of the two categories. Example category names: "munkaviszony megszüntetése" and "házasság felbontása".
+Scores are the total_d values exactly as they appear in the CSV files.
+
+WHAT TO FIND
+- Short lemmas: all n=1 and n=2 lemmas from BOTH full lists (union). The score of a short lemma is its highest total_d across the two full lists.
+- Longer phrases: all lemmas from BOTH filtered lists, each remembered with its category and its total_d from that filtered list (its weight). If the same phrase appears in both filtered lists, keep both entries.
+- A short lemma matches a longer phrase (never the same string) if:
+  a) n=1 short, n=2 or n=3 long: the short lemma equals one of the long phrase's words, OR one of the long phrase's words starts or ends with the short lemma (Hungarian compound, e.g. "tartás" in "tartásdíj", "szerződés" in "albérletszerződés").
+  b) n=1 short, n=1 long: the long word starts or ends with the short lemma.
+  c) n=2 short, n=3 long: the two words of the short lemma appear as consecutive words in the long phrase.
+  For compound matches (starts/ends with), accept the match only if the remaining part of the word (e.g. "díj", "albérlet") is itself an n=1 lemma in either full list.
+- Treat both categories together, not separately: collect all matches for a short lemma across both categories.
+
+FILTERS (apply in this order)
+1. Stoplist: read an optional stoplist file (one lemma per line) and skip those short lemmas.
+2. Minimum weight: ignore longer phrases with weight below a minimum (default: 3).
+3. Too general: drop a short lemma entirely if it matches more than a maximum number of different longer phrases (default: 20).
+4. Score difference: for each match, compute
+   difference = |weight of longer phrase - score of short lemma| / score of short lemma * 100
+   Keep the match only if difference >= a percentage threshold (default: 50). Example: short lemma "szerződés" has score 10; "albérletszerződés" with weight 14 gives 40% and is dropped; with weight 15 it gives 50% and is kept.
+5. Top matches: for each short lemma, keep only the top 3 remaining longer phrases per category by weight.
+6. Ambiguity: keep a short lemma only if its remaining longer phrases include at least one phrase from EACH category. Drop all others.
+
+All thresholds (minimum weight, maximum matches, percentage threshold, top count) and the stoplist path must be optional command-line arguments with the defaults above.
+
+OUTPUT
+One CSV file with these columns:
+- substring (the short lemma)
+- substring_score
+- longer_phrase
+- category (the category of the longer phrase)
+- weight (total_d of the longer phrase in that category's filtered list)
+- difference_percent (rounded to 1 decimal)
+One row per match. Sort by substring, then by category, then by weight descending, so all rows for the same substring are directly below each other.
+The CSV must display Hungarian characters correctly in Excel.
+Print a short summary to the console: number of short lemmas checked, number removed by each filter, number of ambiguous lemmas kept, number of rows written.
+
+Give me an example command to run it.
+```
+
+Q:
+'' has been marked as source root
+
+ez mit jelent? pycharm írta
+
+A:
+Ártalmatlan üzenet, a programod futását nem befolyásolja.
+
+A PyCharm „source root”-nak jelölt meg egy mappát. Ez azt jelenti, hogy az onnan induló importokat megtalálja, és a kódellenőrzése is innen indul. Az üres név (`''`) valószínűleg azért szerepel, mert a projekt gyökérmappájáról van szó, aminek a projekthez viszonyított útvonala üres. Ez a PyCharm-ban gyakran automatikusan megtörténik, amikor megnyitsz vagy futtatsz egy szkriptet.
+
+Egyetlen fájlból álló szkriptnél semmit nem kell vele kezdened. Ha mégis vissza akarod vonni: jobb klikk a mappán → **Mark Directory as** → **Unmark as Sources Root**.
+
+Q:
+megvan az ambiguous_keywords dict-em
+azon gondolkozok, hogy hogyan tegyek fel tisztázó kérdéseket
+gondolom végigiterálok a tokeneken, felveszem listába az összes ambiguous keyword-öt, markolom a case-t mint more information needed és elmegyünk egy megfelelő viewba
+
+A:
+Az irány jó, három dolgot tennék hozzá.
+
+**1. Előbb pontozz, csak utána kérdezz.** Ha a kategorizálás már így is egyértelmű (a második kategória az első 50%-a alatt van), akkor ne kérdezz, akkor sem, ha van kétértelmű szó a szövegben. A sorrend így néz ki:
+- egyértelmű → kész, nincs kérdés
+- nem egyértelmű, és van kétértelmű szó → „more information needed”, kérdések
+- nem egyértelmű, és nincs kétértelmű szó → sikertelen kategorizálás oldal
+
+**2. Hagyd ki a már tisztázott szavakat.** Ha az ügyfél a *szerződés* mellett azt is leírta, hogy *albérletszerződés* vagy *munkaszerződés*, akkor a *szerződés*-re nem kell rákérdezni. Tehát egy kétértelmű kulcsszó csak akkor kerül a listára, ha egyik hozzá tartozó hosszabb kifejezés sincs a szövegben.
+
+**3. Ne csak tokeneken iterálj.** Mivel a kétértelmű kulcsok között n=2 kifejezések is vannak, a szöveget ugyanúgy kell feldolgoznod, mint a lista készítésekor: ugyanazzal a lemmatizálással és ugyanazzal az n-gram függvénnyel (1–3). Különben a *fizetem a tartást* sosem fog egyezni a *tartás* lemmával, és a kétszavas kulcsok kimaradnak.
+
+**A view-ban:**
+- Kulcsszavanként egy kérdés, az opciók a hozzá tartozó hosszabb kifejezések, plusz egy „egyik sem”.
+- Legfeljebb 2–3 kérdés legyen, a legnagyobb hatásúak előre (pl. a legnagyobb súlyú opciók alapján). Ha túl sokat kérdezel, az ügyfél feladja.
+- A válasz után a választott kifejezés pontjait hozzáadod a megfelelő kategóriához, és **újraszámolod**. Ha még mindig nem egyértelmű, menjen a sikertelen oldalra. Csak egyszer kérdezz, különben végtelen kör lehet belőle.
+- Az eredeti leírást és a válaszokat is mentsd el az ügyhöz, később ezekből tanulhatsz (pl. milyen szavakat használnak az ügyfelek).
+
+Q:
+hogy kell úgy végigiterálni rajta?
+
+```
+def classify(case, mode):
+    print("classifying case")
+    hazassag_dict, munkaviszony_dict = normalize_lemmas()
+    ambiguous_keyword_dict = create_ambiguous_keyword_dictionary()
+
+    nlp = spacy.load("hu_core_news_lg", exclude=["parser", "ner"])
+    doc = nlp(case.description)
+
+    hazassag_point = 0
+    munkaviszony_point = 0
+
+
+
+    print("calculating points")
+    for token in doc:
+        if token.lemma_ in hazassag_dict:
+            print(f'hazassag lemma: {token.lemma_} +{hazassag_dict.get(token.lemma_)} points')
+            hazassag_point += hazassag_dict.get(token.lemma_)
+        if token.lemma_ in munkaviszony_dict:
+            print(f'munkaviszony lemma: {token.lemma_} +{munkaviszony_dict.get(token.lemma_)} points')
+            munkaviszony_point += munkaviszony_dict.get(token.lemma_)
+
+
+    print(f"Házasság point: {hazassag_point}")
+    print(f"Munkaviszony point: {munkaviszony_point}")
+
+    if munkaviszony_point < hazassag_point < munkaviszony_point * 2 or hazassag_point < munkaviszony_point < hazassag_point * 2\
+            or munkaviszony_point < hazassag_point < 6000 or hazassag_point < munkaviszony_point < 6000:
+        case.status = Case.Status.NOT_SUPPORTED
+        case.save(update_fields=["status"])
+        return None
+    else:
+
+        category = Category.objects.all()
+
+
+        if hazassag_point > munkaviszony_point:
+            category = category.filter(name="Családjog")
+        if munkaviszony_point > hazassag_point:
+            category = category.filter(name="Munkajog")
+        case.category = category[0]
+        case.save()
+        classification = Classification.objects.create(case=case, predicted_category = category[0], mode=mode)
+        classification.save()
+        return classification
+```
+
+most itt tartok
+
+A:
+A lényeg, hogy ne tokenenként menj végig, hanem ugyanazokon az 1–3 szavas n-gramokon, amikből a listák készültek. Erre a legbiztosabb megoldás, hogy a listakészítő szkript függvényeit használod, így a feldolgozás garantáltan ugyanaz:
+
+```python
+from jogi_kulcsszavak import load_model, word_runs, ngrams_of_runs
+
+# Egyszer töltsd be, modulszinten, ne minden classify hívásnál
+# (a modell betöltése több másodperc és sok memória).
+NLP, STOPWORDS = load_model()
+HAZASSAG_DICT, MUNKAVISZONY_DICT = normalize_lemmas()
+AMBIGUOUS = create_ambiguous_keyword_dictionary()
+
+
+def extract_ngrams(text):
+    text = " ".join(text.split())          # sortörések -> szóköz, mint a listáknál
+    doc = NLP(text)
+    return ngrams_of_runs(word_runs(doc), STOPWORDS)   # Counter: {"szülői felügyelet": 2, ...}
+
+
+def classify(case, mode):
+    ngrams = extract_ngrams(case.description)
+
+    hazassag_point = 0
+    munkaviszony_point = 0
+    for ngram, count in ngrams.items():
+        if ngram in HAZASSAG_DICT:
+            hazassag_point += HAZASSAG_DICT[ngram] * count
+        if ngram in MUNKAVISZONY_DICT:
+            munkaviszony_point += MUNKAVISZONY_DICT[ngram] * count
+
+    high = max(hazassag_point, munkaviszony_point)
+    low = min(hazassag_point, munkaviszony_point)
+    clear = high >= 6000 and low * 2 <= high
+
+    if not clear:
+        # kétértelmű kulcsszavak, amiknek egyik hosszabb formája sincs a szövegben
+        unresolved = [
+            kw for kw in ngrams
+            if kw in AMBIGUOUS
+            and not any(phrase in ngrams for phrase in AMBIGUOUS[kw])
+        ]
+        if unresolved:
+            case.status = Case.Status.MORE_INFO_NEEDED
+            case.save(update_fields=["status"])
+            return unresolved          # ezekből építed a kérdéseket a view-ban
+        case.status = Case.Status.NOT_SUPPORTED
+        case.save(update_fields=["status"])
+        return None
+
+    name = "Családjog" if hazassag_point > munkaviszony_point else "Munkajog"
+    category = Category.objects.get(name=name)
+    case.category = category
+    case.save()
+    return Classification.objects.create(case=case, predicted_category=category, mode=mode)
+```
+
+Pár megjegyzés:
+
+- **Hiba volt a régi feltételben:** ha a két pontszám egyenlő (pl. mindkettő 0), egyik ág sem kapta el, és az `else`-ben a `category[0]` egy tetszőleges kategóriát adott. A `high`/`low` változat ezt kezeli, és az 50%-os szabályt is egyszerűbben fejezi ki.
+- A `load_model` a parsert is betölti, mert a mondathatárokhoz kell. A te `exclude=["parser", ...]` hívásoddal a `doc.sents` hibát dobna.
+- A `jogi_kulcsszavak.py`-nak importálhatónak kell lennie, vagyis ugyanabban a mappában vagy source rootban legyen, mint ez a fájl.
+- Azt feltételeztem, hogy az `AMBIGUOUS[kw]` a hosszabb kifejezések listája. Ha tuple-öket tárolsz (kifejezés, kategória, súly), akkor `phrase[0] in ngrams` kell.
+- A `MORE_INFO_NEEDED` státuszt fel kell venned a `Case.Status`-ba, és az `unresolved` listát valahol el kell tárolnod (pl. JSONField vagy session), hogy a view megkapja.
+- Todo-ra: most a *szülői felügyelet* kétszer is pontot ad, egyszer a 2-gramként, egyszer a *szülői* és a *felügyelet* szavakként. Mindkét kategóriánál hasonlóan torzít, de később érdemes lehet kezelni.

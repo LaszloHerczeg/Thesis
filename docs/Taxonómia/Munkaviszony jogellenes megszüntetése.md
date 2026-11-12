@@ -141,31 +141,59 @@ létesített, határozott időre szóló munkaviszony.
     - letiltást bocsátott ki a felperes
     - alperes számláján nem állt rendelkezésre valamennyi munkavállaló illetményéhez a szükséges összeg
     - 
-- munkabér megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31026/2026/10&azonosito=31998165-81c5-4e55-af8d-1a755a14b399)
-- elmaradt pihenőnapi bérpótlék megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31004/2026/7&azonosito=8ee944a1-1593-4bf9-bf07-4843ae27cc04)
--  munkaviszony megszüntetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31023/2026/7&azonosito=5adbd716-3bce-454f-9acb-09548b71f095)
-- jogellenes munkaviszony megszüntetés (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31062/2026/8&azonosito=f06e0918-f169-476b-8798-2a8421b3f865)
-- munkaviszonnyal összefüggő kártérítés és sérelemdíj megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31175/2025/14&azonosito=70d8d6d7-2ef8-458f-8031-80bedf9893ac)
-- munkaviszony jogellenes megszüntetésének jogkövetkezményei és sérelemdíj megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31211/2025/9&azonosito=f8f2dd7a-62b7-4774-8ea1-57a71bdab3b3)
-- megállapodás érvénytelensége (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31040/2026/4&azonosito=047c349c-2fce-4cfa-9239-273505dd7a48)
-- munkabér megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31009/2026/7&azonosito=221bfc09-f4d5-4b99-83bd-1e3101165d47)
-- munkaviszony megszüntetés (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31025/2026/8&azonosito=8277181a-0665-4355-bc19-a8ce7bcf281b)
-- munkaviszony jogellenes megszüntetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31221/2025/7&azonosito=e11248ba-8e8f-4675-b656-207245af6cbb)
-- fizetési felszólítás hatályon kívül helyezése és elmaradt munkabér megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31082/2026/11&azonosito=d34cc926-0c9c-4cbc-b21f-f3187400d61f)
-- jogellenes munkaviszony megszüntetés (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31197/2025/10&azonosito=315cbbb0-563e-45fb-9a6c-71adf41a6942)
-- kártérítés megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31160/2025/6&azonosito=04fa6441-e30a-4bac-8c2b-bca76527f2da)
-- munkaviszony megszüntetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31029/2026/9&azonosito=34d8c7c3-9832-4138-ad22-602438fd10bd)
-- munkaviszony jogellenes megszüntetésének jogkövetkezményei (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31209/2025/6&azonosito=6a565dd5-ebac-4a1b-94af-2df098cfea23)
-- jogellenes munkaviszony megszüntetés (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31017/2026/9&azonosito=f2892365-3663-4707-8a4f-c285f614a9fe)
-- kártérítés megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31055/2026/12&azonosito=8ad3cf70-28e3-4609-b6b3-aa1f64ac1563)
-- rendkívüli munkavégzés ellenértéke iránt indított (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31079/2026/6&azonosito=ee7e54ea-fca3-4180-8b52-b81abc4c602c)
-- munkabér megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31046/2026/4&azonosito=fa8af5b0-7516-4290-8678-c4ca8421e541)
-- elmaradt pihenőnapi bérpótlék, kártérítés és sérelemdíj megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31010/2026/11&azonosito=e4d1ca0e-636f-480a-8c0e-580d8e0ed8f6)
-- rendkívüli munkavégzés ellenértéke (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31069/2026/7&azonosito=0216cb96-10d9-471e-9491-8e49f352ed4a)
-- jogellenes munkaviszony megszüntetés (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31058/2026/7&azonosito=be3ed02f-31bd-4719-b983-ac27bfd73049)
-- jogviszony jogellenes megszüntetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31016/2026/8&azonosito=c8fb4cb0-d0f8-4dc5-9558-61b79f26f73e)
-- rendkívüli munkavégzés díjazása (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31080/2026/5&azonosito=a765dcbc-0e64-4321-8102-f238d46e45de)
-- kártérítés (alkalmazásban állt) (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31135/2026/6&azonosito=20ae3fb2-744a-4e4d-b779-cd8ce761ccec)
-- rekreációs juttatás megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31087/2026/13&azonosito=8eddf76f-c20e-440b-8e0f-da602b77917b)
-- elmaradt pihenőnapi bérpótlék, kártérítés és sérelemdíj megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31099/2026/6&azonosito=fbf7072f-a17c-44fb-ad78-377085dbad2c)
+1. munkabér megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31026/2026/10&azonosito=31998165-81c5-4e55-af8d-1a755a14b399)
+2. elmaradt pihenőnapi bérpótlék megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31004/2026/7&azonosito=8ee944a1-1593-4bf9-bf07-4843ae27cc04)
+3. munkaviszony megszüntetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31023/2026/7&azonosito=5adbd716-3bce-454f-9acb-09548b71f095)
+4. jogellenes munkaviszony megszüntetés (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31062/2026/8&azonosito=f06e0918-f169-476b-8798-2a8421b3f865)
+5. munkaviszonnyal összefüggő kártérítés és sérelemdíj megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31175/2025/14&azonosito=70d8d6d7-2ef8-458f-8031-80bedf9893ac)
+6. munkaviszony jogellenes megszüntetésének jogkövetkezményei és sérelemdíj megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31211/2025/9&azonosito=f8f2dd7a-62b7-4774-8ea1-57a71bdab3b3)
+7. megállapodás érvénytelensége (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31040/2026/4&azonosito=047c349c-2fce-4cfa-9239-273505dd7a48)
+8. munkabér megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31009/2026/7&azonosito=221bfc09-f4d5-4b99-83bd-1e3101165d47)
+9. munkaviszony megszüntetés (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31025/2026/8&azonosito=8277181a-0665-4355-bc19-a8ce7bcf281b)
+10. munkaviszony jogellenes megszüntetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31221/2025/7&azonosito=e11248ba-8e8f-4675-b656-207245af6cbb)
+11. fizetési felszólítás hatályon kívül helyezése és elmaradt munkabér megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31082/2026/11&azonosito=d34cc926-0c9c-4cbc-b21f-f3187400d61f)
+12. jogellenes munkaviszony megszüntetés (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31197/2025/10&azonosito=315cbbb0-563e-45fb-9a6c-71adf41a6942)
+13. kártérítés megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31160/2025/6&azonosito=04fa6441-e30a-4bac-8c2b-bca76527f2da)
+14. munkaviszony megszüntetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31029/2026/9&azonosito=34d8c7c3-9832-4138-ad22-602438fd10bd)
+15. munkaviszony jogellenes megszüntetésének jogkövetkezményei (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31209/2025/6&azonosito=6a565dd5-ebac-4a1b-94af-2df098cfea23)
+16. jogellenes munkaviszony megszüntetés (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31017/2026/9&azonosito=f2892365-3663-4707-8a4f-c285f614a9fe)
+17. kártérítés megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31055/2026/12&azonosito=8ad3cf70-28e3-4609-b6b3-aa1f64ac1563)
+18. rendkívüli munkavégzés ellenértéke iránt indított (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31079/2026/6&azonosito=ee7e54ea-fca3-4180-8b52-b81abc4c602c)
+19. munkabér megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31046/2026/4&azonosito=fa8af5b0-7516-4290-8678-c4ca8421e541)
+20. elmaradt pihenőnapi bérpótlék, kártérítés és sérelemdíj megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31010/2026/11&azonosito=e4d1ca0e-636f-480a-8c0e-580d8e0ed8f6)
+21. rendkívüli munkavégzés ellenértéke (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31069/2026/7&azonosito=0216cb96-10d9-471e-9491-8e49f352ed4a)
+22. jogellenes munkaviszony megszüntetés (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31058/2026/7&azonosito=be3ed02f-31bd-4719-b983-ac27bfd73049)
+23. jogviszony jogellenes megszüntetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31016/2026/8&azonosito=c8fb4cb0-d0f8-4dc5-9558-61b79f26f73e)
+24. rendkívüli munkavégzés díjazása (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31080/2026/5&azonosito=a765dcbc-0e64-4321-8102-f238d46e45de)
+25. kártérítés (alkalmazásban állt) (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31135/2026/6&azonosito=20ae3fb2-744a-4e4d-b779-cd8ce761ccec)
+26. rekreációs juttatás megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31087/2026/13&azonosito=8eddf76f-c20e-440b-8e0f-da602b77917b)
+27. elmaradt pihenőnapi bérpótlék, kártérítés és sérelemdíj megfizetése (https://eakta.birosag.hu/anonimizalt-hatarozat-pdf/?birosagName=Fővárosi%20Ítélőtábla&ugyszam=Mf.31099/2026/6&azonosito=fbf7072f-a17c-44fb-ad78-377085dbad2c)
+
+## Fogalmak
+
+### Forrás: Munka törvénykönyve
+
+- munkavállaló
+- munkáltató
+- munkáltatói érdek-képviseleti szervezet
+- határozott idejű szerződés
+- közös megegyezés
+- felmondás
+- azonnali hatályú felmondás
+  - munkaviszonyból származó lényeges kötelezettségét szándékosan vagy súlyos gondatlansággal jelentős mértékben megszegi
+  - olyan magatartást tanúsít, amely a munkaviszony fenntartását lehetetlenné teszi
+- megszüntetés okának valósága és okszerűsége
+- felmondási idő
+- munkavégzés alól felmentés
+- csoportos létszámcsökkentés
+- végkielégítés
+- munkáltató jogutód nélküli megszűnése
+
+- munkaviszony jogellenes megszüntetésével összefüggésben okozott kár megtérítése
+- elmaradt jövedelem címén igényelt kártérítés
+- munkaviszony helyreállítása
+- egyenlő bánásmód követelménye
+- joggal való visszaélés tilalma
+
+### Forrás: Claude
 

@@ -1,0 +1,91 @@
+Q:
+Szófrekvencia adatokat tárolok a classification/data/filtered csv/law_type mappában a Django projectemben, ahol a law_type a jogi terület neve.
+Minden jogi terület csak egy mappában van és abban a mappában csak az az egyetlen jogterület van. Minden mappában egyetlen csv fájl van, aminek a neve step2_filtered.csv.
+A csv fájl első oszlopa maga a szó és a második oszlopa az, ahányszor előfordul 100000 szóra vetítve.
+Készíts egy olyan scriptet, ami beolvassa az adatokat a csv fájlból és elment minden sort a következő modellbe:
+
+class Rule(models.Model):
+    category = models.ForeignKey('case.Category', on_delete=models.CASCADE)
+    expression = models.TextField()
+    is_positive =models.BooleanField(default=True)
+    is_active =models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+A category nevét parancsori argumentumként adjuk meg. A category objektumoknak van egy name attribútuma. Ha a megadott kategória nem található, akkor írjuk ki az összes category-t, ami az adatbázisban van az __str__ method meghívásával.
+az is_positive és az is_active attribútumok ne kerüljenek beállításra, azaz a default értéket vegyék fel
+A szkript management command-ként készüljön el, ahol a szükséges segédfüggvények vagy method-ként készüljenek el vagy function-ként ugyanabban a fájlban
+
+A:
+Elkészítem a management commandot, aztán egy próba Django projekten ki is próbálom.
+
+Elkészült a management command (import_rules.py). Szintaktikailag ellenőriztem, és a CSV-beolvasó részt egy próbafájlon lefuttattam. Teljes Django-futtatást nem tudtam csinálni, mert itt nem tudtam Django-t telepíteni, úgyhogy a valódi adatbázison még nem próbáltam ki.
+
+Hova tedd: classification/management/commands/import_rules.py. A management/ és a commands/ mappában is kell lennie egy üres __init__.py fájlnak.
+
+Futtatás:
+
+bash
+python manage.py import_rules "Polgári jog"
+python manage.py import_rules "Polgári jog" --law-type polgari_jog
+
+Működés:
+
+A fájlt itt keresi: BASE_DIR/classification/data/filtered csv/<law_type>/step2_filtered.csv. Ha nem adod meg a --law-type kapcsolót, a mappa neve megegyezik a kategória nevével. Ha a mappák neve eltér a kategóriák nevétől (például ékezet nélküli), a --law-type kapcsolóval add meg.
+Ha nincs ilyen nevű kategória, kiírja az összeset a __str__ metódusukkal, és hibakóddal lép ki.
+Csak a szó kerül az expression mezőbe. Az is_positive és az is_active nincs beállítva, így a modell alapértékét kapják.
+A gyakoriság oszlopot csak arra használja, hogy felismerje a fejlécet és a hibás sorokat: ha a második oszlop nem szám, a sort kihagyja.
+
+Feltételezések, amiket érdemes ellenőrizni:
+
+Hol van a Rule: feltételeztem, hogy a Rule modell a classification appban van (from classification.models import Rule). Ha máshol van, az import sort át kell írni.
+Ismétlődő szavak: egy kategórián belül nem hoz létre újra már létező kifejezést, így újrafuttatáskor sem keletkeznek duplikátumok. A fájlon belül ismétlődő szavakat is csak egyszer menti. Ha mégis minden sort külön szeretnél menteni, ezt a save_rules és a read_words függvényben kell kivenni.
+Fájlformátum: az elválasztót (vessző, pontosvessző vagy tab) maga ismeri fel, és az UTF-8 BOM-ot is kezeli.
+
+
+Q:
+a settingsben már van egy ilyen beállításom:
+
+DATA_DIR = BASE_DIR / "classification" / "data"
+ezt használd fel
+
+nem megfelelő argumentum esetén listázza a kategórianeveket és a filtered csv mappában található mappaneveket is
+
+módosítottam a modellt az alábbiak szerint:
+
+class Rule(models.Model):
+    category = models.ForeignKey('case.Category', on_delete=models.CASCADE)
+    expression = models.TextField()
+    weight = models.FloatField()
+    is_positive =models.BooleanField(default=True)
+    is_active =models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+A csv-ben található gyakoriságot a weight attribútumnak állítsd be
+
+A:
+Mindhárom kérést beépítettem az import_rules.py fájlba. Szintaktikailag ellenőriztem, és a CSV-beolvasást két próbafájlon lefuttattam: egy vesszővel elválasztotton, és egy pontosvesszővel elválasztotton, tizedesvesszős számokkal. Az adatbázist kezelő részt Django nélkül itt továbbra sem tudtam futtatni.
+
+DATA_DIR: a fájlt a settings.DATA_DIR / "filtered csv" / <law_type> / "step2_filtered.csv" útvonalon keresi.
+Hibás argumentum: előbb megnézi a kategóriát és a mappát is. Ha bármelyik hibás, kiírja a hibát vagy hibákat, majd az összes kategóriát (a __str__ metódussal) és a filtered csv mappában lévő mappák nevét. Utána hibakóddal lép ki.
+weight: a CSV második oszlopa számként a weight mezőbe kerül. Tizedesvesszőt is elfogad, például 123,4. A fejlécet és azokat a sorokat, ahol nincs érvényes szám, kihagyja.
+
+Egy dolgot a weight mező miatt magamtól változtattam. Ha egy kifejezés már létezik a kategóriánál, nem hagyja ki, hanem frissíti a súlyát, ha az eltér. Ilyenkor az updated_at mezőt is átírja. Így ha újrafuttatod a parancsot frissebb CSV-vel, nem maradnak régi súlyok. A parancs végén kiírja, hány szabály lett új, hány frissült és hány maradt változatlan.
+
+A weight mezőnek nincs alapértéke, ezért a modellváltoztatáshoz tartozó migrációnál a Django kérni fog egy értéket a már meglévő Rule sorokra.
+
+Q:
+csinálj egy kapcsolót parancssori argumentumnak, aminek a hatására először kitörli az összes már meglévő rule-t, ami a megadott kategóriához tartozik és utána menti le az újakat
+
+A:
+Bekerült az import_rules.py fájlba a --replace kapcsoló. Ha megadod, a parancs előbb törli a megadott kategória összes meglévő Rule-ját, utána menti el az újakat a CSV-ből. Itt csak szintaktikailag tudtam ellenőrizni, valódi adatbázison nem futtattam.
+
+bash
+python manage.py import_rules "Polgári jog" --replace
+python manage.py import_rules "Polgári jog" --law-type polgari_jog --replace
+
+A kapcsolóhoz tartozó részletek:
+
+Közös tranzakció: a törlés és az új szabályok mentése egy tranzakcióban fut. Ha a mentés közben hiba történik, a törlés is visszavonódik, így a kategória nem marad szabályok nélkül.
+Törlés csak érvényes adatoknál: csak akkor töröl, ha a kategória és a mappa is érvényes, és a CSV-ben van legalább egy szó. Hibás argumentumnál semmi nem törlődik.
+Összegzés: a végén azt is kiírja, hány régi Rule-t törölt.
+Kézzel szerkesztett mezők: ezzel a kapcsolóval minden szabály újra létrejön. Az is_positive és az is_active mező visszaáll az alapértékre, akkor is, ha korábban kézzel átállítottad. Ha ezt meg akarod tartani, futtasd a parancsot a kapcsoló nélkül: akkor a meglévő szabályoknál csak a súly frissül.

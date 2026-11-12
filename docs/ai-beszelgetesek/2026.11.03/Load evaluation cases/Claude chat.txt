@@ -1,0 +1,73 @@
+Q:
+create a management command in Django for an app called evaluation.
+The command must load data from a json file into the database's EvalCase model.
+The JSON is placed in the EVAL_DIR, the path is defined in the settings file. 
+{
+  "Házasság felbontása": [
+    {"key": "házasság-05", "description": "2003 októberében házasodtunk össze. Két gyerekünk van, egy fiú és egy lány, mindketten 18 alatt. Mindketten tanárok vagyunk, kevés fizetéssel.\nEleinte anyósom lakásában laktunk, aztán átköltöztünk abba a lakásba, ami az enyém és ahol most is élünk a gyerekkkel.\nFérjemnek volt két lakása, azokat eladta és abból éltünk. Ezen nagyon sokat veszekedtünk.\nA gyereknevelésben sem értettünk egyet soha. Ő mindent megenged, nincsenek szabályok.\nElmentünk párterápiára, meg akartam menteni a házasságot, de nem lett belőle semmi.\nEgy idő után mondtam neki, hogy költözzön el, idén márciusban el is költözött. A gyerekek velem maradtak, azóta én látom el őket egyedül. Ő nem is kérte, hogy magával vihesse őket.\nAmi fontos, hogy el szeretnék válni és tartásdíjat kapni."},
+    {"key": "házasság-06", "description": "Évekig éltem házasságban a férjemmel. Összesen 3 ingatlant vettünk 3 különböző helyen a házasság alatt. Én úgy tudtam, hogy ezek közösek.\nMost derült ki, hogy a tulajdoni lapokon csak a férjem neve szerepel. Az egyik házban és a földben van egy másik tulajdonostárs is, az ő részéhez nem akarok hozzányúlni.\nA féjem részéből az engem illető részt szeretném megkapni. A házasságunk tönkrement, nem élünk együtt."},
+    {"key": "házasság-07", "description": "A férjemmel 2009 nyarán jöttünk össze. Az esküvő után a szüleim felajánlották, hogy költözzünk hozzájuk, amíg anyagilag talpra állunk.\nIngyen lakhattunk náluk. 2014-ben és 2016-ban születtek gyerekeink, majd elköltöztünk albérletbe másik helyre.\nUtána elkezdett elromlani a házasságunk.  Tavaly bevallotta, hogy van valakije, aki akkor már terhes volt.\nVálni szeretnék."}
+  ],
+
+  "Lakásbérleti szerződés": [
+    {"key": "lakásbérlet-01", "description": "Kiadtam az ingatlanomat egy felsőoktatási intézménynek. Rendszeresen csúsznak a fizetéssel, sőt újabban már felszólítás után fizetnek csak.\nKaptam egy levelet az ügyvédüktől, melyben több millió forintot követelnek arra hivatkozva, hogy felújítottak dolgokat az épületben, pedig nekem erről sosem szóltak.\nÉn is újítottam fel több dolgot menet közben."},
+    {"key": "lakásbérlet-02", "description": "Egy cég bérel az önkormányzatunktól egy épületet. Több havi bérleti díjjal elmaradtak, ezért megállapodtunk egy részletfizetésben, amiben elismerték a tartozásukat.\nAzóta sem fizetik a részleteket. A bérleti szerződés lejárt, hatalmas tartozásuk van és nem hajlandók kiköltözni.\nA szerződés lejárta óta használati díjat számolunk fel, de azt sem fizetik."},
+  ],
+
+  "Munkaviszony megszüntetése": [
+    {"key": "munkaviszony-03", "description": "Tavaly 2024 januárjában kezdtem el adattárház-architektként dolgozni határozatlan idős szerződéssel, teljes távmunkában, havi bruttó 1,8 millióért.\nA gyakorlatban nem náluk dolgoztam, hanem kihelyeztek egy partnercéghez, ahol egy új adattárházat építettek és én abban a projektben voltam.\nLáttam, hogy a projektben komoly szakmai hibák vannak, ezért szóltam a csapatnak, akik egyetértettek. Utána szóltam a főnöknek is, aki ugyancsak egyetértett.\nPár nappal később a partnernél közölték, hogy vége a projektnek. Szerintem a főnök tudta, hogy ez lesz, csak nem szólt.\nUtána azt mondták, hogy keresnek nekem másik partnert, de szerintem nem kerestek, mivel az oldalon sok hirdetés volt, ami megfelelt volna nekem, de sose ajánlották fel, hogy csatlakozzak.\nAztán elkezdték nyomni, hogy közös megegyezéssel menjek el, de én nem akartam. Július 24-én hívott a főnököm és kiabált velem.\nAzután már mondtam neki, hogy csak írásban vagyok hajlandó kommunikálni, hogy mindennek nyoma maradjon.\nBehívtak személyes megbeszélésre másnapra, de nem mentem, mert a szabályzat szerint 5 nappal előre szólniuk kell róla nekem.\nEgyébként is valószínűleg csak azért hívtak, hogy a felmondásra megpróbáljanak rávenni.\nKésőbb a belső levelezésről levettek, majd megkaptam a felmondásomat azzal az indokkal, hogy kiabáltam a főnökkel, nem hívtam vissza és nem mentem be."},
+    {"key": "munkaviszony-04", "description": "2007 óta docens voltam az egyetemen. 2023 óta van egy szabályzat, hogy Q1-es külföldi publikációért bruttó 800 ezer Ft jár.\nMindenki gond nélkül megkapta eddig. Idén januárban megjelent egy Q1-es külföldi publikációnk.\nLeíró tanulmány volt, a vallásról nem mondott értékítéletet. Február 19-én beadtam rá a kérvényt.\nAz elbírálás alatt módosították a szabályzatot, hogy csak akkor jár támogatás, ha nem sérti az egyetem vallási szellemiségét.\nA beadott, de még ki nem fizetett kérvényekre is alkalmazni kellett.\nErre hivatkozva utasították el a kérelmemet. Írtam levelet, amiben azt kértem, hogy mutassák be, a tanulmány melyik része sérti a szabályzatot.\nAzt a választ kaptam, hogy a dékánnak továbbítják a levelet. Írtam még egyszer, de választ nem kaptam.\nJúnius 19-én felhívtak, hogy másnap menjek be a dékánhoz. Június 23-án kaptam meg a június 20-ára jegyzett felmondásomat.\nIndok: létszámcsökkentés és gazdasági helyzet."},
+    {"key": "munkaviszony-09", "description": "2014 januártól dolgozok ugyanabban az üzletben. A munkáltató közben kétszer változott, de én ugyanazt csinálom és azt mondták, hogy a munkaviszonyom folyamtos.\nA fizetésemnek két része volt, bruttó 267 ezer Ft a munkáltatótól és nettó 190 ezer Ft különböző cégektől számlázva. Egy adott hónapban mindig egy cég számlázott, de néha a cégek változtak.\nÉn kértem, hogy ne így kapjam a fizetésemet, de semmi sem változott. Később a rendőrség házkutatást csinált a cégnél hamis számlákra hivatkozva.\nMásnap behívtak a munkahelyemre és azonnali hatállyal felmondtak arra hivatkozva, hogy a számlázással törvényt szegtem és elvesztették a bizalmukat benne.\nAz elmúlt havi bérem számlás részét azóta sem kaptam meg."}
+  ],
+  "Öröklés": [
+    {"key": "öröklés-01", "description": "A volt anyósomról van szó. A feleségemmel elváltunk, de az édesanyjával jóban maradtunk.\nA volt férjem megkért, ha bármi történik vele, akkor gondoskodjak az édesanyjáról. A férjem meghalt és én tartottam a szavamat.\nEleinte még jól volt, de szerette, ha segítenek. Később már több segítségre volt szüksége, én fürdettem, vásároltam be neki, váltottam ki a gyógyszereit és mostam rá.\nHa valamit vettem neki, akkor azt kifizette nekem, de a több éves segítségemért pénzt nem kértem. Mindenkinek azt mondta, hogy majd rámhagy valamit, mert megérdemlem.\nEgy ügyvédet fel is hívtam, kaptunk hozzá időpontot hétfőre, hogy írásba foglaljuk, de az anyós addigra meghalt. Mindent az örökös kapott."},
+    {"key": "öröklés-02", "description": "A nevelőanyámat ápoltam, amikor kiderült, hogy petefészekrájka van. Én adtam neki pénzt korábban, hogy házat tudjon venni, nem egyeztünk meg, hogy hogyan fogja visszafizetni.\nMindig azt mondta, hogy majd megkapom. Amikor nagyon beteg lett, nem jött ki a nyugdíjából, így mindig támogattam. A halála előtt ügyvédet is hívtunk, hogy a végrendeletet megírjuk.\nMinden meg lett írva, de meghalt, mielőtt a tanúk aláírhatták volna. A hagyatékin a gyerekei azt mondták, hogy nem tartanak igényt semmire.\nDe később érvényes végrendelet hiányában ők kaptak mindent."},
+    {"key": "öröklés-03", "description": "1992-ben ismertem meg a páromat. Én még papíron házas voltam és ő is. Én már elköltöztem otthonról, albérletben éltem, de ő még a feleségével lakott.\nKésőbb a felesége elköltözött és én beköltöztem a házba, ami a párom tulajdona volt 50%-ban. Ő rendező volt, én színész.\nAzt mondta, hogy majd megöröklöm az ő részét a házból és amikor öreg lesz majd ápolom cserébe.\nPár évvel rá gerincszűkülete lett, fájtak a lábai. Megműtötték, de után a szürkehályoga is lett, ami miatt már a jogosítványát sem újították meg és egyre rosszabb lesz.\nEgyszer már hallucináció is kezdtek lenni. Nem lehetett magára hagyni egyáltalán, szóval dolgozni is alig bírtam.\nAmíg lehetett, próbáltam mindenhova vinni, színházba, külföldre, sétálni stb.\nAmikor már nagyon rosszul volt, hívtunk egy ügyvédet és megbeszéltük, hogy írásba foglalja, hogy én kapom a ház 50%-át.\nDe meghalt mire aláírhatta volna."}
+  ]
+}
+This is the JSON, where "Házasság felbontása", "Lakásbérleti szerződés" etc is the expected category.  Key is the key and the description is the description in the model.
+Let is_creative to be set as the default value.
+This is the EvalCase model:
+ class EvalCase(models.Model):
+    key = models.CharField(max_length=100)
+    description = models.TextField()
+    expected_category = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+Define the helper function in the same .py file as the command.
+The command is placed in the evaluation/management/commands directory.
+Name the command as "load_evaluation_cases".
+Define a switch that's usable via command line parameter. If it is activated, the command delete's all the evalcase objects from the database and loads the new batch after.
+During standard run, check first for evalcase objects having the same key value as the ones in the json file. If there's a match, ask the user if they want to override these evalcase objects. If the answer is yes, you override all the matching cases and save all the others from the json. If the answer is no, the command exits.
+After saving the objects, print out the total number of cases and the number of cases per category.
+
+A:
+PyPI isn’t reachable from this workspace, so I can’t install Django here. I’ll write the command, check that it compiles, and test the JSON-handling helpers on your data on their own.
+
+I’ve written the load_evaluation_cases command, with all the helper functions in the same file. It compiles, and I tested the JSON-reading part on a copy of your data. I couldn’t install Django here, so I haven’t run the whole command against a database yet.
+
+Your JSON has an error. The "Lakásbérleti szerződés" list ends with ...nem hajlandók kiköltözni..."}, and that last comma isn’t allowed in JSON. Delete it before loading. If you don’t, the command stops and tells you the line and column of the problem.
+
+How to run it:
+
+bash
+python manage.py load_evaluation_cases                      # normal run
+python manage.py load_evaluation_cases --reset              # delete all EvalCase objects, then load
+python manage.py load_evaluation_cases --file other.json    # use a different file in EVAL_DIR
+
+What it does:
+
+Normal run: it first checks which keys from the JSON are already in the database. If any are, it lists them and asks Do you want to override these cases? [y/n]. If you answer yes, it updates the matching cases and saves all the others. If you answer no, it exits without saving anything.
+--reset: it deletes every EvalCase object and then loads the new batch.
+Summary: after saving, it prints the total number of cases in the database and the number per category.
+
+Choices I made where your spec was open:
+
+is_creative: your model has no field by that name, so I took it to mean is_active. New cases get the model’s default (True).
+Overriding a case: it replaces description and expected_category. It doesn’t touch is_active, so a case you switched off stays off.
+JSON file name: your spec didn’t give one, so it defaults to eval_cases.json in EVAL_DIR. Change DEFAULT_FILENAME at the top of the file or pass --file.
+Error handling: saving runs in a single transaction, so a failure part-way through leaves the database unchanged. The command also refuses to load a file that has the same key twice.
+
+evaluation/management/ and evaluation/management/commands/ each need an empty __init__.py file, or Django won’t find the command.
+

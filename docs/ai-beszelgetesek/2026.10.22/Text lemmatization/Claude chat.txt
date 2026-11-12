@@ -1,0 +1,87 @@
+Q:
+write a script for me that reads text from txt files in a folder. Lemmatize the texts using huspacy's hu_core_news_lg model.  Count the aggregated number of words in the documents, how many times each word appears in them and save the data in a txt file
+
+A:
+I wrote lemma_counter.py and checked that it compiles. I haven’t run it on real Hungarian text, because the model couldn’t be downloaded here.
+
+Setup (once):
+
+pip install huspacy
+python -c "import huspacy; huspacy.download('hu_core_news_lg')"
+
+If the model isn’t installed when the script starts, it tries to download it.
+
+Run:
+
+python lemma_counter.py path/to/folder -o lemma_frequencies.txt
+
+What it does:
+
+Reads every .txt file in the folder. Add --recursive to include subfolders.
+It tries UTF-8 first, then the older Hungarian encodings cp1250 and ISO-8859-2.
+It lemmatizes the text with hu_core_news_lg. The parser and named-entity components are switched off to save time, since lemmas don’t need them.
+It counts only real words. Punctuation, numbers and symbols are skipped, and lemmas are lowercased, so Házak and házban both count as ház.
+Long files are split on paragraph breaks, so they don’t hit spaCy’s text-length limit.
+
+The output file contains:
+
+A header with the number of documents, the total word count, and the number of distinct lemmas.
+The word count for each document.
+Each lemma with its count, tab-separated and sorted from most to least frequent.
+
+Add --no-stopwords if you want common words like a, az, és and hogy left out of the counts and the total.
+
+Q:
+modify the program so the output is a .csv file. The first row is the lemma and the second is the number of times it appears in the texts.
+
+A:
+Parsing column layout for the lemma and count data.
+Parsing column layout for the lemma and count data.
+I’ll change the output to a two-column CSV with the lemma in the first column and its count in the second.
+
+Edited a file, shared a file, and 2 more steps
+The updated lemma_counter.py now writes lemma_frequencies.csv by default. I read your “first row / second row” as columns: each row is one lemma, and the second column is how many times it appears.
+
+lemma,count
+és,9
+ház,5
+őszi,2
+Order: rows go from most to least frequent.
+Excel: the file includes a marker so Excel shows accented letters like ő and ű correctly when you open it directly.
+Totals: the total word count and per-document counts now print in the terminal instead, so the CSV contains only the two columns.
+You run it the same way as before; use -o if you want a different file name.
+
+Q:
+Change the code so every 2 adjacent lemma are counted as well in the list. For example if 2 lemmas next to each other are: házasság megszüntetése, then házasság, megszüntetése and házasság megszüntetése are in the list as separate rows.
+
+A:
+The updated lemma_counter.py now counts every pair of adjacent lemmas as its own row in the CSV, alongside the single lemmas. I tested the counting with a stand-in for the model, since I couldn’t download the real Hungarian model here.
+
+For the sample text “A házasság megszüntetése, házasság megszüntetése.” the CSV contains:
+
+lemma,count
+házasság,2
+házasság megszüntetés,2
+megszüntetés,2
+a,1
+a házasság,1
+
+Because the pairs are lemmatized too, the row reads házasság megszüntetés, not megszüntetése.
+
+A pair is counted only when the two words really stand next to each other in the text:
+
+Breaks: a pair never spans a comma or other punctuation, a number, a line break or a sentence boundary. In the example, megszüntetés házasság across the comma is not counted.
+With --no-stopwords: a removed stopword also breaks the pair. So in a ház és a kert, neither ház kert nor any pair with és is counted.
+
+The total word count in the terminal still counts single words only. The terminal now also shows how many distinct lemma pairs were found.
+
+Q:
+count the words having a line break between them
+
+A:
+Edited a file, shared a file, ran a command
+In the updated lemma_counter.py, two words with a line break between them now count as a pair. In a test where házasság ended one line and megszüntetése started the next, házasság megszüntetés was counted. Words on either side of a full stop at the end of a line still don’t form a pair.
+
+To make this work, I removed the sentence-boundary check. The model sometimes treats a line break as the start of a new sentence, which would have kept splitting these pairs. Sentence ends are still respected through their punctuation: a full stop, question mark or exclamation mark between two words still blocks the pair. Commas, other punctuation and numbers still block it too.
+
+This also applies to blank lines, so the last word of one paragraph and the first word of the next form a pair unless punctuation separates them. Tell me if you’d rather blank lines keep breaking pairs.

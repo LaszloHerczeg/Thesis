@@ -1,0 +1,142 @@
+Q:
+Write a simple, single-file Python script (standard library only) that finds ambiguous lemmas across two legal categories. I need it quickly for a demo, so keep it straightforward.
+
+INPUT
+For each of the two categories there are two CSV files (UTF-8, possibly with BOM):
+- Full list: columns lemma, n, d, N_d, r, N_r, log_ratio, total_d. n is the number of words in the lemma (1, 2 or 3).
+- Filtered list: columns lemma, total_d. There is no n column here; derive n from the number of space-separated words.
+The script takes as command-line arguments: the category name, the full CSV and the filtered CSV for each of the two categories. Example category names: "munkaviszony megszüntetése" and "házasság felbontása".
+
+WHAT TO FIND
+- Short lemmas: all n=1 and n=2 lemmas from BOTH full lists (union).
+- Longer phrases: all lemmas from BOTH filtered lists, each remembered with its category and its total_d from that filtered list. If the same phrase appears in both filtered lists, keep both entries.
+- A short lemma matches a longer phrase (never the same string) if:
+  a) n=1 short, n=2 or n=3 long: the short lemma equals one of the long phrase's words, OR one of the long phrase's words ends with the short lemma (Hungarian compound, e.g. "tartozás" in "bértartozás"), where the remaining prefix is at least 3 characters and the short lemma is at least 3 characters.
+  b) n=1 short, n=1 long: the long word ends with the short lemma (compound), with the same length rules as above.
+  c) n=2 short, n=3 long: the two words of the short lemma appear as consecutive words in the long phrase.
+- Treat both categories together, not separately: collect all matches for a short lemma across both categories.
+- Keep only ambiguous short lemmas: those whose matched longer phrases include at least one phrase from EACH category. Drop all others.
+
+OUTPUT
+One CSV file with these columns:
+- substring (the short lemma)
+- longer_phrase
+- category (the category of the longer phrase)
+- weight (total_d of the longer phrase in that category's filtered list)
+One row per match. Sort by substring, then by category, then by weight descending, so all rows for the same substring are directly below each other.
+The CSV must display Hungarian characters correctly in Excel.
+Print a short summary to the console: number of short lemmas checked, number of ambiguous lemmas found, number of rows written.
+
+Give me an example command to run it.
+
+A:
+Building word and suffix indexes for fast lookups
+I’ll write the script, then run it on a small Hungarian test set to make sure the matching rules behave.
+
+Created a file, shared a file, ran a command
+Here’s ambiguous_lemmas.py. I ran it on a small Hungarian test set and it works. For example, “tartozás” matched “bértartozás” and “munkabér tartozás” in one category and “adótartozás” in the other. “közös megegyezés” matched “közös megegyezés alapján” in both categories. “kár” correctly did not match “kárpótlás”, because that word doesn’t end with “kár”.
+
+Example command:
+
+python ambiguous_lemmas.py "munkaviszony megszüntetése" munkaviszony_full.csv munkaviszony_filtered.csv "házasság felbontása" hazassag_full.csv hazassag_filtered.csv -o ambiguous_lemmas.csv
+-o is optional; the default output name is ambiguous_lemmas.csv.
+
+Things to know:
+
+Excel and separators: The output is UTF-8 with a BOM, so Hungarian characters display correctly. Hungarian and German Excel expect ; as the column separator, though. If everything lands in one column, add --delimiter ";".
+Input format: Input files can use ,, ; or tab as the separator; the script detects it automatically.
+Matching: Whitespace is trimmed, but matching is case-sensitive. That’s fine if your lemmas are already lowercase.
+Speed: It uses lookup indexes instead of comparing every pair, so it stays fast even with tens of thousands of lemmas.
+
+Q:
+Implement these changes:
+- Ignore longer phrases with weight below a minimum (default: 3).
+- For each substring, keep only the top 3 longer phrases per category by weight.
+- Drop a substring entirely if it matches more than a maximum number of different longer phrases before the top-3 cut (default: 20), because it is too general to ask about.
+- Read an optional stoplist file (one lemma per line) and skip those substrings.
+- All these limits must be settable as optional command-line arguments.
+
+A:
+I’ve updated ambiguous_lemmas.py and tested each new option on sample data; all of them behave as intended.
+
+Example command with all options:
+
+python ambiguous_lemmas.py "munkaviszony megszüntetése" munkaviszony_full.csv munkaviszony_filtered.csv "házasság felbontása" hazassag_full.csv hazassag_filtered.csv -o ambiguous_lemmas.csv --min-weight 3 --top-n 3 --max-matches 20 --stoplist stoplist.txt
+
+All four options are optional. Leave any of them out to use the defaults: 3 / 3 / 20 / no stoplist.
+
+How the rules are applied, in order:
+
+Minimum weight: Longer phrases below --min-weight are removed when the filtered lists are loaded. They can’t make a lemma ambiguous, and they don’t count toward the “too general” limit.
+Stoplist: Lemmas on the stoplist are skipped. In the stoplist file, blank lines and lines starting with # are ignored.
+Ambiguity check: As before, a lemma needs at least one match in each category.
+Too-general limit: A lemma is dropped if it matches more than --max-matches different phrases, counted before the top-3 cut. A phrase that appears in both categories counts once.
+Top-N cut: The top --top-n phrases per category are kept, by weight. Ties are broken alphabetically.
+
+The console summary now also shows how many lemmas were skipped by the stoplist, how many phrases were ignored for low weight, and how many lemmas were dropped as too general.
+
+Q:
+modify the code like this:
+Write a simple, single-file Python script (standard library only) that finds ambiguous lemmas across two legal categories. I need it quickly for a demo, so keep it straightforward.
+
+INPUT
+For each of the two categories there are two CSV files (UTF-8, possibly with BOM, delimiter "," or ";"):
+- Full list: columns lemma, n, d, N_d, r, N_r, log_ratio, total_d. n is the number of words in the lemma (1, 2 or 3).
+- Filtered list: columns lemma, total_d. There is no n column here; derive n from the number of space-separated words.
+The script takes as command-line arguments: the category name, the full CSV and the filtered CSV for each of the two categories. Example category names: "munkaviszony megszüntetése" and "házasság felbontása".
+Scores are the total_d values exactly as they appear in the CSV files.
+
+WHAT TO FIND
+- Short lemmas: all n=1 and n=2 lemmas from BOTH full lists (union). The score of a short lemma is its highest total_d across the two full lists.
+- Longer phrases: all lemmas from BOTH filtered lists, each remembered with its category and its total_d from that filtered list (its weight). If the same phrase appears in both filtered lists, keep both entries.
+- A short lemma matches a longer phrase (never the same string) if:
+  a) n=1 short, n=2 or n=3 long: the short lemma equals one of the long phrase's words, OR one of the long phrase's words starts or ends with the short lemma (Hungarian compound, e.g. "tartás" in "tartásdíj", "szerződés" in "albérletszerződés").
+  b) n=1 short, n=1 long: the long word starts or ends with the short lemma.
+  c) n=2 short, n=3 long: the two words of the short lemma appear as consecutive words in the long phrase.
+  For compound matches (starts/ends with), accept the match only if the remaining part of the word (e.g. "díj", "albérlet") is itself an n=1 lemma in either full list.
+- Treat both categories together, not separately: collect all matches for a short lemma across both categories.
+
+FILTERS (apply in this order)
+1. Stoplist: read an optional stoplist file (one lemma per line) and skip those short lemmas.
+2. Minimum weight: ignore longer phrases with weight below a minimum (default: 3).
+3. Too general: drop a short lemma entirely if it matches more than a maximum number of different longer phrases (default: 20).
+4. Score difference: for each match, compute
+   difference = |weight of longer phrase - score of short lemma| / score of short lemma * 100
+   Keep the match only if difference >= a percentage threshold (default: 50). Example: short lemma "szerződés" has score 10; "albérletszerződés" with weight 14 gives 40% and is dropped; with weight 15 it gives 50% and is kept.
+5. Top matches: for each short lemma, keep only the top 3 remaining longer phrases per category by weight.
+6. Ambiguity: keep a short lemma only if its remaining longer phrases include at least one phrase from EACH category. Drop all others.
+
+All thresholds (minimum weight, maximum matches, percentage threshold, top count) and the stoplist path must be optional command-line arguments with the defaults above.
+
+OUTPUT
+One CSV file with these columns:
+- substring (the short lemma)
+- substring_score
+- longer_phrase
+- category (the category of the longer phrase)
+- weight (total_d of the longer phrase in that category's filtered list)
+- difference_percent (rounded to 1 decimal)
+One row per match. Sort by substring, then by category, then by weight descending, so all rows for the same substring are directly below each other.
+The CSV must display Hungarian characters correctly in Excel.
+Print a short summary to the console: number of short lemmas checked, number removed by each filter, number of ambiguous lemmas kept, number of rows written.
+
+Give me an example command to run it.
+
+A:
+I’ll rewrite the script to the new spec and test it on sample data, including your “szerződés” 40% / 50% example.
+
+I’ve rewritten ambiguous_lemmas.py to the new spec and tested it on sample data. Your example works exactly as described. With “szerződés” at score 10, “albérletszerződés” at weight 14 is dropped (40%), and “munkaszerződés” at weight 15 is kept (50.0%). “lízingszerződés” doesn’t match, because “lízing” is not an n=1 lemma in either full list.
+
+Example command:
+
+python ambiguous_lemmas.py "munkaviszony megszüntetése" munkaviszony_full.csv munkaviszony_filtered.csv "házasság felbontása" hazassag_full.csv hazassag_filtered.csv -o ambiguous_lemmas.csv --stoplist stoplist.txt --min-weight 3 --max-matches 20 --min-diff 50 --top-n 3
+
+Everything after the six file and category arguments is optional; leave any option out to use its default.
+
+Things to know:
+
+Scores and weights: Both are written to the output exactly as they appear in the input CSVs. The difference is absolute, so a longer phrase with a much lower weight than the short lemma’s score also passes.
+Compound matches: These can work in both directions. For example, “albérlet” matches “albérletszerződés”, because “szerződés” is itself an n=1 lemma.
+Score of 0: A short lemma with score 0 has no defined percentage difference. These are skipped and shown in the summary only if any occur.
+Summary counts: Each filter line says what it counts. The stoplist, too-general and ambiguity filters count lemmas, the minimum-weight filter counts phrases, and the score-difference and top-N filters count matches.
+Excel separators: If Hungarian Excel puts everything in one column, add --delimiter ";".

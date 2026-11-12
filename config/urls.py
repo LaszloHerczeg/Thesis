@@ -25,7 +25,9 @@ urlpatterns = [
     path("case/", include("case.urls")),
     path("classification/", include("classification.urls")),
     path("matches/", include("matching.urls")),
-# admindocs:
+    path("evaluation/", include("evaluation.urls")),
+
+    # admindocs:
     path('admin/doc/', include("django.contrib.admindocs.urls")),
     path('admin/', admin.site.urls),
 ]

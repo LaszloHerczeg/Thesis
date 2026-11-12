@@ -15,8 +15,6 @@ import os
 from dotenv import load_dotenv
 
 
-import account
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -30,6 +28,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
+# SECURITY WARNING: Anthropic API key
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+
 ALLOWED_HOSTS = []
 
 
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'case',
     'classification',
     'matching',
+    'evaluation',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -128,6 +130,12 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+# Data files (legal cases)
+DATA_DIR = BASE_DIR / "classification" / "data"
+
+# Evaluation cases
+EVAL_DIR = BASE_DIR / "evaluation" / "data"
+
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
@@ -148,3 +156,6 @@ LOGIN_REDIRECT_URL = 'account:profile'
 LOGOUT_REDIRECT_URL = None
 
 AUTH_USER_MODEL = 'account.User'
+
+# HuSpaCy
+MODEL_NAME = "hu_core_news_lg"

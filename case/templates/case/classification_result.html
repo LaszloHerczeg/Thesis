@@ -1,26 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Placeholder title
+{% endblock %}
+
 {% block content %}
-<style>
-  .category-table,
-  .lawyer-table {
-    border-collapse: collapse;
-  }
-  .category-table td,
-  .lawyer-table td {
-    border: 1px solid #ccc;
-    padding: 6px 12px;
-  }
-  .category-table {
-    margin-bottom: 24px;
-  }
-  .label {
-    font-weight: bold;
-  }
-  .lawyer-tables {
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-</style>
 
 <table class="category-table">
   <tr>
@@ -44,21 +28,47 @@
       <td class="label">Language:</td>
       <td>{{ recommendation.lawyer.list_language }}</td>
     </tr>
+      <tr>
+      <td class="label">Your language preference:</td>
+      <td>{{ case.list_language }}✅</td>
+    </tr>
     <tr>
       <td class="label">City:</td>
       <td>{{ recommendation.lawyer.city }}</td>
+    </tr>
+    <tr>
+      <td class="label">Your city preference:</td>
+      <td>{{ case.city }}✅</td>
     </tr>
     <tr>
       <td class="label">Price:</td>
       <td>{{ recommendation.lawyer.price }}</td>
     </tr>
     <tr>
+      <td class="label">Your price maximum:</td>
+      <td>{{ case.hourly_rate }}✅</td>
+    </tr>
+    <tr>
       <td class="label">Format:</td>
-      <td>{{ recommendation.lawyer.is_online }}</td>
+      {% if recommendation.lawyer.is_online %}
+        <td>Online</td>
+      {% else %}
+        <td>In-person</td>
+      {% endif %}
+    </tr>
+    <tr>
+      <td class="label">Your format preference:</td>
+        <td>{{ case.format }}✅</td>
     </tr>
   </table>
   {% empty %}
   <p>No lawyers found in this category.</p>
   {% endfor %}
 </div>
+
+{% if classification.mode == "rule_based" %}
+  {% include "case/_classification_result_rule.html" %}
+{% else %}
+  {% include "case/_classification_result_llm.html" %}
+  {% endif %}
 {% endblock %}

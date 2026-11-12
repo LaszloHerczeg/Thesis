@@ -1,0 +1,106 @@
+Q:
+Write a Python script that finds lemmas (single words and multi-word phrases) that are characteristic of one legal field, by comparing two collections of Hungarian legal case descriptions.
+
+INPUT
+- Two folders, given as command-line arguments:
+  1. Target folder: .txt files from the field I'm analyzing.
+  2. Reference folder: .txt files from other, general cases.
+- Each .txt file contains exactly one case description, in Hungarian, UTF-8.
+
+PROCESSING
+- Lemmatize the texts with HuSpaCy using the hu_core_news_lg model. Lowercase all lemmas.
+- Extract 1-word, 2-word and 3-word lemma sequences (n-grams), e.g. "gyermek", "szülői felügyelet", "közös szülői felügyelet". The script must handle all three lengths.
+- Line breaks must not split n-grams: treat line breaks as ordinary spaces (replace them before processing), so an n-gram can continue on the next line. N-grams must not cross sentence boundaries and must not contain punctuation or numbers.
+- Drop n-grams that start or end with a Hungarian stopword (e.g. "a", "az", "és", "hogy"), but keep stopwords inside 3-word n-grams.
+- For both folders, count the number of documents each lemma appears in (a lemma that appears 50 times in one file counts as 1).
+- For the target folder only, also count the total number of occurrences of each lemma across all files.
+
+STEP 1 – full table
+Create a CSV containing every lemma/n-gram found in the target folder, with these columns:
+- lemma
+- n (1, 2 or 3)
+- d = number of target documents containing it
+- N_d = total number of target documents
+- r = number of reference documents containing it
+- N_r = total number of reference documents
+- log_ratio = log2( ((d + 0.5) / (N_d + 1)) / ((r + 0.5) / (N_r + 1)) )
+- total_d = total number of occurrences in the target documents
+Sort by log_ratio descending.
+
+STEP 2 – filtering
+A separate command reads the CSV from step 1 (without reprocessing the texts, since lemmatization is slow) and writes a second CSV containing only the lemmas that meet both thresholds:
+- d >= minimum document count (default: 3)
+- log_ratio >= minimum log ratio (default: 1.0)
+Both thresholds must be settable as optional command-line arguments; if omitted, the defaults apply.
+This second CSV has only two columns: lemma and total_d. Sort by total_d descending.
+
+OUTPUT REQUIREMENTS
+- CSV files must display Hungarian characters (á, ő, ű etc.) correctly when opened in Excel.
+- Round log_ratio to 3 decimals.
+- Print a short summary to the console (number of documents in each folder, number of lemmas before and after filtering).
+
+Please also give me installation instructions (including how to install HuSpaCy and the hu_core_news_lg model) and example commands for both steps.
+
+A:
+I’ll write the script, test the n-gram and CSV logic here, and check the current HuSpaCy install instructions.
+
+spaCy can’t be installed in this sandbox (and Hugging Face is blocked), so I’ll test the counting, n-gram, formula and CSV logic with a stand-in tokenizer instead of the real model.
+
+The script is jogi_kulcsszavak.py, with two subcommands: extract (step 1) and filter (step 2).
+
+I couldn’t install HuSpaCy here, so I haven’t run it with the real model. I tested everything else on sample case texts, using a simple tokenizer in place of the model. That covered:
+
+Line breaks: “közös szülői⏎felügyelet” became one 3-gram.
+Commas and numbers: a comma or a year correctly stops an n-gram.
+Stopwords: “felügyelet a gyermek” is kept, but “a gyermek” is dropped.
+Counts: a word appearing several times in one file counts as 1 in d, but every occurrence counts in total_d.
+log_ratio: I checked the formula by hand.
+Excel: the files start with a byte order mark (BOM), so Excel shows á, ő, ű correctly.
+Installation
+
+HuSpaCy supports Python 3.9 to 3.13. Python 3.11 or 3.12 is the safest choice.
+
+bash
+# 1. Create and activate a virtual environment (recommended)
+python -m venv venv
+venv\Scripts\activate            # Windows
+source venv/bin/activate         # macOS / Linux
+
+# 2. Install HuSpaCy (this also installs spaCy)
+pip install huspacy
+
+# 3. Download the hu_core_news_lg model (~ several hundred MB)
+python -c "import huspacy; huspacy.download('hu_core_news_lg')"
+
+If step 3 doesn’t work, you can install the model straight from Hugging Face:
+
+bash
+pip install "hu_core_news_lg@https://huggingface.co/huspacy/hu_core_news_lg/resolve/main/hu_core_news_lg-any-py3-none-any.whl"
+
+To check that it worked: python -c "import spacy; spacy.load('hu_core_news_lg'); print('OK')"
+
+Example commands
+
+Step 1 – full table (slow, because this is where the lemmatization happens):
+
+bash
+python jogi_kulcsszavak.py extract csaladjog/ altalanos/ -o step1_full.csv
+
+Step 2 – filtering (takes seconds and doesn’t reprocess the texts):
+
+bash
+# default thresholds: d >= 3, log_ratio >= 1.0
+python jogi_kulcsszavak.py filter step1_full.csv -o step2_filtered.csv
+
+# custom thresholds
+python jogi_kulcsszavak.py filter step1_full.csv -o step2_filtered.csv --min-docs 5 --min-log-ratio 1.5
+Things to know
+Hungarian Excel: with Hungarian regional settings, Excel expects ; between columns, so a comma-separated file opens as a single column. Add --excel-hu to step 1 for this. It switches to ; and a decimal comma (2,392). Step 2 detects the format automatically and keeps it.
+“Numbers”: n-grams exclude both digits (2023., 1.) and words the model tags as numerals (három, két).
+Abbreviations: the trailing period is removed, so Ptk. becomes ptk and is kept as a word.
+Stopwords: these come from spaCy’s built-in Hungarian list. It also contains words like van, lesz and nem, so n-grams that start or end with those are dropped too.
+Speed: lemmatizing a large folder can take a while; progress is shown as it runs. On a multi-core machine, --n-process 4 speeds it up, at the cost of more memory.
+
+Sources:
+
+huspacy on PyPI

@@ -38,18 +38,20 @@
       </tr>
 
       {% for case in case_list %}
-        <tr>
-          <td> <a class="case-detail-link" id="{{ case.id }}" href="{% url 'case:case_detail' case.id %}">{{ case|truncatechars:20 }}</a></td>
-          <td>
+
+        <tr class="clickable-row">
+          <td> <a class="case-detail-link" id="{{ case.id }}" href="{{ url }}">{{ case|truncatechars:20 }}</a></td>
+          <td tabindex="-1">
             {% if not case.predicted_category %}
               {{ case.status }}
             {% else %}
               {{ case.predicted_category }}
             {% endif %}
           </td>
-          <td> {{ case.created_at }}</td>
+          <td tabindex="-1"> {{ case.created_at }}</td>
         </tr>
         </table>
+
       {% endfor %}
   {% else %}
     <p>You have no cases yet. Click <a class="screening-link" href="{% url 'case:create_case' %}">here</a> to submit </p>

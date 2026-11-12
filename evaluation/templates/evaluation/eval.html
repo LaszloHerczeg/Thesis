@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    PLaceholder title
+{% endblock %}
+
+
+{% block content %}
+
+<table class="table-evalrun">
+  <tr class="table-evalrun-head">
+      <th>Id</th>
+      <th>Mode</th>
+      <th>Accuracy</th>
+      <th>Duration</th>
+  </tr>
+  <tr class="table-evalrun-body">
+      <td>{{ erun_rule.id }}</td>
+      <td>Rule-based</td>
+      <td>{{ erun_rule.accuracy_percent|floatformat:2 }}</td>
+      <td>{{ erun_rule.duration|floatformat:2 }}</td>
+  </tr>
+</table>
+
+<table class="table-evalclassification">
+    <tr class="table-evalclassification-head">
+        <th>Key</th>
+        <th>Expected category</th>
+        <th>Predicted category</th>
+        <th>Score</th>
+        <th>Follow-up expected</th>
+        <th>Follow-up asked</th>
+        <th>Duration</th>
+    </tr>
+    {% for row in results_rule %}
+        <tr class="table-evalclassification-body {% if row.passed %}row-pass{% else %}row-fail{% endif %}">
+            <td>{{ row.key }}</td>
+            <td>{{ row.expected }}</td>
+            <td>{{ row.predicted }}</td>
+            <td>{{ row.score|floatformat:2 }}</td>
+            <td>{{ row.followup_expected|yesno:"Yes,No" }}</td>
+            <td>{{ row.followup_asked|yesno:"Yes,No" }}</td>
+            <td>{{ row.duration|floatformat:2 }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+
+<table class="table-evalrun">
+  <tr class="table-evalrun-head">
+      <th>Id</th>
+      <th>Mode</th>
+      <th>Accuracy</th>
+      <th>Duration</th>
+  </tr>
+  <tr class="table-evalrun-body">
+      <td>{{ erun_llm.id }}</td>
+      <td>LLM-based</td>
+      <td>{{ erun_llm.accuracy_percent|floatformat:2 }}</td>
+      <td>{{ erun_llm.duration|floatformat:2 }}</td>
+  </tr>
+</table>
+
+<table class="table-evalclassification">
+    <tr class="table-evalclassification-head">
+        <th>Key</th>
+        <th>Expected category</th>
+        <th>Predicted category</th>
+        <th>Reasoning</th>
+        <th>Duration</th>
+    </tr>
+    {% for row in results_llm %}
+        <tr class="table-evalclassification-body {% if row.passed %}row-pass{% else %}row-fail{% endif %}">
+            <td>{{ row.key }}</td>
+            <td>{{ row.expected }}</td>
+            <td>{{ row.predicted }}</td>
+            <td>{{ row.reasoning }}</td>
+        <td>{{ row.duration|floatformat:2 }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
